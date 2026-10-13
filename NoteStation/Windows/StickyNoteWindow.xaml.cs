@@ -551,7 +551,7 @@ namespace NoteStation
 
         private void CmdDelete_Click(object sender, RoutedEventArgs e)
         {
-            var res = MessageBox.Show(
+            var res = AppDialog.Show(
                 $"Delete note \"{Note.Title}\"?\nThis cannot be undone.",
                 "NoteStation — Delete Note",
                 MessageBoxButton.YesNo,
@@ -623,7 +623,7 @@ namespace NoteStation
 
             if (isDirty)
             {
-                var res = MessageBox.Show(
+                var res = AppDialog.Show(
                     "Close this note? Unsaved changes will be lost.",
                     "NoteStation — Close Note",
                     MessageBoxButton.OKCancel,
@@ -1043,12 +1043,12 @@ namespace NoteStation
             // If currently locked, require PIN to remove it
             if (Note.IsLocked)
             {
-                MessageBox.Show("Show the note first (enter its PIN) before removing the PIN.",
+                AppDialog.Show("Show the note first (enter its PIN) before removing the PIN.",
                     "Remove PIN", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
 
-            var r = MessageBox.Show("Remove the PIN from this note?",
+            var r = AppDialog.Show("Remove the PIN from this note?",
                 "Remove PIN", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (r == MessageBoxResult.Yes)
             {
@@ -1260,7 +1260,7 @@ namespace NoteStation
             }
             else
             {
-                MessageBox.Show("No text recognized in selected region.", "OCR Result",
+                AppDialog.Show("No text recognized in selected region.", "OCR Result",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
         }

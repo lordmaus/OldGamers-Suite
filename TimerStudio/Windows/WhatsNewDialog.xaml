@@ -13,10 +13,10 @@
   <StackPanel Margin="32,28,32,28">
 
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><Image Source="{StaticResource JtIcon.GettingStarted}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Style="{StaticResource DialogTitle}" Text="What's New" VerticalAlignment="Center"
-               FontFamily="Segoe UI" FontSize="20" FontWeight="Bold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="20" FontWeight="Bold"
                Foreground="{DynamicResource BrushBlueText}"/></StackPanel>
     <TextBlock x:Name="LblVersion"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}"
                HorizontalAlignment="Center" Margin="0,2,0,0"/>
 
@@ -26,58 +26,58 @@
       <StackPanel>
 
         <TextBlock Style="{StaticResource SectionHeader}" Text="Date / Time countdown mode"
-                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <TextBlock Text="Set a specific date and time as a target. The timer counts down to that exact moment and alerts when it arrives."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap" Margin="0,0,0,12"/>
 
         <TextBlock Style="{StaticResource SectionHeader}" Text="Collapsible timer cards"
-                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <TextBlock Text="Click ▾ in the header to collapse a timer to just its name. Collapse state persists across restarts."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap" Margin="0,0,0,12"/>
 
         <TextBlock Style="{StaticResource SectionHeader}" Text="Timer persistence"
-                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <TextBlock Text="All timers and their settings are automatically saved and restored when you restart the app."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap" Margin="0,0,0,12"/>
 
         <TextBlock Style="{StaticResource SectionHeader}" Text="Export &amp; Import"
-                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <TextBlock Text="Back up your timers or move them between machines using Export / Import in the About dialog."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap" Margin="0,0,0,12"/>
 
         <TextBlock Style="{StaticResource SectionHeader}" Text="Popup position &amp; multi-monitor"
-                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <TextBlock Text="Choose from 9 popup positions (corners, edges, center). The popup follows your cursor's monitor and respects per-monitor DPI scaling."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap" Margin="0,0,0,12"/>
 
         <TextBlock Style="{StaticResource SectionHeader}" Text="Alert style options"
-                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <TextBlock Text="Choose between Lens (small popup), Fullscreen flash, or Both. Configure duration, auto-dismiss, and auto-reset per timer."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap" Margin="0,0,0,12"/>
 
         <TextBlock Style="{StaticResource SectionHeader}" Text="Keyboard shortcut: Ctrl+N"
-                   FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <TextBlock Text="Press Ctrl+N anywhere in the main window to quickly add a new timer."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap" Margin="0,0,0,12"/>
 

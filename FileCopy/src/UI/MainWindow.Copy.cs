@@ -74,7 +74,7 @@ namespace FileCopy
             session ??= CopySession.FromPrefs(AppPrefs.Instance);
 
             if (!ValidatePaths(session)) return;
-            if (_items.Count == 0) { MessageBox.Show(this, "Run Scan first.", "File Copy Studio"); return; }
+            if (_items.Count == 0) { AppDialog.Show(this, "Run Scan first.", "File Copy Studio"); return; }
 
             // Size estimate + move confirmations are interactive — skip for scheduled runs
             if (!session.IsScheduled)
@@ -85,7 +85,7 @@ namespace FileCopy
                 const long LargeThreshold = 1L * 1024 * 1024 * 1024; // 1 GB
                 if (totalBytes >= LargeThreshold)
                 {
-                    var r = MessageBox.Show(this,
+                    var r = AppDialog.Show(this,
                         $"This operation will copy {toCopy.Count:N0} file(s) totalling {SizeFormat.Format(totalBytes)}.\n\nProceed?",
                         "Large copy — confirm", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
                     if (r != MessageBoxResult.Yes) return;
@@ -94,7 +94,7 @@ namespace FileCopy
                 if (session.DeleteSourceOnMove)
                 {
                     int moveCount = _items.Count(x => x.Action != FileAction.Skip);
-                    var r = MessageBox.Show(this,
+                    var r = AppDialog.Show(this,
                         $"Delete source (Move) is enabled.\n\n" +
                         $"{moveCount:N0} file(s) will be deleted from source after copying.\n\n" +
                         $"Source: {session.SourcePath}\n\nThis cannot be undone. Proceed?",

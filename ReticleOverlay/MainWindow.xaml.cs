@@ -104,7 +104,7 @@ namespace ReticleOverlay
             // RO-05: tell the user once if prefs/profiles were unreadable and where the file was kept.
             if (CorruptFile.SetAsideThisSession.Count > 0)
             {
-                Dispatcher.InvokeAsync(() => MessageBox.Show(this,
+                Dispatcher.InvokeAsync(() => AppDialog.Show(this,
                     "Some saved data could not be read, so Reticle Overlay set it aside and started with defaults:\n\n" +
                     string.Join("\n", CorruptFile.SetAsideThisSession) +
                     "\n\nThe original file is kept there unchanged.",
@@ -568,7 +568,7 @@ namespace ReticleOverlay
             int ex = _profiles.FindIndex(p => p.Name.Equals(name, StringComparison.OrdinalIgnoreCase));
             if (ex >= 0)
             {
-                var confirm = MessageBox.Show($"A profile named \"{name}\" already exists.\n\nOverwrite it?",
+                var confirm = AppDialog.Show($"A profile named \"{name}\" already exists.\n\nOverwrite it?",
                     "Overwrite Profile", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (confirm != MessageBoxResult.Yes) return;
             }
@@ -595,7 +595,7 @@ namespace ReticleOverlay
         private void BtnDeleteProfile_Click(object s, RoutedEventArgs e)
         {
             int idx = CmbProfiles.SelectedIndex; if (idx < 0 || idx >= _profiles.Count) return;
-            if (MessageBox.Show($"Delete \"{_profiles[idx].Name}\"?", "Delete Profile",
+            if (AppDialog.Show($"Delete \"{_profiles[idx].Name}\"?", "Delete Profile",
                MessageBoxButton.YesNo, MessageBoxImage.Question) != MessageBoxResult.Yes) return;
             _profiles.RemoveAt(idx);
             ProfileStore.Save(_profiles);
@@ -802,7 +802,7 @@ namespace ReticleOverlay
             if (string.IsNullOrEmpty(newName) || newName == current) return;
             if (_profiles.FindIndex(p => p.Name.Equals(newName, StringComparison.OrdinalIgnoreCase)) >= 0)
             {
-                MessageBox.Show($"A profile named \"{newName}\" already exists.", "Rename", MessageBoxButton.OK, MessageBoxImage.Warning);
+                AppDialog.Show($"A profile named \"{newName}\" already exists.", "Rename", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
             _profiles[idx].Name = newName;

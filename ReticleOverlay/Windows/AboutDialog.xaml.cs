@@ -47,19 +47,19 @@ namespace ReticleOverlay
                 if (File.Exists(ProfileStore.File))
                 {
                     File.Copy(ProfileStore.File, dlg.FileName, overwrite: true);
-                    MessageBox.Show("Profiles exported to:\n" + dlg.FileName,
+                    AppDialog.Show("Profiles exported to:\n" + dlg.FileName,
                         "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 }
                 else
                 {
-                    MessageBox.Show("No profiles file found to export.",
+                    AppDialog.Show("No profiles file found to export.",
                         "Export", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Export failed:\n" + ex.Message,
+                AppDialog.Show("Export failed:\n" + ex.Message,
                     "Export Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -90,19 +90,19 @@ namespace ReticleOverlay
                     content, ProfileStoreContext.Default.ListReticleProfile);
                 if (parsed == null || parsed.Count == 0)
                 {
-                    MessageBox.Show("The selected file contains no valid profiles.",
+                    AppDialog.Show("The selected file contains no valid profiles.",
                         "Import Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("The selected file does not appear to be a valid profiles export:\n" + ex.Message,
+                AppDialog.Show("The selected file does not appear to be a valid profiles export:\n" + ex.Message,
                     "Import Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var result = MessageBox.Show(
+            var result = AppDialog.Show(
                 "Importing will merge these profiles into your current list.\n\n" +
                 "A profile with the same name as one you already have will be overwritten by the imported version; " +
                 "profiles with new names are added alongside your existing ones.\n\nContinue?",
@@ -140,14 +140,14 @@ namespace ReticleOverlay
                     CrashLog.Info($"Import: cleared {sanitized} unsafe (non-local) CustomImagePath value(s).");
 
                 ProfilesImported?.Invoke(this, EventArgs.Empty);
-                MessageBox.Show(
+                AppDialog.Show(
                     $"Profiles imported: {added} added, {updated} updated." +
                     (sanitized > 0 ? $"\n\n{sanitized} custom image path(s) not on a local drive were cleared." : ""),
                     "Import Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Import failed:\n" + ex.Message,
+                AppDialog.Show("Import failed:\n" + ex.Message,
                     "Import Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -165,7 +165,7 @@ namespace ReticleOverlay
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Could not copy: " + ex.Message, "Copy Failed",
+                AppDialog.Show("Could not copy: " + ex.Message, "Copy Failed",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -180,7 +180,7 @@ namespace ReticleOverlay
         {
             string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "README.md");
             if (File.Exists(path)) OpenUrl(path);
-            else MessageBox.Show("README.md not found next to the exe.", "Help",
+            else AppDialog.Show("README.md not found next to the exe.", "Help",
                 MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

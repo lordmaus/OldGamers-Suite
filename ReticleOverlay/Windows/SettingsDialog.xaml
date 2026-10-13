@@ -17,10 +17,10 @@
     <Border DockPanel.Dock="Top" Background="{DynamicResource BrushBar}"
             BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1" Padding="14,0" MinHeight="52">
       <StackPanel VerticalAlignment="Center">
-        <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Settings" FontFamily="Segoe UI" FontSize="15" FontWeight="SemiBold"
+        <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Settings" FontFamily="{DynamicResource AppFontFamily}" FontSize="15" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/></StackPanel>
         <TextBlock Text="Behaviour and startup options"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
       </StackPanel>
     </Border>
 
@@ -28,7 +28,7 @@
             BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,1,0,0" Padding="14,0" MinHeight="52">
       <Grid VerticalAlignment="Center">
         <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/></Grid.ColumnDefinitions>
-        <TextBlock x:Name="LblSaved" Text="" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+        <TextBlock x:Name="LblSaved" Text="" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushGreenText}" VerticalAlignment="Center"/>
         <Button Content="Close" Style="{StaticResource PrimaryButton}"
                 Grid.Column="1" Padding="24,0" MinHeight="44"
@@ -73,7 +73,7 @@
       </Border>
 
       <TextBlock Text="BEHAVIOUR" AutomationProperties.HeadingLevel="Level2"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
       <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,6" Margin="0,0,0,12">
         <StackPanel>
@@ -98,7 +98,7 @@
       </Border>
 
       <TextBlock Text="STARTUP" AutomationProperties.HeadingLevel="Level2"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
       <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,6" Margin="0,0,0,12">
         <CheckBox x:Name="ChkStartup"
@@ -111,12 +111,12 @@
 
       <!-- Polish #6: Reset all to defaults -->
       <TextBlock Text="RESET" AutomationProperties.HeadingLevel="Level2"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
       <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,8" Margin="0,0,0,4">
         <StackPanel>
           <TextBlock Text="Resets all reticle settings (size, color, type, opacity, offset) to factory defaults. Does not delete saved profiles."
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
                      TextWrapping="Wrap" Margin="0,0,0,8"/>
           <Button x:Name="BtnResetDefaults"
                   Style="{StaticResource DangerButton}" HorizontalAlignment="Left"

@@ -9,7 +9,7 @@
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource BrushBg}"
         Foreground="{DynamicResource BrushText}"
-        FontFamily="Segoe UI">
+        FontFamily="{DynamicResource AppFontFamily}">
 
   <Window.Resources>
     <local:InverseBoolConverter x:Key="InverseBool"/>
@@ -19,7 +19,7 @@
       <Setter Property="Foreground"       Value="{DynamicResource BrushText}"/>
       <Setter Property="BorderBrush"      Value="{DynamicResource BrushSurf2}"/>
       <Setter Property="BorderThickness"  Value="1"/>
-      <Setter Property="FontFamily"       Value="Segoe UI"/>
+      <Setter Property="FontFamily"       Value="{DynamicResource AppFontFamily}"/>
       <Setter Property="FontSize"         Value="{DynamicResource FontSizeBody}"/>
       <Setter Property="Padding"          Value="10,5"/>
       <Setter Property="MinWidth"         Value="120"/>

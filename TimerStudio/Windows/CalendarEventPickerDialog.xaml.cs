@@ -52,7 +52,7 @@ namespace TimerStudio
                 try   { PopulateList(CalendarImporter.ParseIcs(path), "ICS file"); }
                 catch (Exception ex)
                 {
-                    MessageBox.Show("Could not read the calendar file:\n" + ex.Message,
+                    AppDialog.Show("Could not read the calendar file:\n" + ex.Message,
                         "Import Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     ShowLoading(false);
                 }
@@ -118,7 +118,7 @@ namespace TimerStudio
                 catch (Exception ex)
                 {
                     Debug.WriteLine("[TimerStudio] Folder enum error: " + ex.Message);
-                    MessageBox.Show("Could not read Outlook calendars:\n\n" + ex.Message
+                    AppDialog.Show("Could not read Outlook calendars:\n\n" + ex.Message
                         + "\n\nTry exporting as an .ics file instead.",
                         "Outlook Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     ShowLoading(false);
@@ -153,7 +153,7 @@ namespace TimerStudio
                 catch (Exception ex)
                 {
                     Debug.WriteLine("[TimerStudio] ReadOutlookFolder error: " + ex.Message);
-                    MessageBox.Show("Could not read events from \"" + chosen.Name + "\":\n\n"
+                    AppDialog.Show("Could not read events from \"" + chosen.Name + "\":\n\n"
                         + ex.Message, "Outlook Error",
                         MessageBoxButton.OK, MessageBoxImage.Warning);
                     ShowLoading(false);
@@ -274,7 +274,7 @@ namespace TimerStudio
             if (hasAllDay)
             {
                 int n = chosen.Count(ev => ev.IsAllDay);
-                if (MessageBox.Show(
+                if (AppDialog.Show(
                     n + " selected event" + (n == 1 ? " is an" : "s are") + " all-day.\n\n" +
                     "Timer Studio will set the alert to 9:00 AM on the event date.\n" +
                     "You can adjust the time after importing.",

@@ -67,7 +67,7 @@
           <TextBlock x:Name="HintLabel"
                      Grid.Column="1"
                      Text=""
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
                      Foreground="{DynamicResource BrushHint}"
                      VerticalAlignment="Center" HorizontalAlignment="Center"
                      Opacity="0.75"
@@ -183,7 +183,7 @@
 
             <TextBlock x:Name="LensZoomLabel"
                        Text="2.00x"
-                       FontFamily="Segoe UI" FontSize="13" FontWeight="Bold"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="Bold"
                        VerticalAlignment="Center"
                        Foreground="{DynamicResource BrushText}"
                        MinWidth="52" TextAlignment="Center"

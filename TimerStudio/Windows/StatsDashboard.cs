@@ -26,7 +26,7 @@ namespace TimerStudio
 
         private void BtnClear_Click(object sender, RoutedEventArgs e)
         {
-            var r = MessageBox.Show(
+            var r = AppDialog.Show(
                 "Delete all alert history? This cannot be undone.",
                 "Clear History", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (r != MessageBoxResult.Yes) return;

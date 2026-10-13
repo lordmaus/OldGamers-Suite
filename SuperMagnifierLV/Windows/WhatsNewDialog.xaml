@@ -10,9 +10,9 @@
 
   <StackPanel Margin="28,24,28,24">
 
-    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><Image Source="{StaticResource JtIcon.GettingStarted}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="What's New" VerticalAlignment="Center" FontFamily="Segoe UI" FontSize="18" FontWeight="Bold"
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><Image Source="{StaticResource JtIcon.GettingStarted}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="What's New" VerticalAlignment="Center" FontFamily="{DynamicResource AppFontFamily}" FontSize="18" FontWeight="Bold"
                Foreground="{DynamicResource BrushBlueText}"/></StackPanel>
-    <TextBlock x:Name="VersionLabel" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+    <TextBlock x:Name="VersionLabel" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Center"
                Margin="0,2,0,0"/>
 
@@ -41,120 +41,120 @@
         </StackPanel>
 
 
-        <TextBlock Text="2026.3.16 — Layout, Compliance &amp; Smart Defaults" FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+        <TextBlock Text="2026.3.16 — Layout, Compliance &amp; Smart Defaults" FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
         <StackPanel Margin="12,0,0,10">
           <TextBlock Text="• Two-column control panel — Magnification and Quick Toggles side-by-side"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Lens title bar drag fixed — was broken due to WS_EX_NOACTIVATE interaction"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Voice title-bar buttons fixed — TTS now initialises independently of Zoom TTS setting"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Voice now announces Windows Explorer, UWP, and browser tab buttons via UI Automation"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Startup Defaults — set Follow Mode, Snap-to-Word, Reticle, and Voice as default startup state in Settings"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Lens toolbar — Tab key now cycles through all toolbar buttons (WCAG 2.1.1)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Escape closes About, App Preset, Input, and First-Run Wizard dialogs (WCAG 2.1.2)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• All buttons meet 44×44px minimum touch target (WCAG 2.5.5)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Disabled controls use BrushDisabled colour token instead of opacity collapse (WCAG 1.4.3)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Animations respect Windows Reduce Motion preference (WCAG 2.3.3)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Status toasts can be clicked to dismiss (WCAG 2.2.1); auto-extended on reduced-motion systems"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Colour swatches are now proper Buttons — keyboard-accessible and announced by screen readers"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Bug fix — Settings not saved on first launch; tour and What's New no longer repeat"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Lens title bar size cycles all 5 sizes correctly; separator lines scale with bar height"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
         </StackPanel>
 
-        <TextBlock Text="Session 45 — Compliance &amp; Features" FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+        <TextBlock Text="Session 45 — Compliance &amp; Features" FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,4,0,6"/>
         <StackPanel Margin="12,0,0,10">
           <TextBlock Text="• WCAG 1.4.3 — BrushRed in Light theme now passes contrast ratio (4.98:1)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• WCAG 2.1.1 — Zoom slider arrow-key step now matches your chosen zoom step"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• WCAG 2.4.7 — Slider focus ring: real visible adorner replaces invisible BorderBrush trigger"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• WCAG 2.4.11 — Focus ring colour adapts automatically when you switch Dark ↔ Light theme"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Bug fix — Colour picker now samples correct pixel on high-DPI secondary monitors"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Bug fix — Colour pick failure (clipboard locked) now shows an error toast"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Colour history palette — last 10 picked colours shown as swatches in colour pick mode"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Sleep/hibernate resume — magnifier engine auto-reinitialises after system wake"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• About dialog — 📋 Copy Path button copies settings file location to clipboard"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Ctrl+Shift+C hotkey cycles through all colour modes (Normal → Greyscale → Invert → …)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Settings dialog — ↺ Reset to Defaults button restores factory settings with confirmation"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Lens title bar right-click context menu — Freeze, Colour Picker, Snapshot, Click-Through, Close"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Control panel screen position is now remembered between sessions"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• WCAG 1.3.1 — Tooltips now visible on disabled buttons and controls"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
         </StackPanel>
 
-        <TextBlock Text="Session 44" FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+        <TextBlock Text="Session 44" FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,4,0,6"/>
         <StackPanel Margin="12,0,0,10">
           <TextBlock Text="• Wider, shorter Settings dialog — two-column layout"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Live zoom shown in lens title bar (e.g. 🔍 2.5×)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Colour picker shows hex + RGB in a toast after picking"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Tray menu now includes quick-load for named presets"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Preset load hotkeys (Ctrl+1–5, Ctrl+Shift+1–5) now shown in Hotkey Remap dialog"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Lens restored off-screen after monitor disconnect is now clamped into view"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Settings dialog zoom field now accepts locale decimal separator (, or .)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• WordTracker.TryGetWordFocus() runs on background thread with 200ms timeout"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• About dialog now has a keyboard shortcut (F1) and links to readme"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Silent catch{} blocks now log to Debug output in debug builds"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• README fully updated with all features from sessions 1–44"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
         </StackPanel>
 
-        <TextBlock Text="Session 43" FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+        <TextBlock Text="Session 43" FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,4,0,6"/>
         <StackPanel Margin="12,0,0,10">
           <TextBlock Text="• Single-instance mutex — second launch shows a friendly message"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Hotkey conflict detection — toast names each failing hotkey"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Windows shutdown now saves settings (logoff / restart safe)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Status toasts announced to screen readers (WCAG 4.1.3)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• PNG snapshots (lossless) replacing JPEG"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Lens toolbar keyboard accessible via Alt+H (WCAG 2.1.1)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Inline field validation in Settings dialog (WCAG 3.3.1)"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Hotkey conflict in Remap dialog now blocks Save button"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Dynamic version read from assembly at runtime"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
         </StackPanel>
 
       </StackPanel>

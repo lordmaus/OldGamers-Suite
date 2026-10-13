@@ -11,7 +11,7 @@
         Topmost="True"
         Background="{DynamicResource BrushBg}"
         Foreground="{DynamicResource BrushText}"
-        FontFamily="Segoe UI"
+        FontFamily="{DynamicResource AppFontFamily}"
         AutomationProperties.Name="Keyboard shortcuts reference"
         KeyDown="Window_KeyDown">
 

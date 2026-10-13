@@ -24,7 +24,7 @@
     <!-- Header -->
     <TextBlock Grid.Row="0"
                Text="📅  Calendar &amp; Email Settings"
-               FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
                Foreground="{DynamicResource BrushText}"
                AutomationProperties.HeadingLevel="Level1"/>
 
@@ -33,7 +33,7 @@
 
         <!-- ══ SECTION: DEFAULT CALENDAR ══════════════════════════════════════ -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="DEFAULT CALENDAR"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="The default calendar auto-loads in the Import picker and is used for auto-pull."
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
@@ -75,7 +75,7 @@
 
         <!-- ══ SECTION: CALENDAR VISIBILITY ═══════════════════════════════════ -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="CALENDAR VISIBILITY"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="Unchecked calendars are hidden from the auto-pull and the Import picker."
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
@@ -115,7 +115,7 @@
 
         <!-- ══ SECTION: AUTO-PULL ══════════════════════════════════════════════ -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="AUTO-PULL FROM CALENDAR"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="Automatically creates timer cards for upcoming Outlook events. Skips events already imported. Look-ahead window and keyword filters apply."
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
@@ -189,7 +189,7 @@
 
         <!-- ══ SECTION: IMPORT FILTERS ════════════════════════════════════════ -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="IMPORT FILTERS"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="Applies to both auto-pull and the manual Import picker."
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
@@ -283,7 +283,7 @@
 
         <!-- ══ SECTION: CALENDAR EVENT DEFAULTS ══════════════════════════════════ -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="CALENDAR EVENT DEFAULTS"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="Applied to every timer card created from a calendar event (auto-pull or import). Per-card settings override these."
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"

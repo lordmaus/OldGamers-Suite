@@ -8,7 +8,7 @@
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource BrushBg}"
         Foreground="{DynamicResource BrushText}"
-        FontFamily="Segoe UI"
+        FontFamily="{DynamicResource AppFontFamily}"
         ResizeMode="CanResize">
     <Grid Margin="12">
         <Grid.RowDefinitions>

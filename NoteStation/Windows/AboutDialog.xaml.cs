@@ -60,7 +60,7 @@ namespace NoteStation
             if (System.IO.File.Exists(path))
                 Process.Start(new ProcessStartInfo(path) { UseShellExecute = true });
             else
-                MessageBox.Show("README.md was not found next to the application.",
+                AppDialog.Show("README.md was not found next to the application.",
                     "NoteStation", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 

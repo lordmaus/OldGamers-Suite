@@ -358,7 +358,7 @@ namespace SuperMagnifier
         // Reset all settings to factory defaults
         private void ResetDefaultsBtn_Click(object sender, RoutedEventArgs e)
         {
-            var answer = System.Windows.MessageBox.Show(
+            var answer = AppDialog.Show(
                 "This will reset ALL settings to factory defaults and restart the dialog.\n\nYour hotkey bindings and presets will also be cleared.\n\nContinue?",
                 "Reset to Defaults",
                 System.Windows.MessageBoxButton.YesNo,

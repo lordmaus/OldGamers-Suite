@@ -512,7 +512,7 @@ namespace TimerStudio
         {
             if (CountTimerCards() >= MaxTimersWarning)
             {
-                var result = System.Windows.MessageBox.Show(
+                var result = AppDialog.Show(
                     "You already have " + CountTimerCards() + " timers running.\n\n" +
                     "Adding many timers may affect performance, especially when multiple alerts fire simultaneously.\n\n" +
                     "Do you want to add another timer?",
@@ -1006,7 +1006,7 @@ namespace TimerStudio
                 if (el is TimerCard tc && tc.IsSelected) selected.Add(tc);
             if (selected.Count == 0) return;
 
-            var result = System.Windows.MessageBox.Show(this,
+            var result = AppDialog.Show(this,
                 $"Delete {selected.Count} selected timer{(selected.Count == 1 ? "" : "s")}? This cannot be undone.",
                 "Delete Selected Timers",
                 System.Windows.MessageBoxButton.YesNo,
@@ -1041,7 +1041,7 @@ namespace TimerStudio
         public void SaveAsTemplate(TimerModel model)
         {
             string name = model.Name ?? "Timer";
-            var result = System.Windows.MessageBox.Show(
+            var result = AppDialog.Show(
                 "Save \"" + name + "\" as a reusable template?",
                 "Save Template",
                 System.Windows.MessageBoxButton.YesNo,
@@ -1055,7 +1055,7 @@ namespace TimerStudio
                 string.Equals(t.Name, name, StringComparison.OrdinalIgnoreCase));
             AppPrefs.Instance.Templates.Add(dto);
             AppPrefs.Instance.Save();
-            System.Windows.MessageBox.Show(
+            AppDialog.Show(
                 "Template \"" + name + "\" saved.\nApply it from any timer's quick preset menu.",
                 "Template Saved",
                 System.Windows.MessageBoxButton.OK,
@@ -1117,7 +1117,7 @@ namespace TimerStudio
 
             string uri = sb.ToString();
             System.Windows.Clipboard.SetText(uri);
-            System.Windows.MessageBox.Show(
+            AppDialog.Show(
                 "Timer config copied to clipboard as a shareable link:\n\n" + uri +
                 "\n\nRecipients can paste this into Timer Studio to import the timer.",
                 "Timer Shared",
@@ -1763,7 +1763,7 @@ namespace TimerStudio
             var templates = AppPrefs.Instance.Templates;
             if (templates.Count == 0)
             {
-                System.Windows.MessageBox.Show(
+                AppDialog.Show(
                     "No saved templates yet.\n\nSave a timer as a template with the \"Save as template\" button on its card.",
                     "Templates", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
                 return;
@@ -1808,12 +1808,12 @@ namespace TimerStudio
                     AppPrefs.Instance.Templates,
                     TimerStudioJsonContext.Default.ListTimerDto);
                 System.IO.File.WriteAllText(dlg.FileName, json, System.Text.Encoding.UTF8);
-                System.Windows.MessageBox.Show("Templates exported to:\n" + dlg.FileName,
+                AppDialog.Show("Templates exported to:\n" + dlg.FileName,
                     "Export Complete", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show("Export failed: " + ex.Message,
+                AppDialog.Show("Export failed: " + ex.Message,
                     "Export Error", System.Windows.MessageBoxButton.OK, System.Windows.MessageBoxImage.Error);
             }
         }

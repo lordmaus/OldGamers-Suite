@@ -305,12 +305,12 @@ namespace NoteStation
             try
             {
                 DataStore.ExportBackup(dlg.FileName);
-                MessageBox.Show($"Backup saved to:\n{dlg.FileName}",
+                AppDialog.Show($"Backup saved to:\n{dlg.FileName}",
                     "NoteStation — Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
+                AppDialog.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -324,7 +324,7 @@ namespace NoteStation
             };
             if (dlg.ShowDialog(this) != true) return;
 
-            var confirm = MessageBox.Show(
+            var confirm = AppDialog.Show(
                 "Importing will replace your current clipboard history, notes, and tasks with those from the backup.\n\nThis cannot be undone. Continue?",
                 "NoteStation — Import Backup",
                 MessageBoxButton.OKCancel,
@@ -334,13 +334,13 @@ namespace NoteStation
             try
             {
                 string summary = DataStore.ImportBackup(dlg.FileName);
-                MessageBox.Show($"Import complete: {summary}\n\nNoteStation will restart to load the restored data.",
+                AppDialog.Show($"Import complete: {summary}\n\nNoteStation will restart to load the restored data.",
                     "NoteStation — Import Complete", MessageBoxButton.OK, MessageBoxImage.Information);
                 App.Restart();
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Import failed:\n{ex.Message}", "NoteStation — Error",
+                AppDialog.Show($"Import failed:\n{ex.Message}", "NoteStation — Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -373,7 +373,7 @@ namespace NoteStation
 
                 if (result.NewClips.Count == 0 && result.NewFolders.Count == 0)
                 {
-                    MessageBox.Show(
+                    AppDialog.Show(
                         "No .html/.rtf/.txt clip files were found in the selected folder.\n\n" +
                         "Make sure you selected the 'Saved Clips' folder inside your ClipClip data directory.",
                         "NoteStation — Nothing Imported",
@@ -389,7 +389,7 @@ namespace NoteStation
                 foreach (var c in result.NewClips)
                     DataStore.SaveClip(c);
 
-                MessageBox.Show(
+                AppDialog.Show(
                     result.Summary + "\n\nNoteStation will restart to load the imported clips.",
                     "NoteStation — Import Complete",
                     MessageBoxButton.OK, MessageBoxImage.Information);
@@ -398,14 +398,14 @@ namespace NoteStation
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Import failed:\n{ex.Message}", "NoteStation — Error",
+                AppDialog.Show($"Import failed:\n{ex.Message}", "NoteStation — Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
         private void BtnClearAllData_Click(object sender, RoutedEventArgs e)
         {
-            var res = MessageBox.Show(
+            var res = AppDialog.Show(
                 "This will permanently delete all clipboard history, notes, and tasks stored by NoteStation.\n\nThis cannot be undone.\n\nContinue?",
                 "NoteStation — Clear All Data",
                 MessageBoxButton.OKCancel,
@@ -413,7 +413,7 @@ namespace NoteStation
             if (res != MessageBoxResult.OK) return;
 
             DataStore.ClearAllData();
-            MessageBox.Show(
+            AppDialog.Show(
                 "All data cleared. NoteStation will now restart.",
                 "NoteStation — Data Cleared",
                 MessageBoxButton.OK, MessageBoxImage.Information);

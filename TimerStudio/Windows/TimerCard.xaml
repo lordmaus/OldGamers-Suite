@@ -147,7 +147,7 @@
         <TextBox x:Name="TxtName"
                  Grid.Column="1"
                  Style="{x:Null}"
-                 FontFamily="Segoe UI"
+                 FontFamily="{DynamicResource AppFontFamily}"
                  FontSize="14" FontWeight="SemiBold"
                  Background="Transparent"
                  Foreground="{DynamicResource BrushText}"
@@ -200,7 +200,7 @@
       <!-- ── DateTime target label (DateTime mode only) ── -->
       <TextBlock x:Name="LblDateTimeTarget"
                  Text="{Binding TargetDateTimeLabel}"
-                 FontFamily="Segoe UI"
+                 FontFamily="{DynamicResource AppFontFamily}"
                  FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushMuted}"
                  HorizontalAlignment="Center"
@@ -297,7 +297,7 @@
         <!-- DatePicker: SelectionChanged wired in code-behind -->
         <DatePicker x:Name="DpTargetDate"
                     Grid.Row="0" Grid.Column="1"
-                    FontFamily="Segoe UI" FontSize="12"
+                    FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
                     ToolTip="Select the target date"
                     AutomationProperties.Name="Target date"/>
 
@@ -571,7 +571,7 @@
       <!-- ── Time-since label (shown after Done state: how long since alert fired) ── -->
       <TextBlock x:Name="LblTimeSince"
                  Text="{Binding TimeSinceText}"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushMuted}"
                  HorizontalAlignment="Center"
                  Margin="0,0,0,2"
@@ -580,7 +580,7 @@
       <!-- ── Feature 5: Last-fired label ── -->
       <TextBlock x:Name="LblLastFired"
                  Text="{Binding LastFiredLabel}"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushMuted}"
                  HorizontalAlignment="Center"
                  Margin="0,0,0,6"
@@ -649,7 +649,7 @@
                  Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
                  Visibility="Collapsed"
                  Style="{x:Null}"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Background="{DynamicResource BrushSurf2}"
                  Foreground="{DynamicResource BrushText}"
                  CaretBrush="{DynamicResource BrushText}"

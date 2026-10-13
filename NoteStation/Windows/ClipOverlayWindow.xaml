@@ -58,7 +58,7 @@
           <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Center">
             <Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtInlineIcon}" VerticalAlignment="Center"/>
             <TextBlock Text="Clips"
-                       FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeBody}" FontWeight="SemiBold"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeBody}" FontWeight="SemiBold"
                        Foreground="{DynamicResource BrushText}"
                        VerticalAlignment="Center"
                        AutomationProperties.HeadingLevel="Level1"
@@ -131,7 +131,7 @@
               Background="#AA11111B"
               Padding="8,4">
         <TextBox x:Name="TxtSearch"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushText}"
                  Background="#33FFFFFF"
                  BorderThickness="0"

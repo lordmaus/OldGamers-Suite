@@ -27,9 +27,9 @@
     <StackPanel Margin="0,0,0,16">
 
     <!-- Header -->
-    <StackPanel Orientation="Horizontal" Margin="20,14,20,1"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Settings" VerticalAlignment="Center" FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+    <StackPanel Orientation="Horizontal" Margin="20,14,20,1"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Settings" VerticalAlignment="Center" FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
                Foreground="{DynamicResource BrushText}"/></StackPanel>
-    <TextBlock x:Name="FilePathLabel" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+    <TextBlock x:Name="FilePathLabel" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}" Margin="20,0,20,8"/>
 
     <Separator/>
@@ -45,7 +45,7 @@
       <!-- Left: Lens Size -->
       <StackPanel Grid.Column="0" Margin="0,0,12,0">
         <TextBlock x:Name="HeadLensSize" Text="Lens Size"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
         <Grid>
           <Grid.ColumnDefinitions>
@@ -63,7 +63,7 @@
           </Grid.RowDefinitions>
 
           <TextBlock Grid.Row="0" Grid.Column="0" Text="Width:"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center" Margin="0,3"/>
           <TextBox   Grid.Row="0" Grid.Column="1" x:Name="LensWBox" Text="520"
                      Width="72" MinHeight="44" FontSize="{DynamicResource FontSizeBody}" Padding="4,2"
@@ -73,7 +73,7 @@
                      ToolTip="Lens width (200–3840 px)"
                      TextChanged="LensWBox_TextChanged" InputScope="Number"/>
           <TextBlock Grid.Row="0" Grid.Column="2" Text="px"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
                      VerticalAlignment="Center" Margin="4,3"/>
           <TextBlock x:Name="LensWError" Grid.Row="1" Grid.Column="1" Grid.ColumnSpan="3"
                      Text="✗ 200–3840 px" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushRedText}"
@@ -82,7 +82,7 @@
                      AutomationProperties.LiveSetting="Assertive"/>
 
           <TextBlock Grid.Row="2" Grid.Column="0" Text="Height:"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center" Margin="0,3"/>
           <TextBox   Grid.Row="2" Grid.Column="1" x:Name="LensHBox" Text="360"
                      Width="72" MinHeight="44" FontSize="{DynamicResource FontSizeBody}" Padding="4,2"
@@ -92,7 +92,7 @@
                      ToolTip="Lens height (150–2160 px)"
                      TextChanged="LensHBox_TextChanged" InputScope="Number"/>
           <TextBlock Grid.Row="2" Grid.Column="2" Text="px"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
                      VerticalAlignment="Center" Margin="4,3"/>
           <TextBlock x:Name="LensHError" Grid.Row="3" Grid.Column="1" Grid.ColumnSpan="3"
                      Text="✗ 150–2160 px" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushRedText}"
@@ -115,7 +115,7 @@
       <!-- Right: Zoom + Zoom Step -->
       <StackPanel Grid.Column="2" Margin="16,0,0,0">
         <TextBlock x:Name="HeadZoom" Text="Zoom"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
         <Grid>
           <Grid.ColumnDefinitions>
@@ -131,7 +131,7 @@
           </Grid.RowDefinitions>
 
           <TextBlock Grid.Row="0" Grid.Column="0" Text="Zoom:"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center" Margin="0,3"/>
           <TextBox   Grid.Row="0" Grid.Column="1" x:Name="ZoomBox" Text="2.00"
                      Width="72" MinHeight="44" FontSize="{DynamicResource FontSizeBody}" Padding="4,2"
@@ -141,7 +141,7 @@
                      ToolTip="Starting zoom (1.25–20×)"
                      TextChanged="ZoomBox_TextChanged" InputScope="Number"/>
           <TextBlock Grid.Row="0" Grid.Column="2" Text="×"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
                      VerticalAlignment="Center" Margin="4,3"/>
           <TextBlock x:Name="ZoomError" Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="4"
                      Text="✗ 1.25–20× required" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushRedText}"
@@ -157,7 +157,7 @@
         </Grid>
 
         <TextBlock x:Name="HeadZoomStep" Text="Zoom Step"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,12,0,4"/>
         <WrapPanel>
           <RadioButton x:Name="Step01"  Content="0.1×"  GroupName="DlgStep" Margin="0,0,10,0"
@@ -187,23 +187,23 @@
       <!-- Left: Rendering Quality -->
       <StackPanel Grid.Column="0" Margin="0,0,12,0">
         <TextBlock x:Name="HeadRendering" Text="Rendering Quality"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
         <RadioButton x:Name="SmoothRadio" GroupName="Render" IsChecked="True" Margin="0,2"
                      AutomationProperties.Name="Smooth bilinear rendering">
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Smooth (bilinear)" FontFamily="Segoe UI" FontSize="12"
+            <TextBlock Text="Smooth (bilinear)" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
                        Foreground="{DynamicResource BrushText}"/>
-            <TextBlock Text="  — text &amp; UI" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+            <TextBlock Text="  — text &amp; UI" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                        Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center"/>
           </StackPanel>
         </RadioButton>
         <RadioButton x:Name="CrispRadio" GroupName="Render" Margin="0,4"
                      AutomationProperties.Name="Crisp nearest-pixel rendering">
           <StackPanel Orientation="Horizontal">
-            <TextBlock Text="Crisp (nearest)" FontFamily="Segoe UI" FontSize="12"
+            <TextBlock Text="Crisp (nearest)" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
                        Foreground="{DynamicResource BrushText}"/>
-            <TextBlock Text="  — pixel art" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+            <TextBlock Text="  — pixel art" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                        Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center"/>
           </StackPanel>
         </RadioButton>
@@ -214,7 +214,7 @@
       <!-- Right: Lens Appearance -->
       <StackPanel Grid.Column="2" Margin="16,0,0,0">
         <TextBlock x:Name="HeadLensAppearance" Text="Lens Appearance"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
         <Grid>
           <Grid.ColumnDefinitions>
@@ -229,7 +229,7 @@
           </Grid.RowDefinitions>
 
           <TextBlock Grid.Row="0" Grid.Column="0" Text="Opacity:"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center"/>
           <Slider    Grid.Row="0" Grid.Column="1" x:Name="OpacitySlider"
                      Minimum="0.2" Maximum="1.0" Value="1.0"
@@ -237,12 +237,12 @@
                      AutomationProperties.Name="Lens opacity"
                      ToolTip="Lens opacity (20%–100%)"/>
           <TextBlock Grid.Row="0" Grid.Column="2" x:Name="OpacityLabel"
-                     Text="100%" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     Text="100%" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center" TextAlignment="Right"/>
 
           <TextBlock Grid.Row="2" Grid.Column="0" Text="Theme:"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center"/>
           <ComboBox  Grid.Row="2" Grid.Column="1" Grid.ColumnSpan="2"
                      x:Name="ThemeCombo" FontSize="{DynamicResource FontSizeCaption}" MinHeight="44"
@@ -288,7 +288,7 @@
       <!-- Left: Behaviour in 2-column grid -->
       <StackPanel Grid.Column="0" Margin="0,0,12,0">
         <TextBlock x:Name="HeadBehaviour" Text="Behaviour"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
         <Grid>
           <Grid.ColumnDefinitions>
@@ -339,7 +339,7 @@
       <!-- Right: Smooth Panning + Dim When Idle -->
       <StackPanel Grid.Column="2" Margin="16,0,0,0">
         <TextBlock x:Name="HeadSmoothPanning" Text="Smooth Panning"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
         <CheckBox x:Name="SmoothPanCheck" Content="Enable smooth follow"
                   IsChecked="False" Margin="0,0,0,4"
@@ -352,7 +352,7 @@
             <ColumnDefinition Width="52"/>
           </Grid.ColumnDefinitions>
           <TextBlock Grid.Column="0" Text="Lag:"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center"/>
           <Slider    Grid.Column="1" x:Name="PanLagSlider"
                      Minimum="0.03" Maximum="0.45" Value="0.15"
@@ -360,13 +360,13 @@
                      AutomationProperties.Name="Smooth panning lag"
                      ToolTip="Lower = tighter follow   Higher = looser follow"/>
           <TextBlock Grid.Column="2" x:Name="PanLagLabel"
-                     Text="Medium" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     Text="Medium" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center" TextAlignment="Right"/>
         </Grid>
 
         <TextBlock x:Name="HeadDimWhenIdle" Text="Dim When Idle"
-                   FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}" Margin="0,14,0,4"/>
         <CheckBox x:Name="DimWhenIdleCheck" Content="Dim lens when cursor is still"
                   IsChecked="False" Margin="0,0,0,4"
@@ -385,7 +385,7 @@
           </Grid.RowDefinitions>
 
           <TextBlock Grid.Row="0" Grid.Column="0" Text="Delay (sec):"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center"/>
           <Slider    Grid.Row="0" Grid.Column="1" x:Name="DimDelaySlider"
                      Minimum="2" Maximum="30" Value="5"
@@ -393,12 +393,12 @@
                      AutomationProperties.Name="Dim delay in seconds"
                      ToolTip="Seconds of cursor stillness before dimming (2–30s)"/>
           <TextBlock Grid.Row="0" Grid.Column="2" x:Name="DimDelayLabel"
-                     Text="5s" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     Text="5s" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center" TextAlignment="Right"/>
 
           <TextBlock Grid.Row="2" Grid.Column="0" Text="Dim opacity:"
-                     FontFamily="Segoe UI" FontSize="12" Foreground="{DynamicResource BrushText}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center"/>
           <Slider    Grid.Row="2" Grid.Column="1" x:Name="DimOpacitySlider"
                      Minimum="0.05" Maximum="0.9" Value="0.15"
@@ -406,7 +406,7 @@
                      AutomationProperties.Name="Dim target opacity"
                      ToolTip="Target opacity when dimmed (5%–90%)"/>
           <TextBlock Grid.Row="2" Grid.Column="2" x:Name="DimOpacityLabel"
-                     Text="15%" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     Text="15%" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushText}"
                      VerticalAlignment="Center" TextAlignment="Right"/>
         </Grid>
@@ -418,7 +418,7 @@
     <!-- ROW 4: Startup Defaults -->
     <StackPanel Margin="16,8,16,4">
       <TextBlock x:Name="HeadStartupDefaults" Text="Startup Defaults"
-                 FontFamily="Segoe UI" FontSize="12" FontWeight="Bold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="Bold"
                  Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"
                  ToolTip="These settings are applied every time the app launches"/>
       <Grid>
@@ -438,7 +438,7 @@
         <!-- Follow Mode default -->
         <StackPanel Grid.Row="0" Grid.Column="0" Margin="0,3">
           <TextBlock Text="Follow mode on start:"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushHint}" Margin="0,0,0,3"/>
           <StackPanel Orientation="Horizontal">
             <RadioButton x:Name="DefaultFollowMouseRadio" Content="Mouse"
@@ -473,7 +473,7 @@
         <!-- UI Size default -->
         <StackPanel Grid.Row="4" Grid.Column="0" Margin="0,3">
           <TextBlock Text="UI size on start:"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushHint}" Margin="0,0,0,3"/>
           <ComboBox x:Name="DefaultUiSizeCombo" FontSize="{DynamicResource FontSizeCaption}"
                     AutomationProperties.Name="Default UI size on startup"
@@ -490,7 +490,7 @@
         <!-- Lens title bar size default -->
         <StackPanel Grid.Row="4" Grid.Column="2" Margin="0,3">
           <TextBlock Text="Lens title bar on start:"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushHint}" Margin="0,0,0,3"/>
           <ComboBox x:Name="DefaultTitleBarSizeCombo" FontSize="{DynamicResource FontSizeCaption}"
                     AutomationProperties.Name="Default lens title bar size on startup"
@@ -642,7 +642,7 @@
       <Separator/>
       <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="20,4">
         <Image Source="{StaticResource JtIcon.Warning}" Style="{StaticResource JtInlineIcon}" x:Name="StatusIcon" Visibility="Collapsed"/>
-        <TextBlock x:Name="StatusLabel" Text="" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+        <TextBlock x:Name="StatusLabel" Text="" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushGreenText}" VerticalAlignment="Center"
                    AutomationProperties.LiveSetting="Polite"/>
       </StackPanel>

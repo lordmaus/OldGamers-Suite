@@ -142,7 +142,7 @@ namespace NoteStation
             string title = TxtTitle.Text.Trim();
             if (string.IsNullOrEmpty(title))
             {
-                MessageBox.Show("Task title cannot be empty.", "NoteStation",
+                AppDialog.Show("Task title cannot be empty.", "NoteStation",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 TxtTitle.Focus();
                 return;

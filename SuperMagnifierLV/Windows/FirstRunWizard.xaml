@@ -7,7 +7,7 @@
         WindowStartupLocation="CenterScreen"
         Background="{DynamicResource BrushBg}"
         Foreground="{DynamicResource BrushText}"
-        FontFamily="Segoe UI"
+        FontFamily="{DynamicResource AppFontFamily}"
         KeyDown="Window_KeyDown">
 
   <Grid>
@@ -67,7 +67,7 @@
               <Setter Property="BorderBrush" Value="{DynamicResource BrushSurf2}"/>
               <Setter Property="BorderThickness" Value="1"/>
               <Setter Property="Padding" Value="12,7"/>
-              <Setter Property="FontFamily" Value="Segoe UI"/>
+              <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
               <Setter Property="FontSize" Value="{DynamicResource FontSizeCaption}"/>
               <Setter Property="Cursor" Value="Hand"/>
               <Setter Property="Template">
@@ -104,7 +104,7 @@
                 <Setter Property="Background" Value="Transparent"/>
                 <Setter Property="Foreground" Value="{DynamicResource BrushMuted}"/>
                 <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeCaption}"/>
                 <Setter Property="Cursor" Value="Hand"/>
                 <Setter Property="Template">
@@ -128,7 +128,7 @@
                 <Setter Property="Background" Value="{DynamicResource BrushBlue}"/>
                 <Setter Property="Foreground" Value="White"/>
                 <Setter Property="BorderThickness" Value="0"/>
-                <Setter Property="FontFamily" Value="Segoe UI"/>
+                <Setter Property="FontFamily" Value="{DynamicResource AppFontFamily}"/>
                 <Setter Property="FontSize" Value="{DynamicResource FontSizeCaption}"/>
                 <Setter Property="FontWeight" Value="Bold"/>
                 <Setter Property="Cursor" Value="Hand"/>

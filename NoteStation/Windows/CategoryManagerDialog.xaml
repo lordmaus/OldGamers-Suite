@@ -22,7 +22,7 @@
     <!-- Header -->
     <TextBlock Grid.Row="0" Text="Categories"
                Style="{StaticResource DialogTitle}"
-               FontFamily="Segoe UI" FontSize="16"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="16"
                Margin="0,0,0,12"/>
 
     <!-- Category list -->
@@ -37,7 +37,7 @@
                 Foreground="{DynamicResource BrushText}"
                 BorderThickness="0"
                 SelectionMode="Single"
-                FontFamily="Segoe UI" FontSize="13"
+                FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                 ScrollViewer.HorizontalScrollBarVisibility="Disabled">
         <ListView.View>
           <GridView>
@@ -98,7 +98,7 @@
                    Text="New category name…"
                    IsHitTestVisible="False"
                    Foreground="{DynamicResource BrushMuted}"
-                   FontFamily="Segoe UI" FontSize="13"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                    VerticalAlignment="Center"
                    Margin="10,0,0,0">
           <TextBlock.Style>

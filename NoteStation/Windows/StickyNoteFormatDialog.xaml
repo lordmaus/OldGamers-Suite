@@ -20,12 +20,12 @@
   <StackPanel Margin="20,16,20,8">
 
     <TextBlock Style="{StaticResource DialogTitle}" Text="Note Appearance"
-               FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
                Foreground="{DynamicResource BrushText}" Margin="0,0,0,16"/>
 
     <!-- ── Font Family ── -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="Font family"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
     <ComboBox x:Name="CboFontFamily"
               SelectionChanged="CboFontFamily_SelectionChanged"
@@ -35,7 +35,7 @@
 
     <!-- ── Font Size ── -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="Font size"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
       <Slider x:Name="SliderFontSize"
@@ -47,7 +47,7 @@
               AutomationProperties.HelpText="Drag to change font size from 8 to 72 points"/>
       <TextBlock x:Name="LblFontSize"
                  Text="14pt"
-                 FontFamily="Segoe UI" FontSize="13"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                  Foreground="{DynamicResource BrushText}"
                  VerticalAlignment="Center" Margin="10,0,0,0"
                  AutomationProperties.Name="Current font size"/>
@@ -55,7 +55,7 @@
 
     <!-- ── Title Size ── -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="Title size"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
       <Slider x:Name="SliderTitleSize"
@@ -68,7 +68,7 @@
               AutomationProperties.HelpText="Drag to change title font size from 8 to 32 points"/>
       <TextBlock x:Name="LblTitleSize"
                  Text="14"
-                 FontFamily="Segoe UI" FontSize="13"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                  Foreground="{DynamicResource BrushText}"
                  VerticalAlignment="Center" Margin="10,0,0,0"
                  AutomationProperties.Name="Current title font size"/>
@@ -91,7 +91,7 @@
 
     <!-- ── Text Color ── -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="Text color"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
     <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
       <Border x:Name="TextColorSwatch"
@@ -114,15 +114,15 @@
               AutomationProperties.Name="Pick text color"><Image Source="{StaticResource JtIcon.Theme}" Width="20" Height="20"/></Button>
     </StackPanel>
     <TextBlock Text="Common: #FFFFFF (white)  #1C1C1C (dark)  #FFD700 (gold)"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,12"/>
 
     <!-- ── Background Color ── -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="Background color"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
     <TextBlock Text="Choose a preset:"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
     <WrapPanel x:Name="BgColorPanel" Margin="0,0,0,8"/>
     <StackPanel Orientation="Horizontal">
@@ -148,7 +148,7 @@
 
     <!-- ── Opacity ── -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="Window opacity"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushHint}" Margin="0,12,0,4"/>
     <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
       <Slider x:Name="SliderOpacity"
@@ -160,7 +160,7 @@
               AutomationProperties.HelpText="Drag to set note window opacity from 10% to 100%"/>
       <TextBlock x:Name="LblOpacity"
                  Text="100%"
-                 FontFamily="Segoe UI" FontSize="13"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                  Foreground="{DynamicResource BrushText}"
                  VerticalAlignment="Center" Margin="10,0,0,0"
                  AutomationProperties.Name="Current opacity"/>
@@ -199,7 +199,7 @@
 
     <!-- ── Preview ── -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="Preview"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushHint}" Margin="0,16,0,6"/>
     <Border x:Name="PreviewBorder"
             MinHeight="80" CornerRadius="6"

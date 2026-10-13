@@ -202,7 +202,7 @@ namespace TimerStudio
             bool cleared = CalendarImporter.ClearRunAsAdminFlag();
             if (!cleared)
             {
-                System.Windows.MessageBox.Show(
+                AppDialog.Show(
                     "Could not remove the flag automatically.\n\n" +
                     "Please do it manually:\n" +
                     "Right-click TimerStudio.exe → Properties → Compatibility tab\n" +
@@ -214,7 +214,7 @@ namespace TimerStudio
             }
 
             // Flag cleared — restart the app at normal (medium) integrity
-            var result = System.Windows.MessageBox.Show(
+            var result = AppDialog.Show(
                 "The 'Run as administrator' flag has been removed.\n\n" +
                 "TimerStudio needs to restart to take effect.\n" +
                 "Restart now?",

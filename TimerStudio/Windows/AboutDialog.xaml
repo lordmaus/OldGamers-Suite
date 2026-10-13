@@ -21,11 +21,11 @@
 
     <!-- Logo / Title -->
     <TextBlock Style="{StaticResource DialogTitle}" Text="⏱ Timer Studio"
-               FontFamily="Segoe UI" FontSize="22" FontWeight="Bold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="22" FontWeight="Bold"
                Foreground="{DynamicResource BrushBlueText}"
                HorizontalAlignment="Center"/>
     <TextBlock Text="Multi-timer application with alerts for Windows"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}"
                HorizontalAlignment="Center" Margin="0,2,0,0"/>
 
@@ -56,34 +56,34 @@
       </Grid.RowDefinitions>
 
       <TextBlock Grid.Row="0" Grid.Column="0" Text="Version"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}"/>
       <TextBlock Grid.Row="0" Grid.Column="1" x:Name="VersionLabel"
-                 FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushText}"
                  AutomationProperties.Name="Application version number"/>
 
       <TextBlock Grid.Row="2" Grid.Column="0" Text="Created by"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}"/>
       <TextBlock Grid.Row="2" Grid.Column="1" Text="Matthew Pittman"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushText}"/>
 
       <TextBlock Grid.Row="4" Grid.Column="0" Text="Platform"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}"/>
       <TextBlock Grid.Row="4" Grid.Column="1"
                  Text="Windows · WPF · .NET 10"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushText}"/>
 
       <TextBlock Grid.Row="6" Grid.Column="0" Text="Settings file"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}"/>
       <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Vertical">
         <TextBlock x:Name="SettingsPathLabel"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    TextWrapping="Wrap"
                    AutomationProperties.Name="Path to saved timers file"/>
@@ -120,7 +120,7 @@
 
       <!-- Website -->
       <TextBlock Grid.Row="8" Grid.Column="0" Text="Website"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
       <Button    Grid.Row="8" Grid.Column="1"
                  HorizontalAlignment="Left"
@@ -134,7 +134,7 @@
 
       <!-- GitHub -->
       <TextBlock Grid.Row="10" Grid.Column="0" Text="GitHub"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
       <Button    Grid.Row="10" Grid.Column="1"
                  HorizontalAlignment="Left"
@@ -147,11 +147,11 @@
                  Click="GitHubBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Link}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="GitHub" VerticalAlignment="Center"/></StackPanel></Button>
 
       <TextBlock Grid.Row="12" Grid.Column="0" Text="Start with Windows"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
       <CheckBox  Grid.Row="12" Grid.Column="1" x:Name="ChkStartup"
                  Content="Launch at Windows startup"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushText}"
                  VerticalAlignment="Center"
                  ToolTip="Add Timer Studio to Windows startup so it launches automatically when you log in"
@@ -160,7 +160,7 @@
                  Click="ChkStartup_Click"/>
 
       <TextBlock Grid.Row="14" Grid.Column="0" Text="Help"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
       <Button    Grid.Row="14" Grid.Column="1"
                  HorizontalAlignment="Left"
@@ -176,7 +176,7 @@
     <Separator Margin="0,14,0,14"/>
 
     <!-- Description -->
-    <TextBlock FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+    <TextBlock FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushText}"
                TextWrapping="Wrap" TextAlignment="Center"
                Text="Timer Studio lets you run multiple named countdown timers, stopwatches, and date/time targets simultaneously, each with custom alert colors, sounds, font sizes, and popup styles. Timers persist across restarts."/>
@@ -185,11 +185,11 @@
 
     <!-- Donate -->
     <TextBlock Style="{StaticResource SectionHeader}" Text="☕  Donate / Buy Me a Coffee"
-               FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                Foreground="{DynamicResource BrushBlueText}"
                HorizontalAlignment="Center" Margin="0,0,0,8"/>
     <TextBlock Text="If Timer Studio is useful to you, consider a small donation!"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}"
                HorizontalAlignment="Center" Margin="0,0,0,12"/>
     <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">

@@ -4,6 +4,17 @@ All notable changes to Super Magnifier LV are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows `yyyy.mm.dd.xxx`.
 
 
+## [Unreleased] – 2026-10-13 · Suite shared library
+
+Source-level change (not build-verified in the session that made it). Suite repo: `OldGamers.Suite.slnx`.
+
+### Changed
+- **Themes come from the suite set** (`..\Shared\Themes`, 108 themes, linked into the app). Dark / Light now use the higher-contrast NoteStation/TimerStudio values (`#000000` / `#FFFFFF` base); other themes differ only slightly.
+- **Dialogs follow the app theme**: message and confirm boxes use the themed `AppDialog` (theme colours, app font, 44 px buttons, focus on the safe default, Esc, Ctrl+C) instead of the unthemed Windows box. Startup / crash messages keep the Windows box.
+- **UI font setting applies everywhere**: hard-coded `Segoe UI` in XAML replaced with the `AppFontFamily` token; monospace text uses `MonoFontFamily` (Cascadia Mono, Consolas) — "Segoe UI Mono" is not a Windows font.
+- **Starting the app again brings the running window forward** (from the tray or minimised) instead of showing "Already running".
+- Resize grip, version display now come from the shared library `OldGamers.Wpf.Shared` (same behaviour).
+
 ## [2026.10.13.0001] — 2026-10-13 · Skills Review fixes
 
 Source-level change (not build-verified in the session that made it). `version.txt` set to `2026.10.13.0000`; next `build.bat` produces `.0001`.

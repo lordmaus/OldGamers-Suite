@@ -28,11 +28,11 @@
         <StackPanel Orientation="Horizontal">
           <Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtHeaderIcon}"/>
           <TextBlock Text="Keyboard Shortcuts" VerticalAlignment="Center"
-                     FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
                      Foreground="{DynamicResource BrushText}"/>
         </StackPanel>
         <TextBlock Text="All shortcuts are fixed and cannot be remapped."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    Margin="0,4,0,0" TextWrapping="Wrap"/>
       </StackPanel>
@@ -46,51 +46,51 @@
 
         <!-- Operations -->
         <TextBlock Text="OPERATIONS" AutomationProperties.HeadingLevel="Level2"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
         <Border Background="{DynamicResource BrushSurf}" CornerRadius="6"
                 Padding="12,8" Margin="0,0,0,14">
           <StackPanel>
             <Grid Margin="0,0,0,4">
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Ctrl+S" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Ctrl+S" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Scan files" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Scan files" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
             <Grid Margin="0,0,0,4">
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="F5" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="F5" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Start copy" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Start copy" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
             <Grid Margin="0,0,0,4">
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Escape" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Escape" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Cancel operation" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Cancel operation" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
             <Grid Margin="0,0,0,4">
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Ctrl+P" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Ctrl+P" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Pause / Resume" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Pause / Resume" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
             <Grid Margin="0,0,0,4">
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Ctrl+D" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Ctrl+D" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Dry run (preview actions)" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Dry run (preview actions)" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
             <Grid>
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Ctrl+J" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Ctrl+J" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Open Scheduler" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Open Scheduler" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
           </StackPanel>
@@ -98,23 +98,23 @@
 
         <!-- Presets -->
         <TextBlock Text="PRESETS" AutomationProperties.HeadingLevel="Level2"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
         <Border Background="{DynamicResource BrushSurf}" CornerRadius="6"
                 Padding="12,8" Margin="0,0,0,14">
           <StackPanel>
             <Grid Margin="0,0,0,4">
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Ctrl+1 … Ctrl+5" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Ctrl+1 … Ctrl+5" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Load preset slot 1–5" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Load preset slot 1–5" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
             <Grid>
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Ctrl+Shift+1 … +5" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Ctrl+Shift+1 … +5" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Save preset slot 1–5" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Save preset slot 1–5" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
           </StackPanel>
@@ -122,23 +122,23 @@
 
         <!-- File grid -->
         <TextBlock Text="FILE GRID" AutomationProperties.HeadingLevel="Level2"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
         <Border Background="{DynamicResource BrushSurf}" CornerRadius="6"
                 Padding="12,8" Margin="0,0,0,14">
           <StackPanel>
             <Grid Margin="0,0,0,4">
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Delete" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Delete" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Skip selected rows" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Skip selected rows" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
             <Grid>
               <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-              <TextBlock Grid.Column="0" Text="Drag preset → preset" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="0" Text="Drag preset → preset" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-              <TextBlock Grid.Column="1" Text="Reorder preset slots" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+              <TextBlock Grid.Column="1" Text="Reorder preset slots" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                          Foreground="{DynamicResource BrushText}"/>
             </Grid>
           </StackPanel>
@@ -146,15 +146,15 @@
 
         <!-- Help -->
         <TextBlock Text="HELP"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
         <Border Background="{DynamicResource BrushSurf}" CornerRadius="6"
                 Padding="12,8" Margin="0,0,0,4">
           <Grid>
             <Grid.ColumnDefinitions><ColumnDefinition Width="160"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
-            <TextBlock Grid.Column="0" Text="F1" FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+            <TextBlock Grid.Column="0" Text="F1" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                        Foreground="{DynamicResource BrushBlueText}" FontWeight="SemiBold"/>
-            <TextBlock Grid.Column="1" Text="Show keyboard shortcuts" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+            <TextBlock Grid.Column="1" Text="Show keyboard shortcuts" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                        Foreground="{DynamicResource BrushText}"/>
           </Grid>
         </Border>

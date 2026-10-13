@@ -19,15 +19,15 @@
     <StackPanel Margin="20,16,20,8">
 
       <TextBlock Style="{StaticResource DialogTitle}" Text="Keyboard Shortcuts"
-                 FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
                  Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
       <TextBlock Text="Global hotkeys work even when NoteStation is minimised. In-app hotkeys only work when the window is focused."
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"
                  Margin="0,0,0,16"/>
 
       <!-- ─── In-app hotkeys ──────────────────────────────────────────────── -->
-      <TextBlock Style="{StaticResource SectionHeader}" Text="IN-APP" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+      <TextBlock Style="{StaticResource SectionHeader}" Text="IN-APP" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,8"/>
 
       <Grid Margin="0,0,0,0">
@@ -46,38 +46,38 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="New task" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="HkNewTask" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="HkNewTask" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="New sticky note" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="HkNewNote" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="HkNewNote" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Delete selected" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="2" Grid.Column="1" Text="Delete" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="2" Grid.Column="1" Text="Delete" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="3" Grid.Column="0" Text="Open Settings" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="HkSettings" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="3" Grid.Column="1" x:Name="HkSettings" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="4" Grid.Column="0" Text="Cycle Theme" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="HkTheme" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="4" Grid.Column="1" x:Name="HkTheme" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="5" Grid.Column="0" Text="About" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="5" Grid.Column="1" Text="F1" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="5" Grid.Column="1" Text="F1" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="6" Grid.Column="0" Text="Cycle UI size" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="6" Grid.Column="1" Text="Ctrl+=" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="6" Grid.Column="1" Text="Ctrl+=" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
       </Grid>
 
       <Separator Margin="0,12"/>
 
       <!-- ─── Mouse ──────────────────────────────────────────────────────── -->
-      <TextBlock Style="{StaticResource SectionHeader}" Text="MOUSE BUTTONS" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+      <TextBlock Style="{StaticResource SectionHeader}" Text="MOUSE BUTTONS" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,8"/>
 
       <Grid>
@@ -92,20 +92,20 @@
         </Grid.RowDefinitions>
 
         <TextBlock Grid.Row="0" Grid.Column="0" Text="Previous clipboard" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="MousePrev" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="0" Grid.Column="1" x:Name="MousePrev" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="1" Grid.Column="0" Text="Next clipboard" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="MouseNext" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="1" Grid.Column="1" x:Name="MouseNext" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
         <TextBlock Grid.Row="2" Grid.Column="0" Text="Scroll clipboard" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Padding="0,8"/>
-        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="MouseScroll" FontFamily="Segoe UI Mono" FontSize="12"
+        <TextBlock Grid.Row="2" Grid.Column="1" x:Name="MouseScroll" FontFamily="{DynamicResource MonoFontFamily}" FontSize="12"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
       </Grid>
 
       <TextBlock Text="Change mouse assignments in Settings → Mouse Button Assignments."
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,8,0,0"/>
 
     </StackPanel>

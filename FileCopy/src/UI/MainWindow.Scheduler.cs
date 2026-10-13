@@ -28,7 +28,7 @@ namespace FileCopy
             string list = string.Join("\n", missed.Select(j =>
                 $"  • {j.Label}  (was due {j.NextRun.Value:yyyy-MM-dd HH:mm})"));
 
-            var r = MessageBox.Show(this,
+            var r = AppDialog.Show(this,
                 $"{missed.Count} scheduled job(s) were missed while the app was closed:\n\n{list}\n\nRun them now?",
                 "Missed scheduled jobs", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.Yes);
 

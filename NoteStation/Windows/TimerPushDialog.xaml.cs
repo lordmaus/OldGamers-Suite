@@ -38,7 +38,7 @@ namespace NoteStation
         {
             if (PushDatePicker.SelectedDate is not DateTime date)
             {
-                MessageBox.Show("Please select a target date.", "NoteStation",
+                AppDialog.Show("Please select a target date.", "NoteStation",
                     MessageBoxButton.OK, MessageBoxImage.Warning);
                 PushDatePicker.Focus();
                 return;
@@ -51,7 +51,7 @@ namespace NoteStation
 
             if (target <= DateTime.Now)
             {
-                var res = MessageBox.Show(
+                var res = AppDialog.Show(
                     "The selected date/time is in the past. Push anyway?",
                     "NoteStation", MessageBoxButton.YesNo, MessageBoxImage.Warning);
                 if (res != MessageBoxResult.Yes) return;

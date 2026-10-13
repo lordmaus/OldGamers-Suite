@@ -10,7 +10,7 @@
         WindowStartupLocation="CenterOwner"
         Background="{DynamicResource BrushBg}"
         Foreground="{DynamicResource BrushText}"
-        FontFamily="Segoe UI"
+        FontFamily="{DynamicResource AppFontFamily}"
         ResizeMode="CanResize"
         ShowInTaskbar="False">
     <Grid>
@@ -24,11 +24,11 @@
 
                 <!-- App icon + name -->
                 <TextBlock Text="◉ Badge Overlay" AutomationProperties.HeadingLevel="Level1"
-                           FontFamily="Segoe UI" FontSize="22" FontWeight="Bold"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="22" FontWeight="Bold"
                            Foreground="{DynamicResource BrushBlueText}"
                            HorizontalAlignment="Center"/>
                 <TextBlock Text="Accessibility Badge Tool for Low Vision"
-                           FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                            Foreground="{DynamicResource BrushMuted}"
                            HorizontalAlignment="Center" Margin="0,2,0,0"/>
 
@@ -57,28 +57,28 @@
                   </Grid.RowDefinitions>
 
                   <TextBlock Grid.Row="0" Grid.Column="0" Text="Version" FontWeight="SemiBold"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
                   <TextBlock Grid.Row="0" Grid.Column="1" x:Name="VersionLabel"
-                             FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+                             FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                              Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
                   <TextBlock Grid.Row="2" Grid.Column="0" Text="Created by" FontWeight="SemiBold"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
                   <TextBlock Grid.Row="2" Grid.Column="1" Text="Matthew Pittman"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                              Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
                   <TextBlock Grid.Row="4" Grid.Column="0" Text="Platform" FontWeight="SemiBold"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
                   <TextBlock Grid.Row="4" Grid.Column="1" Text="Windows · WPF · .NET 10"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                              Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
 
                   <TextBlock Grid.Row="6" Grid.Column="0" Text="Settings file" FontWeight="SemiBold"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Top" Margin="0,2,0,0"/>
                   <StackPanel Grid.Row="6" Grid.Column="1">
                     <TextBlock x:Name="LblSettingsPath" Text=""
-                               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                                Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"/>
                     <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
                       <Button Style="{StaticResource FlatButton}"
@@ -99,7 +99,7 @@
                   </StackPanel>
 
                   <TextBlock Grid.Row="8" Grid.Column="0" Text="Website" FontWeight="SemiBold"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
                   <Button Grid.Row="8" Grid.Column="1"
                           HorizontalAlignment="Left" Style="{StaticResource FlatButton}"
                           FontSize="{DynamicResource FontSizeCaption}" Padding="8,0" MinHeight="44"
@@ -109,7 +109,7 @@
                           Click="BtnWebsite_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Web}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="oldgamerssoftware.com" VerticalAlignment="Center"/></StackPanel></Button>
 
                   <TextBlock Grid.Row="10" Grid.Column="0" Text="GitHub" FontWeight="SemiBold"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
                   <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal">
                     <Button
                             HorizontalAlignment="Left" Style="{StaticResource FlatButton}"
@@ -128,10 +128,10 @@
                   </StackPanel>
 
                   <TextBlock Grid.Row="12" Grid.Column="0" Text="Reset" FontWeight="SemiBold"
-                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Top" Margin="0,2,0,0"/>
                   <StackPanel Grid.Row="12" Grid.Column="1">
                     <TextBlock Text="Restore all settings to factory defaults."
-                               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
                                TextWrapping="Wrap" Margin="0,0,0,4"/>
                     <Button Style="{StaticResource FlatButton}"
                             Padding="8,3" MinHeight="44" MinWidth="44" HorizontalAlignment="Left" FontSize="{DynamicResource FontSizeCaption}"
@@ -223,7 +223,7 @@
 
                 <!-- Donate -->
                 <TextBlock Text="☕  Donate / Buy Me a Coffee" AutomationProperties.HeadingLevel="Level2"
-                           FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                            Foreground="{DynamicResource BrushBlueText}"
                            HorizontalAlignment="Center" Margin="0,0,0,8"/>
                 <TextBlock Text="If Badge Overlay helps you, consider a small donation!"

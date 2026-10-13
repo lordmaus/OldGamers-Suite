@@ -805,7 +805,7 @@ namespace BadgeOverlay
                 string err = _overlay.SpeechInitError;
                 if (!string.IsNullOrEmpty(err))
                 {
-                    System.Windows.MessageBox.Show(
+                    AppDialog.Show(
                         "Screen Reader Mode is enabled, but speech could not start:\n\n" +
                         err + "\n\n" +
                         "Screen Reader Mode has been turned off.",
@@ -1183,12 +1183,12 @@ namespace BadgeOverlay
             {
                 System.IO.File.WriteAllText(dlg.FileName,
                     System.Text.Json.JsonSerializer.Serialize(_s, AppSettings.SharedJsonOpts));
-                System.Windows.MessageBox.Show("Settings exported.", "Export",
+                AppDialog.Show("Settings exported.", "Export",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Export failed:\n{ex.Message}", "Error",
+                AppDialog.Show($"Export failed:\n{ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -1214,12 +1214,12 @@ namespace BadgeOverlay
                 _overlay?.ApplySettings(_s);
                 RegisterHotkeys();
                 _s.Save();
-                System.Windows.MessageBox.Show("Settings imported.", "Import",
+                AppDialog.Show("Settings imported.", "Import",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                System.Windows.MessageBox.Show($"Import failed:\n{ex.Message}", "Error",
+                AppDialog.Show($"Import failed:\n{ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

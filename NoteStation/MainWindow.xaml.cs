@@ -1033,7 +1033,7 @@ namespace NoteStation
 
         private void BtnClipClear_Click(object sender, RoutedEventArgs e)
         {
-            var res = MessageBox.Show(
+            var res = AppDialog.Show(
                 "Clear all clipboard history? Pinned and filed items will be kept.",
                 "NoteStation — Clear Clipboard",
                 MessageBoxButton.YesNo,
@@ -1095,11 +1095,11 @@ namespace NoteStation
                 string exportMsg = skipped > 0
                     ? $"Exported {exported} text items to:\n{dlg.FileName}\n({skipped} image item(s) skipped — CSV does not support images)"
                     : $"Exported {exported} items to:\n{dlg.FileName}";
-                MessageBox.Show(exportMsg, "NoteStation — Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
+                AppDialog.Show(exportMsg, "NoteStation — Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
+                AppDialog.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -1180,12 +1180,12 @@ namespace NoteStation
                     }
                 }
                 File.WriteAllText(dlg.FileName, sb.ToString(), System.Text.Encoding.UTF8);
-                MessageBox.Show($"Exported {items.Count()} note(s) to:\n{dlg.FileName}",
+                AppDialog.Show($"Exported {items.Count()} note(s) to:\n{dlg.FileName}",
                     "NoteStation — Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
+                AppDialog.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -1248,12 +1248,12 @@ namespace NoteStation
                 }
 
                 File.WriteAllText(dlg.FileName, sb.ToString(), System.Text.Encoding.UTF8);
-                MessageBox.Show($"Exported {items.Count()} task(s) to:\n{dlg.FileName}",
+                AppDialog.Show($"Exported {items.Count()} task(s) to:\n{dlg.FileName}",
                     "NoteStation — Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
+                AppDialog.Show($"Export failed:\n{ex.Message}", "NoteStation — Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -2260,7 +2260,7 @@ namespace NoteStation
         {
             if (TaskList.SelectedItem is not TaskItem task)
             {
-                MessageBox.Show("Select a task first, then click Push to Timer.",
+                AppDialog.Show("Select a task first, then click Push to Timer.",
                     "NoteStation", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -2323,7 +2323,7 @@ namespace NoteStation
             }
             if (!haveLock)
             {
-                MessageBox.Show(
+                AppDialog.Show(
                     "TimerStudio's timer file is busy (another save is in progress). Try again in a moment.",
                     "NoteStation — Timer Pushed", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -2399,14 +2399,14 @@ namespace NoteStation
                     $"\"{task.Title}\" — {displayDt} (ID {nextId})",
                     System.Windows.Forms.ToolTipIcon.Info);
 
-                MessageBox.Show(
+                AppDialog.Show(
                     $"\"{task.Title}\" pushed to Timer Studio as a calendar event.\n\nTarget: {displayDt}\nTimer ID: {nextId}",
                     "NoteStation — Timer Pushed",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(
+                AppDialog.Show(
                     $"Failed to write to timers.json:\n\n{ex.Message}\n\nVerify the Timer Studio path in Settings.",
                     "NoteStation — Push Failed",
                     MessageBoxButton.OK, MessageBoxImage.Error);
@@ -4086,7 +4086,7 @@ namespace NoteStation
             if (toDelete.Count == 0) return;
 
             string names = string.Join(", ", toDelete.Select(n => $"\"{n.Name}\""));
-            var result = MessageBox.Show(
+            var result = AppDialog.Show(
                 $"Delete {toDelete.Count} folders: {names}?\n\nAll items inside will become unsorted.",
                 "Delete Folders", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result != MessageBoxResult.Yes) return;
@@ -4306,7 +4306,7 @@ namespace NoteStation
 
         private void FolderDelete(FolderNode node, string tab)
         {
-            var result = MessageBox.Show(
+            var result = AppDialog.Show(
                 $"Delete folder \"{node.Name}\"?\n\nItems inside will become unsorted.",
                 "Delete Folder", MessageBoxButton.YesNo, MessageBoxImage.Warning);
             if (result != MessageBoxResult.Yes) return;
@@ -4551,7 +4551,7 @@ namespace NoteStation
             var delItem = JtIcons.Menu("Delete Note…", "delete");
             delItem.Click += (_, __) =>
             {
-                var res = MessageBox.Show(
+                var res = AppDialog.Show(
                     $"Delete note \"{item.Title}\"?\nThis cannot be undone.",
                     "NoteStation — Delete Note",
                     MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -4581,7 +4581,7 @@ namespace NoteStation
                 var delItem = JtIcons.Menu($"Delete {selected.Count} Notes…", "delete");
                 delItem.Click += (_, __) =>
                 {
-                    var res = MessageBox.Show(
+                    var res = AppDialog.Show(
                         $"Delete {selected.Count} notes?\nThis cannot be undone.",
                         "NoteStation — Delete Note",
                         MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -4646,7 +4646,7 @@ namespace NoteStation
                 var bulkDelete = JtIcons.Menu($"Delete {selected.Count} Tasks…", "delete");
                 bulkDelete.Click += (_, __) =>
                 {
-                    var res = MessageBox.Show(
+                    var res = AppDialog.Show(
                         $"Delete {selected.Count} tasks? This cannot be undone.",
                         "NoteStation — Delete Tasks",
                         MessageBoxButton.YesNo, MessageBoxImage.Warning);
@@ -5377,7 +5377,7 @@ namespace NoteStation
         {
             var selected = ListClipboard.SelectedItems.Cast<ClipboardItem>().ToList();
             if (selected.Count == 0) return;
-            var confirm = MessageBox.Show(
+            var confirm = AppDialog.Show(
                 $"Permanently delete {selected.Count} clip{(selected.Count == 1 ? "" : "s")}? This cannot be undone.",
                 "NoteStation", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.OK) return;
@@ -5389,7 +5389,7 @@ namespace NoteStation
         private void EmptyClipTrash_Click(object sender, RoutedEventArgs e)
         {
             if (_deletedClips.Count == 0) return;
-            var confirm = MessageBox.Show(
+            var confirm = AppDialog.Show(
                 $"Permanently delete all {_deletedClips.Count} clip{(_deletedClips.Count == 1 ? "" : "s")} in Recently Deleted?",
                 "NoteStation", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.OK) return;
@@ -5410,7 +5410,7 @@ namespace NoteStation
         {
             var selected = ListNotes.SelectedItems.Cast<StickyNote>().ToList();
             if (selected.Count == 0) return;
-            var confirm = MessageBox.Show(
+            var confirm = AppDialog.Show(
                 $"Permanently delete {selected.Count} note{(selected.Count == 1 ? "" : "s")}? This cannot be undone.",
                 "NoteStation", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.OK) return;
@@ -5422,7 +5422,7 @@ namespace NoteStation
         private void EmptyNoteTrash_Click(object sender, RoutedEventArgs e)
         {
             if (_deletedNotes.Count == 0) return;
-            var confirm = MessageBox.Show(
+            var confirm = AppDialog.Show(
                 $"Permanently delete all {_deletedNotes.Count} note{(_deletedNotes.Count == 1 ? "" : "s")} in Recently Deleted?",
                 "NoteStation", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.OK) return;
@@ -5443,7 +5443,7 @@ namespace NoteStation
         {
             var selected = TaskList.SelectedItems.Cast<TaskItem>().ToList();
             if (selected.Count == 0) return;
-            var confirm = MessageBox.Show(
+            var confirm = AppDialog.Show(
                 $"Permanently delete {selected.Count} task{(selected.Count == 1 ? "" : "s")}? This cannot be undone.",
                 "NoteStation", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.OK) return;
@@ -5455,7 +5455,7 @@ namespace NoteStation
         private void EmptyTaskTrash_Click(object sender, RoutedEventArgs e)
         {
             if (_deletedTasks.Count == 0) return;
-            var confirm = MessageBox.Show(
+            var confirm = AppDialog.Show(
                 $"Permanently delete all {_deletedTasks.Count} task{(_deletedTasks.Count == 1 ? "" : "s")} in Recently Deleted?",
                 "NoteStation", MessageBoxButton.OKCancel, MessageBoxImage.Warning);
             if (confirm != MessageBoxResult.OK) return;

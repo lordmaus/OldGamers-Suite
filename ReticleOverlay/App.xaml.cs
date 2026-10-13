@@ -127,15 +127,19 @@ namespace ReticleOverlay
             _instanceMutex = new Mutex(initiallyOwned: true, MutexName, out bool createdNew);
             if (!createdNew)
             {
-                MessageBox.Show(
-                    "Reticle Overlay is already running.\n\nCheck the system tray.",
-                    "Already Running",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                // S-10 (2026-10-13): bring the running instance forward instead of "Already running";
+                // the box is only the fallback when the running instance can't be reached.
+                if (!InstanceActivation.SignalExisting("ReticleOverlay"))
+                    MessageBox.Show(
+                        "Reticle Overlay is already running.\n\nCheck the system tray.",
+                        "Already Running",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 _instanceMutex.Dispose();
                 Shutdown(0);
                 return;
             }
+            InstanceActivation.Listen("ReticleOverlay", () => InstanceActivation.BringToFront(Current.MainWindow));
 
             AppPrefs.Instance.Load();
 
@@ -194,6 +198,7 @@ namespace ReticleOverlay
 
         protected override void OnExit(ExitEventArgs e)
         {
+            InstanceActivation.Stop();
             base.OnExit(e);
             try { _instanceMutex?.ReleaseMutex(); _instanceMutex?.Dispose(); }
             catch { }

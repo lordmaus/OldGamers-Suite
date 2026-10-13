@@ -523,7 +523,7 @@ namespace BadgeOverlay
 
             if (conflictWarning != null)
             {
-                System.Windows.MessageBox.Show(this,
+                AppDialog.Show(this,
                     conflictWarning,
                     "Hotkey conflict",
                     MessageBoxButton.OK,
@@ -535,7 +535,7 @@ namespace BadgeOverlay
 
         private void BtnResetAll_Click(object sender, RoutedEventArgs e)
         {
-            var r = System.Windows.MessageBox.Show(
+            var r = AppDialog.Show(
                 "Reset all hotkeys to factory defaults?",
                 "Reset Hotkeys", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (r != MessageBoxResult.Yes) return;

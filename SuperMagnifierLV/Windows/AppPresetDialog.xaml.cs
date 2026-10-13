@@ -40,7 +40,7 @@ namespace SuperMagnifier
         {
             if (RulesList.SelectedItem is not RuleVm vm) return;
             // Error prevention (WCAG 3.3.6). Cancel also discards, but confirm a destructive row delete.
-            if (MessageBox.Show(this, $"Remove the rule for \"{vm.ExeName}\"?", "Remove app preset rule",
+            if (AppDialog.Show(this, $"Remove the rule for \"{vm.ExeName}\"?", "Remove app preset rule",
                     MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No) != MessageBoxResult.Yes)
                 return;
             _items.Remove(vm);

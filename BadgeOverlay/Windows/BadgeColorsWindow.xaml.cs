@@ -416,7 +416,7 @@ namespace BadgeOverlay
             // Destructive — wipes every user-customised colour. Require
             // confirmation so an errant click doesn't lose a palette the
             // user spent time tuning.
-            var r = MessageBox.Show(
+            var r = AppDialog.Show(
                 this,
                 "Reset every category colour to its factory default?\n\n" +
                 "Any customisations will be lost. This cannot be undone.",

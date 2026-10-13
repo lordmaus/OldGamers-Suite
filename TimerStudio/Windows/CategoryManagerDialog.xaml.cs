@@ -81,7 +81,7 @@ namespace TimerStudio
         {
             var item = LstCategories.SelectedItem as CategoryItem;
             if (item == null) return;
-            var r = MessageBox.Show(
+            var r = AppDialog.Show(
                 "Delete category \"" + item.Name + "\"?\n\n" +
                 (item.TimerCount > 0
                     ? item.TimerCount + " timer(s) will become uncategorised."

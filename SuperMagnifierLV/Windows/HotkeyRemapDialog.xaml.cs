@@ -241,7 +241,7 @@ namespace SuperMagnifier
             CommitCancel();
             // Error prevention (WCAG 3.3.6): confirm before discarding every custom binding.
             // Cancel still reverts everything, but confirm anyway — the dialog lists 30+ rows.
-            if (MessageBox.Show(this,
+            if (AppDialog.Show(this,
                     "Restore every hotkey to the default (Ctrl+Alt) shortcuts?\n\nYour custom shortcuts will be replaced. You can still press Cancel afterwards to keep the old ones.",
                     "Restore default hotkeys", MessageBoxButton.YesNo, MessageBoxImage.Question,
                     MessageBoxResult.No) != MessageBoxResult.Yes)

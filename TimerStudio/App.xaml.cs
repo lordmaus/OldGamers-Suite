@@ -178,15 +178,19 @@ namespace TimerStudio
             }
             if (!createdNew)
             {
-                MessageBox.Show(
-                    "Timer Studio is already running.\n\nCheck the system tray.",
-                    "Already Running",
-                    MessageBoxButton.OK,
-                    MessageBoxImage.Information);
+                // S-10 (2026-10-13): bring the running instance forward instead of "Already running";
+                // the box is only the fallback when the running instance can't be reached.
+                if (!InstanceActivation.SignalExisting("TimerStudio"))
+                    MessageBox.Show(
+                        "Timer Studio is already running.\n\nCheck the system tray.",
+                        "Already Running",
+                        MessageBoxButton.OK,
+                        MessageBoxImage.Information);
                 _instanceMutex.Dispose();
                 Shutdown(0);
                 return;
             }
+            InstanceActivation.Listen("TimerStudio", () => InstanceActivation.BringToFront(Current.MainWindow));
 
             // ── Load persisted prefs (window size, theme) ─────────────────────
             AppPrefs.Instance.Load();
@@ -281,6 +285,7 @@ namespace TimerStudio
 
         protected override void OnExit(ExitEventArgs e)
         {
+            InstanceActivation.Stop();
             SystemEvents.UserPreferenceChanged -= OnUserPreferenceChanged;
             base.OnExit(e);
             try { _instanceMutex?.ReleaseMutex(); _instanceMutex?.Dispose(); }

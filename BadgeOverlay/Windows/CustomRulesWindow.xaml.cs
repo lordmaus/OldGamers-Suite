@@ -114,7 +114,7 @@ namespace BadgeOverlay
         private void BtnDelete_Click(object s, RoutedEventArgs e)
         {
             if (_editing == null) return;
-            var r = System.Windows.MessageBox.Show(
+            var r = AppDialog.Show(
                 $"Delete rule for \"{_editing.MatchValue}\"?",
                 "Confirm Delete", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (r != MessageBoxResult.Yes) return;
@@ -146,14 +146,14 @@ namespace BadgeOverlay
                     _s.CustomRules ?? new System.Collections.Generic.List<CustomRule>(),
                     AppSettingsJsonContext.Default.ListCustomRule);
                 System.IO.File.WriteAllText(dlg.FileName, json);
-                MessageBox.Show(this,
+                AppDialog.Show(this,
                     $"Exported {_s.CustomRules?.Count ?? 0} rule(s).",
                     "Export rules", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
                 CrashLog.Write("BtnExport_Click", ex);
-                MessageBox.Show(this, "Export failed — see crash log.",
+                AppDialog.Show(this, "Export failed — see crash log.",
                     "Export rules", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -176,12 +176,12 @@ namespace BadgeOverlay
                     json, AppSettingsJsonContext.Default.ListCustomRule);
                 if (imported == null || imported.Count == 0)
                 {
-                    MessageBox.Show(this, "File contained no rules.",
+                    AppDialog.Show(this, "File contained no rules.",
                         "Import rules", MessageBoxButton.OK, MessageBoxImage.Information);
                     return;
                 }
 
-                var r = MessageBox.Show(this,
+                var r = AppDialog.Show(this,
                     $"Import {imported.Count} rule(s)?\n\n" +
                     "Yes = append to current rules.\n" +
                     "No  = replace current rules.\n" +
@@ -226,7 +226,7 @@ namespace BadgeOverlay
             catch (Exception ex)
             {
                 CrashLog.Write("BtnImport_Click", ex);
-                MessageBox.Show(this, "Import failed — file may not be a valid rules export.",
+                AppDialog.Show(this, "Import failed — file may not be a valid rules export.",
                     "Import rules", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }

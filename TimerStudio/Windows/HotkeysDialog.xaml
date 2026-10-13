@@ -29,10 +29,10 @@
             Padding="20,14,20,14">
       <StackPanel>
         <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Style="{StaticResource DialogTitle}" Text="Keyboard Shortcuts" VerticalAlignment="Center"
-                   FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
                    Foreground="{DynamicResource BrushText}"/></StackPanel>
         <TextBlock Text="Click a shortcut button to capture a new key combination. Press Escape to unbind."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    Margin="0,4,0,0" TextWrapping="Wrap"/>
       </StackPanel>
@@ -52,7 +52,7 @@
         <TextBlock x:Name="LblCaptureStatus"
                    Grid.Column="0"
                    Text="Click any shortcut button on the right to begin capturing."
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                    Foreground="{DynamicResource BrushMuted}"
                    VerticalAlignment="Center"/>
         <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
@@ -84,7 +84,7 @@
             Padding="20,10">
       <StackPanel>
         <TextBlock Style="{StaticResource SectionHeader}" Text="Fixed shortcuts  (always active, not remappable)"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,6"/>
         <Grid>
           <Grid.ColumnDefinitions>

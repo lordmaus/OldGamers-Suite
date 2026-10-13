@@ -20,13 +20,13 @@
 
       <!-- Task name -->
       <TextBlock x:Name="LblTaskTitle"
-                 FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushText}"
                  TextTrimming="CharacterEllipsis"
                  Margin="0,0,0,4"/>
 
       <TextBlock Text="Push this task to Timer Studio as a calendar event. Set the target date and time:"
-                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                  Foreground="{DynamicResource BrushMuted}"
                  TextWrapping="Wrap"
                  Margin="0,0,0,16"/>
@@ -37,7 +37,7 @@
           <ColumnDefinition Width="100"/>
           <ColumnDefinition Width="*"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Text="Date:" FontFamily="Segoe UI" FontSize="13"
+        <TextBlock Text="Date:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
         <DatePicker x:Name="PushDatePicker"
                     Grid.Column="1" MinHeight="44"
@@ -53,7 +53,7 @@
           <ColumnDefinition Width="Auto"/>
           <ColumnDefinition Width="Auto"/>
         </Grid.ColumnDefinitions>
-        <TextBlock Text="Time:" FontFamily="Segoe UI" FontSize="13"
+        <TextBlock Text="Time:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                    Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
         <ComboBox x:Name="CboHour"
                   Grid.Column="1" Width="70" MinHeight="44"

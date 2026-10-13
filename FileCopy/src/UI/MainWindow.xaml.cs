@@ -322,7 +322,7 @@ namespace FileCopy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Cannot open log", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(this, ex.Message, "Cannot open log", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -405,13 +405,13 @@ namespace FileCopy
                 Vm.StatusText = $"Exported {_errors.Count:N0} error(s) to {System.IO.Path.GetFileName(dlg.FileName)}.";
                 // If a copy is running, show a dialog since the status bar is being used for progress
                 if (IsRunning)
-                    MessageBox.Show(this,
+                    AppDialog.Show(this,
                         $"Exported {_errors.Count:N0} error(s) to:\n{dlg.FileName}",
                         "CSV exported", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Export failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(this, ex.Message, "Export failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -463,7 +463,7 @@ namespace FileCopy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Load job failed",
+                AppDialog.Show(this, ex.Message, "Load job failed",
                                 MessageBoxButton.OK, MessageBoxImage.Error);
                 Vm.StatusText = "Load job failed.";
             }
@@ -542,7 +542,7 @@ namespace FileCopy
                     ? "File Copy Studio — copy in progress"
                     : "File Copy Studio";
 
-                var result = MessageBox.Show(this, body, title,
+                var result = AppDialog.Show(this, body, title,
                     MessageBoxButton.YesNoCancel,
                     IsRunning ? MessageBoxImage.Warning : MessageBoxImage.Question,
                     MessageBoxResult.Cancel);
@@ -806,7 +806,7 @@ namespace FileCopy
         {
             if (_items.Count == 0)
             {
-                MessageBox.Show(this, "Run Scan first — there's nothing to save.",
+                AppDialog.Show(this, "Run Scan first — there's nothing to save.",
                                 "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }
@@ -825,7 +825,7 @@ namespace FileCopy
                 var job = FcJob.Build(AppPrefs.Instance, _items);
                 FcJob.Save(dlg.FileName, job);
                 if (job.Truncated)
-                    MessageBox.Show(this,
+                    AppDialog.Show(this,
                         $"Job saved, but was truncated to {FcJob.MaxItems:N0} items (scan has {_items.Count:N0}).\n\nSaved: {Path.GetFileName(dlg.FileName)}",
                         "Job truncated", MessageBoxButton.OK, MessageBoxImage.Warning);
                 else
@@ -833,7 +833,7 @@ namespace FileCopy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, ex.Message, "Save failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(this, ex.Message, "Save failed", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -950,7 +950,7 @@ namespace FileCopy
             var failed = CtxTargets().Where(x => x.Action == FileAction.Failed).ToList();
             if (failed.Count == 0) failed = _items.Where(x => x.Action == FileAction.Failed).ToList();
             if (failed.Count == 0) { Vm.StatusText = "No failed items to retry."; return; }
-            if (IsRunning) { MessageBox.Show(this, "Cannot retry while a copy is running.", "File Copy Studio"); return; }
+            if (IsRunning) { AppDialog.Show(this, "Cannot retry while a copy is running.", "File Copy Studio"); return; }
             if (!ValidatePaths()) return;
 
             foreach (var it in failed)
@@ -1027,7 +1027,7 @@ namespace FileCopy
                     : "\n⚠ Differences detected"
                 : "";
 
-            MessageBox.Show(this,
+            AppDialog.Show(this,
                 $"File: {it.RelativePath}\n" +
                 $"Action: {it.Action}\n\n" +
                 $"SOURCE\n{Fmt(src)}\n\n" +

@@ -161,7 +161,7 @@ namespace ReticleOverlay
         // values at open (same live-commit pattern as LostFocus).
         private void BtnResetAll_Click(object sender, RoutedEventArgs e)
         {
-            var r = MessageBox.Show(this,
+            var r = AppDialog.Show(this,
                 "Reset all hotkeys to defaults?\n\nToggle overlay = F8 · Next profile = F9 · Prev profile = F10 · others blank.\n\n" +
                 "Cancel in this dialog still restores what you had when it opened.",
                 "Reset hotkeys", MessageBoxButton.YesNo, MessageBoxImage.Warning, MessageBoxResult.No);

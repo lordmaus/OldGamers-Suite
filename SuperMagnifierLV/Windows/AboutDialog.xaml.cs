@@ -56,7 +56,7 @@ namespace SuperMagnifier
             }
             catch (System.Exception ex)
             {
-                System.Windows.MessageBox.Show($"Could not copy path: {ex.Message}",
+                AppDialog.Show($"Could not copy path: {ex.Message}",
                     "Copy Failed", System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Warning);
             }
@@ -70,7 +70,7 @@ namespace SuperMagnifier
             if (System.IO.File.Exists(readmePath))
                 OpenUrl(readmePath);
             else
-                System.Windows.MessageBox.Show(
+                AppDialog.Show(
                     "README.md not found next to the exe.",
                     "Help", System.Windows.MessageBoxButton.OK,
                     System.Windows.MessageBoxImage.Information);

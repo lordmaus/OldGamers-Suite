@@ -164,7 +164,7 @@ namespace ReticleOverlay
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Could not update startup setting:\n" + ex.Message,
+                AppDialog.Show("Could not update startup setting:\n" + ex.Message,
                     "Startup", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -174,7 +174,7 @@ namespace ReticleOverlay
         // Polish #6: reset reticle settings to factory defaults
         private void BtnResetDefaults_Click(object sender, RoutedEventArgs e)
         {
-            var result = MessageBox.Show(
+            var result = AppDialog.Show(
                 "This will reset all reticle settings (type, size, color, opacity, offset) to factory defaults.\n\nSaved profiles are NOT affected.\n\nContinue?",
                 "Reset to Defaults",
                 MessageBoxButton.YesNo,

@@ -17,7 +17,7 @@
     <!-- Icon + heading -->
     <TextBlock Text="When you click ✕, NoteStation should:"
                Style="{StaticResource DialogTitle}"
-               FontFamily="Segoe UI" FontSize="14"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="14"
                TextWrapping="Wrap" Margin="0,0,0,18"/>
 
     <!-- Option buttons -->

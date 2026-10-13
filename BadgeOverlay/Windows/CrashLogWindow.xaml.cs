@@ -117,7 +117,7 @@ namespace BadgeOverlay
 
         private void BtnClear_Click(object sender, RoutedEventArgs e)
         {
-            var r = MessageBox.Show(
+            var r = AppDialog.Show(
                 "Clear all entries from the crash log?\n\n" +
                 "The log will be moved to crash.log.bak so you can still " +
                 "recover entries if needed. Clearing again replaces the backup.",

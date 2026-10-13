@@ -57,7 +57,7 @@
           <StackPanel Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="2" Orientation="Horizontal" VerticalAlignment="Center">
             <Image Source="{StaticResource JtIcon.Tasks}" Style="{StaticResource JtInlineIcon}" VerticalAlignment="Center"/>
             <TextBlock Text="Tasks"
-                       FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeBody}" FontWeight="SemiBold"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeBody}" FontWeight="SemiBold"
                        Foreground="{DynamicResource BrushText}"
                        VerticalAlignment="Center"
                        AutomationProperties.HeadingLevel="Level1"

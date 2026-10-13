@@ -13,6 +13,8 @@
         <!-- Fixed-color JT icon set (theme-independent). AppTheme.ReplaceThemeDict only swaps "Themes/" entries. -->
         <ResourceDictionary Source="Theming/ColorIcons.xaml"/>
       </ResourceDictionary.MergedDictionaries>
+      <!-- S-12 (2026-10-13): monospace token — "Segoe UI Mono" is not a Windows font. -->
+      <FontFamily x:Key="MonoFontFamily">Cascadia Mono, Consolas</FontFamily>
 
       <!-- Fixed-color JT icons (Theming/ColorIcons.xaml). Never recolored per theme;
            always paired with a text label or AutomationProperties.Name. Disabled = faded. -->

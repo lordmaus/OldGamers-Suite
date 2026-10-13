@@ -14,6 +14,8 @@
              App.OnStartup re-adds this after its MergedDictionaries.Clear(). -->
         <ResourceDictionary Source="Theming/ColorIcons.xaml"/>
       </ResourceDictionary.MergedDictionaries>
+      <!-- S-12 (2026-10-13): monospace token — "Segoe UI Mono" is not a Windows font. -->
+      <FontFamily x:Key="MonoFontFamily">Cascadia Mono, Consolas</FontFamily>
       <!-- Converter: "Visible"/"Collapsed" string → Visibility enum -->
       <local:StringToVisibilityConverter x:Key="StringToVisibilityConverter"/>
 

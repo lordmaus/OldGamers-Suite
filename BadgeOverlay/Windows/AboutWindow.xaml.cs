@@ -33,7 +33,7 @@ namespace BadgeOverlay
             // custom rule, every hotkey, every colour preference. We
             // back up to a timestamped .bak so a misclick is recoverable
             // by importing the backup.
-            var r = MessageBox.Show(
+            var r = AppDialog.Show(
                 "Reset ALL settings to factory defaults?\n\n" +
                 "Your current settings will be backed up to settings.json.bak-<timestamp> first. " +
                 "You can restore them with About → Import.\n\n" +
@@ -61,7 +61,7 @@ namespace BadgeOverlay
             catch (Exception ex)
             {
                 CrashLog.Write("BtnResetAll_Click", ex);
-                MessageBox.Show(
+                AppDialog.Show(
                     "Reset failed. See crash.log for details.",
                     "Reset all settings",
                     MessageBoxButton.OK, MessageBoxImage.Error);
@@ -156,7 +156,7 @@ namespace BadgeOverlay
                     // user isn't left with a dead button. URL is the
                     // canonical project page; harmless if offline (the
                     // shell will show a normal "no internet" dialog).
-                    System.Windows.MessageBox.Show(
+                    AppDialog.Show(
                         "README.md was not found in the install folder. " +
                         "Opening the online version instead.",
                         "Help",
@@ -361,7 +361,7 @@ namespace BadgeOverlay
                     {
                         CrashLog.Write("BtnAudit_Click run", ex2);
                         WindowState = prevState;
-                        MessageBox.Show(
+                        AppDialog.Show(
                             "The audit failed. Details have been written to the crash log.",
                             "Audit failed", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
@@ -383,7 +383,7 @@ namespace BadgeOverlay
                     catch (Exception ex3)
                     {
                         CrashLog.Write("BtnAudit_Click open", ex3);
-                        MessageBox.Show(
+                        AppDialog.Show(
                             $"Audit saved to:\n{outPath}\n\n" +
                             "Couldn't open it automatically — open it manually in your browser.",
                             "Audit complete", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -445,7 +445,7 @@ namespace BadgeOverlay
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show(
+                    AppDialog.Show(
                         $"THIRD-PARTY-NOTICES.txt not found at:\n{path}\n\n" +
                         "The file should be installed alongside BadgeOverlay.exe.",
                         "File not found", System.Windows.MessageBoxButton.OK,

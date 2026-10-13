@@ -181,7 +181,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Failed to save defaults:\n{ex.Message}",
+                AppDialog.Show($"Failed to save defaults:\n{ex.Message}",
                     "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
@@ -189,7 +189,7 @@ namespace BadgeOverlay
         // ── Factory reset ─────────────────────────────────────────────────────
         private void BtnFactoryReset_Click(object s, RoutedEventArgs e)
         {
-            var r = MessageBox.Show(
+            var r = AppDialog.Show(
                 "Restore factory defaults?\n\nThis will overwrite settings.json with factory values.",
                 "Factory Reset", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (r != MessageBoxResult.Yes) return;
@@ -207,7 +207,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                MessageBox.Show($"Reset failed:\n{ex.Message}", "Error",
+                AppDialog.Show($"Reset failed:\n{ex.Message}", "Error",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }

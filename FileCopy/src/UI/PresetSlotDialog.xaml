@@ -17,7 +17,7 @@
         <RowDefinition Height="Auto"/>
       </Grid.RowDefinitions>
       <TextBlock Grid.Row="0" Text="Choose a preset slot to overwrite (1–5):"
-                 FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="13" Foreground="{DynamicResource BrushText}"
                  Margin="0,0,0,10"/>
       <Grid Grid.Row="1">
         <Grid.ColumnDefinitions>

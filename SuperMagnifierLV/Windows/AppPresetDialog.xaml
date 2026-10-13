@@ -15,9 +15,9 @@
       <RowDefinition Height="Auto"/>
     </Grid.RowDefinitions>
 
-    <StackPanel Orientation="Horizontal" Margin="0,0,0,4" Grid.Row="0"><Image Source="{StaticResource JtIcon.Rules}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="App-Based Auto Presets" VerticalAlignment="Center" FontFamily="Segoe UI"
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,4" Grid.Row="0"><Image Source="{StaticResource JtIcon.Rules}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="App-Based Auto Presets" VerticalAlignment="Center" FontFamily="{DynamicResource AppFontFamily}"
                FontSize="14" FontWeight="Bold" Foreground="{DynamicResource BrushBlueText}"/></StackPanel>
-    <TextBlock Grid.Row="1" TextWrapping="Wrap" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+    <TextBlock Grid.Row="1" TextWrapping="Wrap" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,8"
                Text="When one of these apps becomes the foreground window, the linked preset loads automatically. Enter the exe name without .exe (e.g. chrome, notepad, acrobat)."/>
 
@@ -96,7 +96,7 @@
         <ColumnDefinition Width="Auto"/>
       </Grid.ColumnDefinitions>
       <TextBox x:Name="ExeBox" Grid.Column="0"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Background="{DynamicResource BrushBar}"
                Foreground="{DynamicResource BrushText}"
                BorderBrush="{DynamicResource BrushBlue}" Padding="6,4"
@@ -105,7 +105,7 @@
                ToolTip="Enter exe name without .exe (e.g. chrome, notepad, acrobat)"/>
       <ComboBox x:Name="SlotCombo" Grid.Column="2" MinHeight="44"
                 AutomationProperties.Name="Preset slot for this application"
-                FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                 Background="{DynamicResource BrushBar}"
                 Foreground="{DynamicResource BrushText}">
         <ComboBoxItem Content="Preset 1" Tag="0" IsSelected="True"/>

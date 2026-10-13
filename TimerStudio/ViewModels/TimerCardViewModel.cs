@@ -862,7 +862,7 @@ namespace TimerStudio
                 var remaining = _model.TargetDateTime - DateTime.Now;
                 if (remaining <= TimeSpan.Zero)
                 {
-                    MessageBox.Show(
+                    AppDialog.Show(
                         "The target date and time is in the past.\n\nPlease choose a future date and time.",
                         "Invalid Target", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
@@ -1117,7 +1117,7 @@ namespace TimerStudio
                              || _model.State == TimerState.Done;
             if (needsConfirm)
             {
-                var r = MessageBox.Show(
+                var r = AppDialog.Show(
                     "Delete timer '" + _model.Name + "'?\n\nThis timer is currently active.",
                     "Delete Timer", MessageBoxButton.YesNo, MessageBoxImage.Question);
                 if (r != MessageBoxResult.Yes) return;

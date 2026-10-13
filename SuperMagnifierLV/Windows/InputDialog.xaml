@@ -7,7 +7,7 @@
         Background="{DynamicResource BrushBg}" ShowInTaskbar="False">
   <StackPanel Margin="20,16,20,16">
     <TextBlock x:Name="PromptLabel" Text="Enter preset name:"
-               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                Foreground="{DynamicResource BrushText}" Margin="0,0,0,8"/>
     <TextBox x:Name="InputBox"
              FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeBody}"

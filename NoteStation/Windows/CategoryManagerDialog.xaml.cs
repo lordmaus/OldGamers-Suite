@@ -152,7 +152,7 @@ namespace NoteStation
         {
             if (LvCategories.SelectedItem is not CategoryRow row) return;
 
-            var result = MessageBox.Show(
+            var result = AppDialog.Show(
                 $"Delete category \"{row.Name}\"?\n\nItems assigned to it will become uncategorised.",
                 "Delete Category",
                 MessageBoxButton.YesNo,

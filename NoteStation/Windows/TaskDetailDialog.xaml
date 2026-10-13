@@ -20,10 +20,10 @@
     <StackPanel Margin="20,16,20,8">
 
       <TextBlock Text="Task Detail" Style="{StaticResource DialogTitle}"
-                 FontFamily="Segoe UI" FontSize="16" FontWeight="Bold" Margin="0,0,0,16"/>
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold" Margin="0,0,0,16"/>
 
       <!-- Title -->
-      <TextBlock Style="{StaticResource SectionHeader}" Text="TITLE" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+      <TextBlock Style="{StaticResource SectionHeader}" Text="TITLE" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"
                  AutomationProperties.HeadingLevel="Level2"/>
       <TextBox x:Name="TxtTitle"
@@ -33,7 +33,7 @@
                AutomationProperties.Name="Task title"/>
 
       <!-- Notes -->
-      <TextBlock Style="{StaticResource SectionHeader}" Text="NOTES" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+      <TextBlock Style="{StaticResource SectionHeader}" Text="NOTES" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"
                  AutomationProperties.HeadingLevel="Level2"/>
       <Border x:Name="NotesToolbarHost" Margin="0,0,0,4"/>
@@ -45,7 +45,7 @@
                AutomationProperties.Name="Task notes"/>
 
       <!-- Due date + time -->
-      <TextBlock Style="{StaticResource SectionHeader}" Text="DUE DATE &amp; TIME" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+      <TextBlock Style="{StaticResource SectionHeader}" Text="DUE DATE &amp; TIME" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"
                  AutomationProperties.HeadingLevel="Level2"/>
       <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
@@ -74,7 +74,7 @@
       </StackPanel>
 
       <!-- Star + accent color -->
-      <TextBlock Style="{StaticResource SectionHeader}" Text="OPTIONS" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+      <TextBlock Style="{StaticResource SectionHeader}" Text="OPTIONS" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"
                  AutomationProperties.HeadingLevel="Level2"/>
 
@@ -82,7 +82,7 @@
                 Margin="0,0,0,12"
                 AutomationProperties.Name="Mark as starred"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Star}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Starred" VerticalAlignment="Center"/></StackPanel></CheckBox>
 
-      <TextBlock Text="Priority:" FontFamily="Segoe UI" FontSize="13"
+      <TextBlock Text="Priority:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                  Foreground="{DynamicResource BrushText}" Margin="0,0,0,8"/>
       <ComboBox x:Name="CboPriority"
                 Width="160" MinHeight="44" HorizontalAlignment="Left"
@@ -90,7 +90,7 @@
                 ToolTip="Task priority level"
                 AutomationProperties.Name="Task priority"/>
 
-      <TextBlock Text="Rank #:" FontFamily="Segoe UI" FontSize="13"
+      <TextBlock Text="Rank #:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                  Foreground="{DynamicResource BrushText}" Margin="0,0,0,8"/>
       <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
         <TextBox x:Name="TxtPriorityRank"
@@ -105,13 +105,13 @@
                 AutomationProperties.Name="Clear manual rank number"/>
       </StackPanel>
 
-      <TextBlock Text="Accent color:" FontFamily="Segoe UI" FontSize="13"
+      <TextBlock Text="Accent color:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
                  Foreground="{DynamicResource BrushText}" Margin="0,0,0,8"/>
 
       <StackPanel x:Name="AccentChips" Orientation="Horizontal" Margin="0,0,0,16"/>
 
       <!-- Subtasks -->
-      <TextBlock Style="{StaticResource SectionHeader}" Text="SUBTASKS" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+      <TextBlock Style="{StaticResource SectionHeader}" Text="SUBTASKS" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                  Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"
                  AutomationProperties.HeadingLevel="Level2"/>
       <ItemsControl x:Name="SubtaskList" Margin="0,0,0,4">

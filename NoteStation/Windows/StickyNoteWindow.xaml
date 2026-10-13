@@ -194,7 +194,7 @@
           <!-- Word count -->
           <TextBlock x:Name="TxtWordCount"
                      Grid.Column="1"
-                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
                      Foreground="{DynamicResource BrushMuted}"
                      VerticalAlignment="Center"
                      Margin="4,0"

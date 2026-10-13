@@ -23,7 +23,7 @@
             BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1"
             Padding="20,14" MinHeight="52">
       <TextBlock Style="{StaticResource DialogTitle}" Text="⚙  Settings"
-                 FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
                  Foreground="{DynamicResource BrushText}"/>
     </Border>
 
@@ -32,7 +32,7 @@
 
         <!-- ── EVENT TIMER FONT SIZES ── -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="EVENT TIMER FONT SIZES"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="DateTime / calendar event timers"
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,10"/>
@@ -87,7 +87,7 @@
 
         <!-- ── COUNTDOWN / STOPWATCH FONT SIZES ── -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="COUNTDOWN / STOPWATCH FONT SIZES"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="Countdown and Stopwatch timers"
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,10"/>
@@ -142,7 +142,7 @@
 
         <!-- ── ALERT DEFAULTS (shared by all timer types) ── -->
         <TextBlock Style="{StaticResource SectionHeader}" Text="ALERT DEFAULTS"
-                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
                    Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
         <TextBlock Text="Applied to all new timers"
                    FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,10"/>

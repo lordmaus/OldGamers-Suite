@@ -13,6 +13,8 @@
              MergedDictionaries and re-add this (cached) right after the new theme. -->
         <ResourceDictionary Source="Theming/ColorIcons.xaml"/>
       </ResourceDictionary.MergedDictionaries>
+      <!-- S-12 (2026-10-13): monospace token — "Segoe UI Mono" is not a Windows font. -->
+      <FontFamily x:Key="MonoFontFamily">Cascadia Mono, Consolas</FontFamily>
 
       <!-- ── Low-Vision: app-wide font family + size anchors (swappable at runtime) ── -->
       <FontFamily x:Key="AppFontFamily">Segoe UI</FontFamily>

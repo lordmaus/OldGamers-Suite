@@ -107,7 +107,7 @@ namespace FileCopy
                     bool discard = session.IsScheduled; // auto-discard for scheduled runs; prompt manually
                     if (!session.IsScheduled)
                     {
-                        var result = MessageBox.Show(this,
+                        var result = AppDialog.Show(this,
                             $"{stale:N0} file(s) have a partial (.fctemp) whose source has changed.\n\nDiscard stale partials and copy fresh?",
                             "Stale partial transfers", MessageBoxButton.YesNo,
                             MessageBoxImage.Question, MessageBoxResult.Yes);
@@ -153,7 +153,7 @@ namespace FileCopy
                 _scanCts?.Dispose(); _scanCts = null;
                 _activeSession = null;
                 CommandManager.InvalidateRequerySuggested();
-                MessageBox.Show(this, ex.Message, "Scan failed", MessageBoxButton.OK, MessageBoxImage.Error);
+                AppDialog.Show(this, ex.Message, "Scan failed", MessageBoxButton.OK, MessageBoxImage.Error);
                 Vm.StatusText = "Scan failed.";
             }
         }
@@ -216,23 +216,23 @@ namespace FileCopy
                 : (string.IsNullOrWhiteSpace(session.SourcePath) ? Array.Empty<string>() : new[] { session.SourcePath });
 
             if (roots.Count == 0)
-            { MessageBox.Show(this, "Add at least one source folder.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
+            { AppDialog.Show(this, "Add at least one source folder.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
             if (string.IsNullOrWhiteSpace(session.DestPath))
-            { MessageBox.Show(this, "Destination folder is required.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
+            { AppDialog.Show(this, "Destination folder is required.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
             // Multiple sources mirror under Dest by leaf name (ComputeMirrorNames) — mixed-parent
             // roots produce a confusing layout, so require one common parent. Catches presets/
             // scheduler/CLI sessions too, not just the live UI add-paths.
             if (!RootsShareCommonParent(roots))
-            { MessageBox.Show(this, "All source folders must be subfolders of the same parent directory.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
+            { AppDialog.Show(this, "All source folders must be subfolders of the same parent directory.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
 
             string d = Path.GetFullPath(session.DestPath).TrimEnd('\\');
             foreach (var root in roots)
             {
                 if (string.IsNullOrWhiteSpace(root) || !Directory.Exists(root))
-                { MessageBox.Show(this, $"Source folder does not exist:\n{root}", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
+                { AppDialog.Show(this, $"Source folder does not exist:\n{root}", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
                 string s = Path.GetFullPath(root).TrimEnd('\\');
                 if (string.Equals(s, d, StringComparison.OrdinalIgnoreCase))
-                { MessageBox.Show(this, "Source and destination must differ.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
+                { AppDialog.Show(this, "Source and destination must differ.", "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Warning); return false; }
             }
             return true;
         }
@@ -497,7 +497,7 @@ namespace FileCopy
             // Multiple folders no longer have a clean single-parent mapping — point at the inline picker.
             if (folders.Count > 1 && files.Count == 0)
             {
-                MessageBox.Show(this,
+                AppDialog.Show(this,
                     "Drop a single parent folder, then use the inline picker below it to narrow the copy " +
                     "to specific subfolders.",
                     "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Information);
@@ -508,7 +508,7 @@ namespace FileCopy
 
             if (string.IsNullOrWhiteSpace(Vm.Prefs.DestPath))
             {
-                MessageBox.Show(this, "Set the destination folder first before dropping files.",
+                AppDialog.Show(this, "Set the destination folder first before dropping files.",
                     "Destination required", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }

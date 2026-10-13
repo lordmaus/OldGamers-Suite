@@ -706,7 +706,7 @@
         <Setter Property="BorderBrush"  Value="Transparent"/>
         <Setter Property="BorderThickness" Value="0"/>
         <Setter Property="Cursor"       Value="Hand"/>
-        <Setter Property="FontFamily"   Value="Segoe UI"/>
+        <Setter Property="FontFamily"   Value="{DynamicResource AppFontFamily}"/>
         <Setter Property="FontSize"     Value="12"/>
         <Setter Property="Padding"      Value="6,2"/>
         <Setter Property="MinWidth"     Value="44"/>
@@ -753,7 +753,7 @@
         <Setter Property="BorderBrush"    Value="{DynamicResource BrushDivider}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Cursor"         Value="Hand"/>
-        <Setter Property="FontFamily"     Value="Segoe UI"/>
+        <Setter Property="FontFamily"     Value="{DynamicResource AppFontFamily}"/>
         <Setter Property="FontSize"       Value="{DynamicResource FontSizeCaption}"/>
         <Setter Property="Padding"        Value="8,3"/>
         <Setter Property="Margin"         Value="0,0,4,0"/>
@@ -814,7 +814,7 @@
         <Setter Property="BorderBrush"    Value="{DynamicResource BrushDivider}"/>
         <Setter Property="BorderThickness" Value="1"/>
         <Setter Property="Cursor"         Value="Hand"/>
-        <Setter Property="FontFamily"     Value="Segoe UI"/>
+        <Setter Property="FontFamily"     Value="{DynamicResource AppFontFamily}"/>
         <Setter Property="FontSize"       Value="{DynamicResource FontSizeCaption}"/>
         <Setter Property="Padding"        Value="8,3"/>
         <Setter Property="Margin"         Value="0,0,4,0"/>

@@ -67,7 +67,7 @@ namespace FileCopy
                 $"filecopy-studio-{DateTime.Now:yyyy-MM-dd}.log");
             if (!File.Exists(logPath))
             {
-                MessageBox.Show(this, "No log file found for today.", "Log",
+                AppDialog.Show(this, "No log file found for today.", "Log",
                     MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }

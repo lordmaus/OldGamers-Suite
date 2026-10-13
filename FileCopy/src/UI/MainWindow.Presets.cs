@@ -170,7 +170,7 @@ namespace FileCopy
             var preset = AppPrefs.Instance.Presets[slot];
             if (preset is null)
             {
-                MessageBox.Show(this, $"Preset {n} is empty. Configure paths/options and click Save.",
+                AppDialog.Show(this, $"Preset {n} is empty. Configure paths/options and click Save.",
                                 "File Copy Studio", MessageBoxButton.OK, MessageBoxImage.Information);
                 return;
             }

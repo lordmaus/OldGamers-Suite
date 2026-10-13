@@ -70,7 +70,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Could not update startup setting:\n" + ex.Message,
+                AppDialog.Show("Could not update startup setting:\n" + ex.Message,
                     "Startup", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -93,15 +93,15 @@ namespace TimerStudio
                 if (File.Exists(TimerPersistence.SaveFilePath))
                     File.Copy(TimerPersistence.SaveFilePath, dlg.FileName, overwrite: true);
                 else
-                    MessageBox.Show("No saved timers file found to export.",
+                    AppDialog.Show("No saved timers file found to export.",
                         "Export", MessageBoxButton.OK, MessageBoxImage.Information);
 
-                MessageBox.Show("Timers exported successfully to:\n" + dlg.FileName,
+                AppDialog.Show("Timers exported successfully to:\n" + dlg.FileName,
                     "Export Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Export failed:\n" + ex.Message,
+                AppDialog.Show("Export failed:\n" + ex.Message,
                     "Export Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -123,19 +123,19 @@ namespace TimerStudio
                 string content = File.ReadAllText(dlg.FileName);
                 if (!content.TrimStart().StartsWith("["))
                 {
-                    MessageBox.Show("The selected file does not appear to be a valid Timer Studio export.",
+                    AppDialog.Show("The selected file does not appear to be a valid Timer Studio export.",
                         "Import Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                     return;
                 }
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Could not read file:\n" + ex.Message,
+                AppDialog.Show("Could not read file:\n" + ex.Message,
                     "Import Error", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
             }
 
-            var result = MessageBox.Show(
+            var result = AppDialog.Show(
                 "Importing will replace all current timers.\n\nDo you want to continue?",
                 "Import Timers", MessageBoxButton.YesNo, MessageBoxImage.Question);
             if (result != MessageBoxResult.Yes) return;
@@ -150,12 +150,12 @@ namespace TimerStudio
                 File.Copy(dlg.FileName, TimerPersistence.SaveFilePath, overwrite: true);
 
                 if (TimersImported != null) TimersImported(this, EventArgs.Empty);
-                MessageBox.Show("Timers imported successfully. The timer list has been refreshed.",
+                AppDialog.Show("Timers imported successfully. The timer list has been refreshed.",
                     "Import Complete", MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
             {
-                MessageBox.Show("Import failed:\n" + ex.Message,
+                AppDialog.Show("Import failed:\n" + ex.Message,
                     "Import Error", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -185,7 +185,7 @@ namespace TimerStudio
             catch (Exception ex)
             {
                 Debug.WriteLine("[TimerStudio] CopyPath failed: " + ex.Message);
-                MessageBox.Show("Could not copy path: " + ex.Message,
+                AppDialog.Show("Could not copy path: " + ex.Message,
                     "Copy Failed", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
         }
@@ -196,7 +196,7 @@ namespace TimerStudio
             if (File.Exists(path))
                 OpenUrl(path);
             else
-                MessageBox.Show(
+                AppDialog.Show(
                     "README.md not found next to the exe.\n\nIt is included in the installer build.",
                     "Help", MessageBoxButton.OK, MessageBoxImage.Information);
         }

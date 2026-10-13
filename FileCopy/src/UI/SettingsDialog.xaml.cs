@@ -109,7 +109,7 @@ namespace FileCopy
             }
             catch (Exception ex)
             {
-                MessageBox.Show(this, $"Could not update startup entry:\n{ex.Message}",
+                AppDialog.Show(this, $"Could not update startup entry:\n{ex.Message}",
                     "Settings", MessageBoxButton.OK, MessageBoxImage.Warning);
                 ChkStartup.IsChecked = StartupHelper.IsEnabled();
             }

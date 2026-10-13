@@ -4,6 +4,17 @@ All notable changes listed by build version (yyyy.mm.dd.xxx).
 
 ---
 
+## [Unreleased] – 2026-10-13 · Suite shared library
+
+Source-level change (not build-verified in the session that made it). Suite repo: `OldGamers.Suite.slnx`.
+
+### Changed
+- **Themes come from the suite set** (`..\Shared\Themes`, 108 themes, linked into the app). Values unchanged for this app; extra keys from the other apps added.
+- **Dialogs follow the app theme**: message and confirm boxes use the themed `AppDialog` (theme colours, app font, 44 px buttons, focus on the safe default, Esc, Ctrl+C) instead of the unthemed Windows box. Startup / crash messages keep the Windows box.
+- **UI font setting applies everywhere**: hard-coded `Segoe UI` in XAML replaced with the `AppFontFamily` token; monospace text uses `MonoFontFamily` (Cascadia Mono, Consolas) — "Segoe UI Mono" is not a Windows font.
+- **Starting the app again brings the running window forward** (from the tray or minimised) instead of showing "Already running".
+- Resize grip, version display, keyboard window mover, type ramp now come from the shared library `OldGamers.Wpf.Shared` (same behaviour).
+
 ## [2026.10.12.0003] — 2026-10-12 · NoteStation IPC mutex (paired release)
 
 **Not build-verified.** Ship together with NoteStation 2026.10.12.0001.

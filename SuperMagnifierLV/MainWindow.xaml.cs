@@ -1939,7 +1939,7 @@ namespace SuperMagnifier
             };
             if (dlg.ShowDialog() != System.Windows.Forms.DialogResult.OK) return;
             try { System.IO.File.Copy(AppSettings.FilePath, dlg.FileName, overwrite: true); }
-            catch (Exception ex) { System.Windows.MessageBox.Show($"Export failed:\n{ex.Message}"); }
+            catch (Exception ex) { AppDialog.Show($"Export failed:\n{ex.Message}"); }
         }
 
         private void ImportSettingsBtn_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -1955,9 +1955,9 @@ namespace SuperMagnifier
                 System.IO.File.Copy(dlg.FileName, AppSettings.FilePath, overwrite: true);
                 _settings = AppSettings.Load();
                 ApplySettingsToUi(_settings);
-                System.Windows.MessageBox.Show("Settings imported. Some changes take effect on next launch.", "Imported");
+                AppDialog.Show("Settings imported. Some changes take effect on next launch.", "Imported");
             }
-            catch (Exception ex) { System.Windows.MessageBox.Show($"Import failed:\n{ex.Message}"); }
+            catch (Exception ex) { AppDialog.Show($"Import failed:\n{ex.Message}"); }
         }
 
         // ── Preset-only export / import ──────────────────────────────────────
@@ -1976,7 +1976,7 @@ namespace SuperMagnifier
                     ShowToast("⚠ Export failed — check the file path", ms: 4000);
                 ShowToast("Presets exported");
             }
-            catch (Exception ex) { System.Windows.MessageBox.Show($"Export failed:\n{ex.Message}"); }
+            catch (Exception ex) { AppDialog.Show($"Export failed:\n{ex.Message}"); }
         }
 
         private void ImportPresetsBtn_Click(object sender, System.Windows.RoutedEventArgs e)
@@ -1991,7 +1991,7 @@ namespace SuperMagnifier
             {
                 var imported = LensPreset.LoadAll(dlg.FileName);
                 if (imported == null || imported.Count == 0)
-                { System.Windows.MessageBox.Show("No presets found in that file."); return; }
+                { AppDialog.Show("No presets found in that file."); return; }
                 // Merge: fill slots 0-4, leave extras from import unused
                 for (int i = 0; i < Math.Min(5, imported.Count); i++)
                     _presets[i] = imported[i];
@@ -2000,7 +2000,7 @@ namespace SuperMagnifier
                 RefreshPresetButtons();
                 ShowToast($"Presets imported ({Math.Min(5, imported.Count)} slots)");
             }
-            catch (Exception ex) { System.Windows.MessageBox.Show($"Import failed:\n{ex.Message}"); }
+            catch (Exception ex) { AppDialog.Show($"Import failed:\n{ex.Message}"); }
         }
 
         // ── App preset map ────────────────────────────────────────────────────
@@ -2143,7 +2143,7 @@ namespace SuperMagnifier
         private void ShowRecentMessages()
         {
             string body = _recentToasts.Count == 0 ? "No messages yet." : string.Join(Environment.NewLine, _recentToasts);
-            System.Windows.MessageBox.Show(this, body, "Recent messages — Super Magnifier LV", MessageBoxButton.OK, MessageBoxImage.Information);
+            AppDialog.Show(this, body, "Recent messages — Super Magnifier LV", MessageBoxButton.OK, MessageBoxImage.Information);
         }
 
         /// <summary>Immediately dismiss the toast — called by timer or click (WCAG 2.2.1).</summary>

@@ -48,7 +48,7 @@ namespace FileCopy
         }
 
         private bool OnConfirmMove(string message) =>
-            MessageBox.Show(this, message, "Move job", MessageBoxButton.YesNo,
+            AppDialog.Show(this, message, "Move job", MessageBoxButton.YesNo,
                             MessageBoxImage.Warning, MessageBoxResult.No) == MessageBoxResult.Yes;
 
         // ── Folder pickers ────────────────────────────────────────────────────
@@ -78,11 +78,11 @@ namespace FileCopy
 
         // ── Dialogs ───────────────────────────────────────────────────────────
         private void OnShowMessage(string msg)
-            => MessageBox.Show(this, msg, "Scheduler", MessageBoxButton.OK, MessageBoxImage.Warning);
+            => AppDialog.Show(this, msg, "Scheduler", MessageBoxButton.OK, MessageBoxImage.Warning);
 
         private void OnDeleteConfirm(SchedulerJob job)
         {
-            var r = MessageBox.Show(this, $"Delete job \"{job.Label}\"?\n\nThe job log will also be deleted.",
+            var r = AppDialog.Show(this, $"Delete job \"{job.Label}\"?\n\nThe job log will also be deleted.",
                 "Confirm delete", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             if (r == MessageBoxResult.Yes) _vm.ConfirmDelete(job);
         }
@@ -92,7 +92,7 @@ namespace FileCopy
             // Check if main window is running a copy
             if (Application.Current?.MainWindow is MainWindow mw && mw.IsRunning)
             {
-                MessageBox.Show(this,
+                AppDialog.Show(this,
                     "A copy is already running. Wait for it to finish before running a scheduled job manually.",
                     "Run now", MessageBoxButton.OK, MessageBoxImage.Warning);
                 return;
@@ -122,11 +122,11 @@ namespace FileCopy
             {
                 string json = JsonSerializer.Serialize(jobs, SchedulerJobContext.Default.ListSchedulerJob);
                 File.WriteAllText(dlg.FileName, json);
-                MessageBox.Show(this, $"Exported {jobs.Count} job(s).", "Export",
+                AppDialog.Show(this, $"Exported {jobs.Count} job(s).", "Export",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
-            { MessageBox.Show(this, ex.Message, "Export failed", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { AppDialog.Show(this, ex.Message, "Export failed", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         private void OnImport()
@@ -142,11 +142,11 @@ namespace FileCopy
             {
                 var info = new FileInfo(dlg.FileName);
                 if (info.Length > 1024 * 1024)
-                { MessageBox.Show(this, "File too large.", "Import", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+                { AppDialog.Show(this, "File too large.", "Import", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
                 string json = File.ReadAllText(dlg.FileName);
                 var list = JsonSerializer.Deserialize(json, SchedulerJobContext.Default.ListSchedulerJob);
                 if (list == null || list.Count == 0)
-                { MessageBox.Show(this, "No valid jobs found.", "Import", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
+                { AppDialog.Show(this, "No valid jobs found.", "Import", MessageBoxButton.OK, MessageBoxImage.Warning); return; }
                 int added = 0;
                 foreach (var job in list)
                 {
@@ -156,17 +156,17 @@ namespace FileCopy
                     added++;
                 }
                 _vm.RefreshJobs();
-                MessageBox.Show(this, $"Imported {added} job(s).", "Import",
+                AppDialog.Show(this, $"Imported {added} job(s).", "Import",
                     MessageBoxButton.OK, MessageBoxImage.Information);
             }
             catch (Exception ex)
-            { MessageBox.Show(this, ex.Message, "Import failed", MessageBoxButton.OK, MessageBoxImage.Error); }
+            { AppDialog.Show(this, ex.Message, "Import failed", MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
         // ── Job log ───────────────────────────────────────────────────────────
         private void OnClearJobLog(SchedulerJob job)
         {
-            var r = MessageBox.Show(this,
+            var r = AppDialog.Show(this,
                 $"Clear all log history for \"{job.Label}\"?\nThis cannot be undone.",
                 "Clear job log", MessageBoxButton.YesNo, MessageBoxImage.Question, MessageBoxResult.No);
             if (r != MessageBoxResult.Yes) return;
@@ -176,7 +176,7 @@ namespace FileCopy
                 _vm.RefreshJobs();
             }
             catch (Exception ex)
-            { MessageBox.Show(this, "Could not delete log: " + ex.Message, "Error",
+            { AppDialog.Show(this, "Could not delete log: " + ex.Message, "Error",
                 MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
@@ -191,7 +191,7 @@ namespace FileCopy
                 if (File.Exists(yest)) logPath = yest;
             }
             if (!File.Exists(logPath))
-            { MessageBox.Show(this, "No log file found.", "Log viewer",
+            { AppDialog.Show(this, "No log file found.", "Log viewer",
                 MessageBoxButton.OK, MessageBoxImage.Information); return; }
 
             try
@@ -209,7 +209,7 @@ namespace FileCopy
                 ShowLogWindow("Scheduler activity log — " + Path.GetFileName(logPath), logPath, content);
             }
             catch (Exception ex)
-            { MessageBox.Show(this, "Cannot read log: " + ex.Message, "Log viewer",
+            { AppDialog.Show(this, "Cannot read log: " + ex.Message, "Log viewer",
                 MessageBoxButton.OK, MessageBoxImage.Error); }
         }
 
@@ -228,7 +228,7 @@ namespace FileCopy
                     content = sr.ReadToEnd();
                 }
                 catch (Exception ex)
-                { MessageBox.Show(this, "Cannot read log: " + ex.Message, "Log viewer",
+                { AppDialog.Show(this, "Cannot read log: " + ex.Message, "Log viewer",
                     MessageBoxButton.OK, MessageBoxImage.Error); return; }
             }
 
