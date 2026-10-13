@@ -1,0 +1,190 @@
+<Window x:Class="BadgeOverlay.StartupSettingsWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:BadgeOverlay.Controls"
+        Title="Startup Settings — Badge Overlay"
+        Width="540" Height="600"
+        MinWidth="420" MinHeight="460"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        Foreground="{DynamicResource BrushText}"
+        FontFamily="Segoe UI"
+        ResizeMode="CanResize">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Border Grid.Row="0" Background="{DynamicResource BrushBar}" Padding="18,14">
+            <StackPanel>
+                <!-- Breadcrumb — "Badge Overlay › Settings" -->
+                <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,4">
+                    <Run Text="Badge Overlay"/>
+                    <Run Text=" › "/>
+                    <Run Text="Startup Settings" FontWeight="SemiBold"/>
+                </TextBlock>
+                <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Startup Settings" AutomationProperties.HeadingLevel="Level1" VerticalAlignment="Center"
+                           FontSize="16" FontWeight="Bold"
+                           Foreground="{DynamicResource BrushBlueText}"/></StackPanel>
+                <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap" Margin="0,4,0,0"
+                           Text="Configure startup behaviour and save your current settings as the startup default."/>
+            </StackPanel>
+        </Border>
+
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="18,14,18,14">
+
+                <!-- SYSTEM STARTUP -->
+                <TextBlock Text="SYSTEM STARTUP" Style="{StaticResource SectionHeader}"/>
+                <CheckBox x:Name="ChkStartWithWindows"
+                          Content="Start with Windows"
+                          Margin="0,8,0,4"
+                          ToolTip="Add to the Windows startup registry key."
+                          Checked="ChkStartWithWindows_Changed"
+                          Unchecked="ChkStartWithWindows_Changed"/>
+                <CheckBox x:Name="ChkStartMinimised"
+                          Content="Start minimised to tray"
+                          Margin="0,2,0,4"/>
+                <CheckBox x:Name="ChkOverlayOnStartup"
+                          Content="Enable overlay on startup"
+                          Margin="0,2,0,12"/>
+
+                <!-- Portable mode — settings.json next to the EXE
+                     instead of %APPDATA%. Useful for USB-stick installs
+                     and locked-down corporate machines. Toggling
+                     creates/deletes a "portable.flag" marker file.
+                     Setting takes effect on next launch (the in-memory
+                     settings object is bound to whichever path was
+                     active at startup). -->
+                <CheckBox x:Name="ChkPortableMode"
+                          Content="Portable mode (store settings next to BadgeOverlay.exe)"
+                          Margin="0,2,0,4"
+                          AutomationProperties.Name="Portable mode"
+                          AutomationProperties.HelpText="Store settings.json next to the BadgeOverlay executable instead of %APPDATA%. Useful for USB-stick installs and locked-down corporate machines. Restart required."
+                          ToolTip="When enabled, settings.json is written next to BadgeOverlay.exe instead of %APPDATA%. Useful for USB-stick installs and locked-down corporate machines. Restart required for the change to take effect."
+                          Checked="ChkPortableMode_Changed"
+                          Unchecked="ChkPortableMode_Changed"/>
+                <TextBlock x:Name="LblPortableModeHint"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                           Margin="22,0,0,12" TextWrapping="Wrap"
+                           Text=""/>
+
+                <Separator/>
+
+                <!-- BADGE DEFAULTS -->
+                <TextBlock Text="BADGE DEFAULTS" Style="{StaticResource SectionHeader}"/>
+                <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                           Margin="0,4,0,10" TextWrapping="Wrap"
+                           Text="Written to settings.json — applied on the next startup and when you click Reset."/>
+
+                <CheckBox x:Name="ChkDefaultShowBadge"
+                          Content="Show badge on startup"
+                          Margin="0,2,0,4"/>
+                <CheckBox x:Name="ChkDefaultSilentMode"
+                          Content="Silent mode — detect buttons but hide badge"
+                          Margin="0,2,0,4"/>
+                <CheckBox x:Name="ChkDefaultUIADetection"
+                          Content="Enhanced detection (Office, browsers)"
+                          ToolTip="Required for browser button badges. Dwell-gated to minimise conflict with cursor tools."
+                          Margin="0,2,0,8"/>
+
+                <Grid Margin="0,0,0,12">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="140"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="52"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Badge distance" VerticalAlignment="Center"
+                               Foreground="{DynamicResource BrushMuted}"/>
+                    <Slider x:Name="SldDefaultBadgeOffset" Grid.Column="1"
+                            AutomationProperties.Name="Default badge distance"
+                            AutomationProperties.HelpText="Pixels between the cursor and the badge, 0 to 80"
+                            Minimum="0" Maximum="80" Value="20"
+                            TickFrequency="4" IsSnapToTickEnabled="True"
+                            VerticalAlignment="Center"
+                            ValueChanged="SldDefaultBadgeOffset_Changed"/>
+                    <TextBlock x:Name="LblDefaultBadgeOffset" Grid.Column="2"
+                               Text="20 px" VerticalAlignment="Center"
+                               HorizontalAlignment="Right"
+                               Foreground="{DynamicResource BrushMuted}" FontSize="12"/>
+                </Grid>
+
+                <Separator/>
+
+                <!-- INFO OVERLAY -->
+                <TextBlock Text="INFO OVERLAY" Style="{StaticResource SectionHeader}"/>
+                <CheckBox x:Name="ChkDefaultInfoOverlay"
+                          Content="Show info overlay on startup"
+                          Margin="0,8,0,12"/>
+
+                <Separator/>
+
+                <!-- DEFAULTS MANAGEMENT -->
+                <TextBlock Text="DEFAULTS MANAGEMENT" Style="{StaticResource SectionHeader}"/>
+                <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                           TextWrapping="Wrap" Margin="0,6,0,10"
+                           Text="Saves all current live settings to settings.json. They will load on the next startup."/>
+
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button
+                            Style="{StaticResource PrimaryButton}"
+                            Padding="10,6" MinHeight="44" Margin="0,0,4,0"
+                            Click="BtnSaveCurrentAsDefaults_Click"
+                            ToolTip="Snapshot all live settings to settings.json"
+                    AutomationProperties.Name="Save Current as Defaults"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Save}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Save Current as Defaults" VerticalAlignment="Center"/></StackPanel></Button>
+                    <Button Grid.Column="1"
+                            Style="{StaticResource FlatButton}"
+                            Padding="10,6" MinHeight="44" Margin="4,0,0,0"
+                            Click="BtnFactoryReset_Click"
+                    AutomationProperties.Name="Factory Reset"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Undo}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Factory Reset" VerticalAlignment="Center"/></StackPanel></Button>
+                </Grid>
+
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <Button
+                            Style="{StaticResource FlatButton}"
+                            Padding="10,6" MinHeight="44" Margin="0,0,4,0"
+                            Click="BtnExport_Click"
+                    AutomationProperties.Name="Export Settings…"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Export Settings…" VerticalAlignment="Center"/></StackPanel></Button>
+                    <Button Grid.Column="1"
+                            Style="{StaticResource FlatButton}"
+                            Padding="10,6" MinHeight="44" Margin="4,0,0,0"
+                            Click="BtnImport_Click"
+                    AutomationProperties.Name="Import Settings…"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Import}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Import Settings…" VerticalAlignment="Center"/></StackPanel></Button>
+                </Grid>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <Border Grid.Row="2" Background="{DynamicResource BrushBar}" Padding="16,10,52,10">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock x:Name="LblStatus" Text="" VerticalAlignment="Center"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushGreenText}"
+                           AutomationProperties.LiveSetting="Polite"/>
+                <Button Grid.Column="1" Content="Close"
+                        Style="{StaticResource PrimaryButton}"
+                        Padding="18,6" MinHeight="44"
+                        IsCancel="True"
+                        Click="BtnClose_Click"/>
+            </Grid>
+        </Border>
+
+        <!-- WCAG 2.2 AAA grip: 44px, focusable, arrow-key resize, 2px focus ring (suite-canonical) -->
+        <ctl:AccessibleResizeGrip/>
+    </Grid>
+</Window>

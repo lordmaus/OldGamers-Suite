@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Rosé Pine — https://rosepinetheme.com -->
+  <SolidColorBrush x:Key="BrushBg"        Color="#191724"/>
+  <SolidColorBrush x:Key="BrushSurf"      Color="#1F1D2E"/>
+  <SolidColorBrush x:Key="BrushSurf2"     Color="#26233A"/>
+  <SolidColorBrush x:Key="BrushText"      Color="#E0DEF4"/>
+  <SolidColorBrush x:Key="BrushMuted"     Color="#D4D0E3"/>
+  <SolidColorBrush x:Key="BrushHint"      Color="#A9A7B9"/>
+  <SolidColorBrush x:Key="BrushBlue"      Color="#9CCFD8"/>
+  <SolidColorBrush x:Key="BrushRed"       Color="#EB6F92"/>
+  <SolidColorBrush x:Key="BrushGreen"     Color="#31748F"/>
+  <SolidColorBrush x:Key="BrushAmber"     Color="#F6C177"/>
+  <SolidColorBrush x:Key="BrushBar"       Color="#13111C"/>
+  <SolidColorBrush x:Key="BrushDisabled"  Color="#6E6A86"/>
+  <SolidColorBrush x:Key="FocusRingBrush" Color="#F6C177"/>
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#6E6A86"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#EF8BA7"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#9CCFD8"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#6FB2CD"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#F6C177"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#000000"/>
+</ResourceDictionary>

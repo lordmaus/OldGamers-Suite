@@ -1,0 +1,174 @@
+<Window x:Class="ReticleOverlay.HotkeysDialog"
+        ResizeMode="CanResize"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:ReticleOverlay.Controls"
+        Title="Hotkeys"
+        Width="400" SizeToContent="Height"
+        MinWidth="360"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        Closing="Window_Closing">
+
+  <Grid>
+  <DockPanel>
+
+    <Border DockPanel.Dock="Top" Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1" Padding="14,0" MinHeight="52">
+      <StackPanel VerticalAlignment="Center">
+        <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Hotkeys" FontFamily="Segoe UI" FontSize="15" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/></StackPanel>
+        <TextBlock Text="Global — work while gaming"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+      </StackPanel>
+    </Border>
+
+    <Border DockPanel.Dock="Bottom" Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,1,0,0" Padding="14,8">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0" Style="{StaticResource FlatButton}"
+                Padding="14,7" MinHeight="44"
+                AutomationProperties.Name="Reset all hotkeys to defaults"
+                ToolTip="Clears all hotkey fields immediately"
+                Click="BtnResetAll_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Undo}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Reset All to Defaults" VerticalAlignment="Center"/></StackPanel></Button>
+        <TextBlock Grid.Column="1" x:Name="LblSaved" Text="" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushGreenText}" VerticalAlignment="Center" Margin="12,0"/>
+        <Button Grid.Column="2" Content="Cancel" Style="{StaticResource FlatButton}"
+                Padding="14,7" MinHeight="44" Margin="0,0,8,0"
+                AutomationProperties.Name="Cancel hotkey changes"
+                ToolTip="Restore hotkeys to values when this dialog was opened"
+                Click="BtnCancel_Click"/>
+        <Button Grid.Column="3" Content="Close" Style="{StaticResource PrimaryButton}"
+                Padding="24,7" MinHeight="44"
+                AutomationProperties.Name="Close hotkeys dialog"
+                Click="BtnClose_Click"/>
+      </Grid>
+    </Border>
+
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled"
+                  Padding="14,12,14,12">
+      <StackPanel>
+
+        <!-- RO-02: hotkeys Windows refused (owned by a game / another app). Icon + text, not colour alone. -->
+        <Border x:Name="ConflictBanner" Visibility="Collapsed" Background="{DynamicResource BrushSurf}"
+                BorderBrush="{DynamicResource BrushAmber}" BorderThickness="4,1,1,1" CornerRadius="4"
+                Padding="10,8" Margin="0,0,0,8">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="{StaticResource JtIcon.Warning}" Width="16" Height="16" Margin="0,2,8,0" VerticalAlignment="Top"/>
+            <TextBlock x:Name="ConflictText" TextWrapping="Wrap" MaxWidth="320"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                       Foreground="{DynamicResource BrushText}"
+                       AutomationProperties.LiveSetting="Assertive"/>
+          </StackPanel>
+        </Border>
+
+        <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,8" Margin="0,0,0,8">
+          <TextBlock Text="Format: F8  or  Ctrl+F8  or  Alt+Shift+F9  — leave blank to disable"
+                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     TextWrapping="Wrap"/>
+        </Border>
+
+        <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,10" Margin="0,0,0,8">
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="130"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+              <RowDefinition Height="6"/>
+              <RowDefinition MinHeight="44"/>
+            </Grid.RowDefinitions>
+
+            <TextBlock x:Name="LblHkToggle" Grid.Row="0" Grid.Column="0" Text="Toggle overlay"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="0"  Grid.Column="1" x:Name="TxtHotkeyToggle"
+                       Tag="Toggle" LostFocus="TxtHotkey_LostFocus" ToolTip="Show/hide the reticle"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkToggle}"
+                       AutomationProperties.HelpText="Enter hotkey e.g. F8, Ctrl+F8, Alt+Shift+F9. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkNext" Grid.Row="2" Grid.Column="0" Text="Next profile"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="2"  Grid.Column="1" x:Name="TxtHotkeyNext"
+                       Tag="Next" LostFocus="TxtHotkey_LostFocus" ToolTip="Cycle to next saved profile"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkNext}"
+                       AutomationProperties.HelpText="Enter hotkey e.g. F8, Ctrl+F8. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkPrev" Grid.Row="4" Grid.Column="0" Text="Prev profile"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="4"  Grid.Column="1" x:Name="TxtHotkeyPrev"
+                       Tag="Prev" LostFocus="TxtHotkey_LostFocus" ToolTip="Cycle to previous saved profile"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkPrev}"
+                       AutomationProperties.HelpText="Enter hotkey e.g. F8, Ctrl+F8. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkOpUp" Grid.Row="6" Grid.Column="0" Text="Opacity +"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="6"  Grid.Column="1" x:Name="TxtHotkeyOpUp"
+                       Tag="OpUp" LostFocus="TxtHotkey_LostFocus"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkOpUp}"
+                       AutomationProperties.HelpText="Increase overlay opacity. Enter hotkey e.g. F8. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkOpDown" Grid.Row="8" Grid.Column="0" Text="Opacity −"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="8"  Grid.Column="1" x:Name="TxtHotkeyOpDown"
+                       Tag="OpDown" LostFocus="TxtHotkey_LostFocus"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkOpDown}"
+                       AutomationProperties.HelpText="Decrease overlay opacity. Enter hotkey e.g. F8. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkNudgeLeft" Grid.Row="10" Grid.Column="0" Text="Nudge Left"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="10" Grid.Column="1" x:Name="TxtHotkeyNudgeLeft"
+                       Tag="NudgeLeft" LostFocus="TxtHotkey_LostFocus"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkNudgeLeft}"
+                       AutomationProperties.HelpText="Move reticle left 1 pixel. Enter hotkey. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkNudgeRight" Grid.Row="12" Grid.Column="0" Text="Nudge Right"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="12" Grid.Column="1" x:Name="TxtHotkeyNudgeRight"
+                       Tag="NudgeRight" LostFocus="TxtHotkey_LostFocus"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkNudgeRight}"
+                       AutomationProperties.HelpText="Move reticle right 1 pixel. Enter hotkey. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkNudgeUp" Grid.Row="14" Grid.Column="0" Text="Nudge Up"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="14" Grid.Column="1" x:Name="TxtHotkeyNudgeUp"
+                       Tag="NudgeUp" LostFocus="TxtHotkey_LostFocus"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkNudgeUp}"
+                       AutomationProperties.HelpText="Move reticle up 1 pixel. Enter hotkey. Leave blank to disable."/>
+
+            <TextBlock x:Name="LblHkNudgeDown" Grid.Row="16" Grid.Column="0" Text="Nudge Down"
+                       FontFamily="Segoe UI" FontSize="13" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBox   Grid.Row="16" Grid.Column="1" x:Name="TxtHotkeyNudgeDown"
+                       Tag="NudgeDown" LostFocus="TxtHotkey_LostFocus"
+                       AutomationProperties.LabeledBy="{Binding ElementName=LblHkNudgeDown}"
+                       AutomationProperties.HelpText="Move reticle down 1 pixel. Enter hotkey. Leave blank to disable."/>
+          </Grid>
+        </Border>
+
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+  <ctl:AccessibleResizeGrip/>
+  </Grid>
+</Window>

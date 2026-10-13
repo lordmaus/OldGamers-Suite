@@ -1,0 +1,74 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+  <!--
+    ═══════════════════════════════════════════════════════════════════
+    High-Contrast theme — WCAG 2.1 honouring
+    ═══════════════════════════════════════════════════════════════════
+    All colour brushes are bound to Windows System Colors so the UI
+    honours the user's selected High-Contrast palette exactly
+    (High-Contrast #1 / #2 / Black / White or any custom scheme).
+
+    System colour mapping:
+      WindowColor            → main background
+      ControlColor           → surface / cards
+      ControlLightLightColor → elevated surface
+      WindowTextColor        → body text
+      GrayTextColor          → muted / hint text
+      HighlightColor         → accent / focus
+      HotTrackColor          → secondary accent
+      InactiveBorderColor    → disabled states
+
+    Per WCAG 2.1 — 1.4.11 (Non-text contrast) and 1.4.12 (Text spacing)
+    the OS guarantees these system colour pairs meet AAA ratios.
+  -->
+
+  <!-- Surfaces -->
+  <SolidColorBrush x:Key="BrushBg"       Color="{x:Static SystemColors.WindowColor}"/>
+  <SolidColorBrush x:Key="BrushSurf"     Color="{x:Static SystemColors.ControlColor}"/>
+  <SolidColorBrush x:Key="BrushSurf2"    Color="{x:Static SystemColors.ControlLightLightColor}"/>
+  <SolidColorBrush x:Key="BrushBar"      Color="{x:Static SystemColors.ControlDarkColor}"/>
+
+  <!-- Text -->
+  <SolidColorBrush x:Key="BrushText"     Color="{x:Static SystemColors.WindowTextColor}"/>
+  <SolidColorBrush x:Key="BrushMuted"    Color="{x:Static SystemColors.GrayTextColor}"/>
+  <SolidColorBrush x:Key="BrushHint"     Color="{x:Static SystemColors.GrayTextColor}"/>
+
+  <!-- Accent colours — HC mode flattens these to the system highlight.
+       Using HighlightColor for everything ensures meaning is conveyed
+       by the active element's highlighted state, not colour alone. -->
+  <SolidColorBrush x:Key="BrushBlue"     Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushRed"      Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushGreen"    Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushAmber"    Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushOrange"   Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushYellow"   Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushPurple"   Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushPink"     Color="{x:Static SystemColors.HighlightColor}"/>
+  <SolidColorBrush x:Key="BrushTeal"     Color="{x:Static SystemColors.HotTrackColor}"/>
+
+  <!-- Inactive / disabled -->
+  <SolidColorBrush x:Key="BrushDisabled" Color="{x:Static SystemColors.InactiveBorderColor}"/>
+
+  <!-- Focus ring uses WindowText (not HighlightColor) for HC. Reasoning:
+       HighlightColor is the SELECTION background — its contrast against
+       Window is guaranteed for text-on-selection, but not for an unfilled
+       border drawn on a surface that could be any HC palette colour.
+       WindowText is guaranteed ≥ 7:1 against Window by Windows HC palette
+       design and always reads as a visible border. Users whose HC theme
+       uses the same colour for Window and Selection (uncommon but valid)
+       still see the ring clearly. -->
+  <SolidColorBrush x:Key="FocusRingBrush" Color="{x:Static SystemColors.WindowTextColor}"/>
+
+  <!-- Fill for CheckBox glyph when the box background is filled with BrushBlue
+       (= HighlightColor under HC). HighlightTextColor is the OS-guaranteed
+       high-contrast complement. -->
+  <SolidColorBrush x:Key="BrushBgForChecked" Color="{x:Static SystemColors.HighlightTextColor}"/>
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="{x:Static SystemColors.GrayTextColor}"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="{x:Static SystemColors.WindowTextColor}"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="{x:Static SystemColors.WindowTextColor}"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="{x:Static SystemColors.WindowTextColor}"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="{x:Static SystemColors.WindowTextColor}"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="{x:Static SystemColors.HighlightTextColor}"/>
+</ResourceDictionary>

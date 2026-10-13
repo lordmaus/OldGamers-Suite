@@ -1,0 +1,102 @@
+<Window x:Class="TimerStudio.OverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:TimerStudio.Controls"
+        Title="Timer Studio Overlay"
+        Width="320" Height="200"
+        MinWidth="200" MinHeight="80"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="CanResize"
+        FontFamily="{DynamicResource AppFontFamily}"
+        Left="40" Top="40"
+        AutomationProperties.Name="Timer Studio Overlay"
+        AutomationProperties.HelpText="Resize with the corner grip, Shift+Arrow keys (10 px) or Shift+Ctrl+Arrow (50 px). Move with Alt+Arrow keys.">
+
+  <Border x:Name="OuterBorder"
+          Background="{DynamicResource BrushSurf}"
+          BorderBrush="{DynamicResource BrushDivider}"
+          BorderThickness="1"
+          CornerRadius="10">
+
+    <Grid>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>  <!-- drag handle / title bar -->
+        <RowDefinition Height="*"/>     <!-- timer rows -->
+      </Grid.RowDefinitions>
+
+      <!-- Drag handle bar -->
+      <Border Grid.Row="0"
+              x:Name="DragHandle"
+              Background="{DynamicResource BrushBar}"
+              CornerRadius="10,10,0,0"
+              Padding="10,5,6,5"
+              MouseLeftButtonDown="DragHandle_MouseDown">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+            <Image Source="{StaticResource JtIcon.Stopwatch}" Style="{StaticResource JtInlineIcon}"/>
+            <TextBlock Text="Timer Overlay"
+                       FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                       Foreground="{DynamicResource BrushMuted}"
+                       VerticalAlignment="Center"/>
+          </StackPanel>
+          <!-- Opacity slider -->
+          <Slider Grid.Column="1"
+                  x:Name="SldOpacity"
+                  Minimum="0.3" Maximum="1.0"
+                  Value="0.85"
+                  Width="60" Margin="6,0"
+                  VerticalAlignment="Center"
+                  ToolTip="Overlay opacity"
+                  ValueChanged="SldOpacity_ValueChanged"
+                  AutomationProperties.Name="Overlay opacity"/>
+          <!-- Options button -->
+          <Button Grid.Column="2"
+                  x:Name="BtnOptions"
+                  Style="{StaticResource FlatButton}"
+                  Background="Transparent"
+                  BorderThickness="0"
+                  Padding="4,2"
+                  MinHeight="44" MinWidth="44"
+                  Cursor="Hand"
+                  ToolTip="Font size options"
+                  AutomationProperties.Name="Font size options"
+                  Click="BtnOptions_Click"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtBtnIcon}" Margin="0"/></Button>
+          <!-- Close button -->
+          <Button Grid.Column="3"
+                  Style="{StaticResource FlatButton}"
+                  Background="Transparent"
+                  BorderThickness="0"
+                  Padding="4,2"
+                  MinHeight="44" MinWidth="44"
+                  Cursor="Hand"
+                  ToolTip="Hide overlay (timers stay pinned)"
+                  AutomationProperties.Name="Hide overlay"
+                  Click="BtnClose_Click"><Image Source="{StaticResource JtIcon.Close}" Style="{StaticResource JtBtnIcon}" Margin="0"/></Button>
+        </Grid>
+      </Border>
+
+      <!-- Timer rows scrollable area -->
+      <ScrollViewer Grid.Row="1"
+                    VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Disabled"
+                    Margin="0,0,0,44">
+        <!-- Bottom margin reserves space for the 44x44 AccessibleResizeGrip -->
+        <StackPanel x:Name="TimerRows" Margin="6,4,6,4"/>
+      </ScrollViewer>
+
+      <!-- UI-1 (2026-10-12): shared 44x44 keyboard + mouse resize grip (Controls/AccessibleResizeGrip.cs) -->
+      <ctl:AccessibleResizeGrip Grid.Row="1" Margin="0,0,0,0"/>
+
+    </Grid>
+  </Border>
+</Window>

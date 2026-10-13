@@ -1,0 +1,52 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>TimerStudio</AssemblyName>
+    <RootNamespace>TimerStudio</RootNamespace>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <Version>2026.10.12.0003</Version>
+    <FileVersion>2026.10.12.0003</FileVersion>
+    <AssemblyVersion>2026.10.12.3</AssemblyVersion>
+    <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
+    <Optimize>true</Optimize>
+    <DebugType>none</DebugType>
+    <ApplicationManifest>Assets\app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <SelfContained>true</SelfContained>
+    <!-- Pre-JIT native images at publish time - improves cold-start (SC 3.2.2 / perf) -->
+    <PublishReadyToRun>true</PublishReadyToRun>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+    <NoWarn>$(NoWarn);WFO0003</NoWarn>
+    <!-- TS-09: reproducible restores â€” commit packages.lock.json once generated -->
+    <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <!-- Phase 6: ..\TimerStudio.Tests exercises internal helpers -->
+    <InternalsVisibleTo Include="TimerStudio.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\app.manifest" />
+    <None Update="Assets\app.ico" />
+    <Resource Include="Assets\app.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Resource>
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- MailKit: SMTP email alerts (MIT licence, no Outlook dependency) -->
+    <!-- TS-09: pinned (was 4.*). â‰¥4.15.1 required for MimeKit CVE-2026-30227. -->
+    <PackageReference Include="MailKit" Version="4.18.1" />
+    <!-- MSAL: OAuth2 Modern Auth for personal Microsoft accounts (Hotmail/Outlook.com) -->
+    <PackageReference Include="Microsoft.Identity.Client" Version="4.90.1" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,44 @@
+# ── Build output ──────────────────────────────────────────────────────────────
+bin/
+obj/
+[Bb]uilds/
+dist/
+publish/
+artifacts/
+TestResults/
+*_Setup.exe
+*.exe
+
+# ── Build script temporaries ───────────────────────────────────────────────────
+_build_log.txt
+_build_done.txt
+_build-output.log
+_build-status.txt
+.writetest
+*.bak
+
+# ── Python ────────────────────────────────────────────────────────────────────
+__pycache__/
+*.pyc
+
+# ── Visual Studio / Rider ─────────────────────────────────────────────────────
+.vs/
+.idea/
+*.user
+*.suo
+*.userprefs
+*.DotSettings.user
+
+# ── NuGet ─────────────────────────────────────────────────────────────────────
+*.nupkg
+packages/
+
+# ── OS noise ──────────────────────────────────────────────────────────────────
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ── Code signing — never commit key material ──────────────────────────────────
+*.pfx
+*.p12
+*.snk

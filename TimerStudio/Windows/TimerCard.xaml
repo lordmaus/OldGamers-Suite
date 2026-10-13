@@ -1,0 +1,1358 @@
+<UserControl x:Class="TimerStudio.TimerCard"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             MinWidth="240">
+
+  <Border x:Name="CardBorder"
+          Background="{DynamicResource BrushSurf}"
+          BorderBrush="{DynamicResource BrushSurf2}"
+          BorderThickness="1" CornerRadius="10"
+          Margin="6" Padding="12,10">
+    <StackPanel>
+
+      <!-- ── Header row 1: mode combo + action buttons ── -->
+      <Grid Margin="0,0,0,4">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Bulk-select checkbox — used by "Delete Selected" in the main toolbar -->
+        <CheckBox x:Name="ChkSelect"
+                  Grid.Column="0"
+                  VerticalAlignment="Center"
+                  MinWidth="44" MinHeight="44"
+                  ToolTip="Select for bulk delete"
+                  AutomationProperties.Name="Select this timer for bulk delete"
+                  Checked="ChkSelect_Changed"
+                  Unchecked="ChkSelect_Changed"/>
+
+        <!-- Mode combo — hidden while running/paused/done. Events wired in code-behind. -->
+        <ComboBox x:Name="CboMode"
+                  Grid.Column="1"
+                  Width="132" Margin="6,0"
+                  VerticalAlignment="Center"
+                  Visibility="{Binding ModeComboVisible}"
+                  ToolTip="Countdown / Stopwatch / Date-Time / Pomodoro / Interval"
+                  AutomationProperties.Name="Timer mode"
+                  AutomationProperties.HelpText="Countdown counts down to zero. Stopwatch counts up. Date/Time counts to a specific date and time. Pomodoro sequences work and break intervals. Interval alternates work and rest phases for a set number of cycles."
+                  SelectionChanged="CboMode_SelectionChanged">
+          <ComboBoxItem ContentTemplate="{StaticResource JtLabelItemTemplate}">Countdown</ComboBoxItem>
+          <ComboBoxItem ContentTemplate="{StaticResource JtLabelItemTemplate}">Stopwatch</ComboBoxItem>
+          <ComboBoxItem ContentTemplate="{StaticResource JtLabelItemTemplate}">Date / Time</ComboBoxItem>
+          <ComboBoxItem ContentTemplate="{StaticResource JtLabelItemTemplate}">Pomodoro</ComboBoxItem>
+          <ComboBoxItem ContentTemplate="{StaticResource JtLabelItemTemplate}">Interval</ComboBoxItem>
+        </ComboBox>
+
+        <WrapPanel Grid.Column="2" Grid.ColumnSpan="2" Orientation="Horizontal"
+                   HorizontalAlignment="Right" VerticalAlignment="Center">
+          <!-- Overlay pin button -->
+          <Button x:Name="BtnOverlayPin"
+                  Width="44" Height="44"
+                  Padding="0"
+                  MinHeight="44" MinWidth="44"
+                  VerticalAlignment="Center"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="12"
+                  ToolTip="Pin to overlay window"
+                  AutomationProperties.Name="Pin or unpin from overlay"
+                  Click="BtnOverlayPin_Click"><Image Source="{StaticResource JtIcon.Pin}" Style="{StaticResource JtSoloIcon}"/></Button>
+          <!-- Category colour dot — click to assign/change category -->
+          <Button x:Name="BtnCategory"
+                  Height="44"
+                  Padding="0,0,6,0"
+                  MinHeight="44" MinWidth="44"
+                  VerticalAlignment="Center"
+                  Style="{StaticResource FlatButton}"
+                  ToolTip="Set category"
+                  AutomationProperties.Name="Set category for this timer"
+                  Click="BtnCategory_Click">
+            <!-- Option C: 4px bar in the category colour + fixed folder icon + category name (never colour alone) -->
+            <StackPanel Orientation="Horizontal">
+              <Rectangle x:Name="CategoryDot" Width="4" Height="24" RadiusX="2" RadiusY="2"
+                         Margin="0,0,6,0" VerticalAlignment="Center"
+                         Fill="{DynamicResource BrushSurf2}"/>
+              <Image Source="{StaticResource JtIcon.Folder}" Style="{StaticResource JtInlineIcon}"/>
+              <TextBlock x:Name="CategoryLabel" Text="No category" FontSize="{DynamicResource FontSizeCaption}"
+                         MaxWidth="96" TextTrimming="CharacterEllipsis"
+                         VerticalAlignment="Center"/>
+            </StackPanel>
+          </Button>
+          <Button x:Name="BtnShareTimer"
+                  Style="{StaticResource FlatButton}"
+                  Background="Transparent"
+                  Foreground="{DynamicResource BrushMuted}"
+                  Padding="6,6" MinHeight="44" MinWidth="44"
+                  FontSize="12"
+                  Click="BtnShareTimer_Click"
+                  ToolTip="Copy timer config as a shareable link"
+                  AutomationProperties.Name="Share this timer"><Image Source="{StaticResource JtIcon.Link}" Style="{StaticResource JtSoloIcon}"/></Button>
+          <Button x:Name="BtnSaveTemplate"
+                  Style="{StaticResource FlatButton}"
+                  Background="Transparent"
+                  Foreground="{DynamicResource BrushMuted}"
+                  Padding="6,6" MinHeight="44" MinWidth="44"
+                  FontSize="12"
+                  Click="BtnSaveTemplate_Click"
+                  ToolTip="Save as reusable template"
+                  AutomationProperties.Name="Save as template"><Image Source="{StaticResource JtIcon.Template}" Style="{StaticResource JtSoloIcon}"/></Button>
+          <Button x:Name="BtnDuplicate"
+                  Style="{StaticResource FlatButton}"
+                  Background="Transparent"
+                  Foreground="{DynamicResource BrushMuted}"
+                  Padding="6,6" MinHeight="44" MinWidth="44"
+                  FontSize="12"
+                  Command="{Binding DuplicateCommand}"
+                  ToolTip="Duplicate this timer — copies all settings to a new card"
+                  AutomationProperties.Name="Duplicate this timer"><Image Source="{StaticResource JtIcon.CopyTask}" Style="{StaticResource JtSoloIcon}"/></Button>
+          <!-- Delete button — lives in the action row -->
+          <Button x:Name="BtnDelete"
+                  Style="{StaticResource FlatButton}"
+                  Background="Transparent"
+                  Foreground="{DynamicResource BrushRedText}"
+                  Padding="6,6" MinHeight="44" MinWidth="44"
+                  FontSize="14" FontWeight="Bold"
+                  VerticalAlignment="Center"
+                  Command="{Binding DeleteCommand}"
+                  ToolTip="Remove this timer"
+                  AutomationProperties.Name="Delete this timer"><Image Source="{StaticResource JtIcon.Delete}" Style="{StaticResource JtSoloIcon}"/></Button>
+
+        </WrapPanel>
+      </Grid>
+
+      <!-- ── Header row 2: collapse + name ── -->
+      <Grid Margin="0,0,0,6">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Collapse toggle -->
+        <Button x:Name="BtnCollapse"
+                Grid.Column="0"
+                Content="{Binding CollapseButtonContent}"
+                Style="{StaticResource FlatButton}"
+                Background="Transparent"
+                Foreground="{DynamicResource BrushMuted}"
+                Padding="8,8" MinHeight="44" MinWidth="44"
+                FontSize="{DynamicResource FontSizeCaption}"
+                VerticalAlignment="Top"
+                Command="{Binding CollapseCommand}"
+                ToolTip="Collapse / expand this timer"
+                AutomationProperties.Name="Collapse or expand timer"/>
+
+        <!-- Timer name — wraps to grow with long titles (up to 1000 chars) -->
+        <TextBox x:Name="TxtName"
+                 Grid.Column="1"
+                 Style="{x:Null}"
+                 FontFamily="Segoe UI"
+                 FontSize="14" FontWeight="SemiBold"
+                 Background="Transparent"
+                 Foreground="{DynamicResource BrushText}"
+                 CaretBrush="{DynamicResource BrushText}"
+                 SelectionBrush="{DynamicResource BrushBlue}"
+                 BorderThickness="0"
+                 Padding="4,6"
+                 Margin="2,0"
+                 VerticalAlignment="Stretch"
+                 VerticalContentAlignment="Top"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="False"
+                 MaxLength="1000"
+                 ToolTip="Click to rename this timer"
+                 AutomationProperties.Name="Timer name"
+                 AutomationProperties.HelpText="Type to rename this timer"
+                 GotFocus="TxtName_GotFocus"
+                 LostFocus="TxtName_LostFocus"
+                 TextChanged="TxtName_TextChanged"/>
+      </Grid>
+
+      <!-- ── Collapsible body (hidden when collapsed) ── -->
+      <StackPanel x:Name="PnlBody"
+                   Visibility="{Binding BodyVisible, Converter={StaticResource StringToVisibilityConverter}}">
+
+      <!-- ── Timer state chip (option B): fixed icon + state word; hidden while idle ── -->
+      <Border x:Name="StateChip"
+              HorizontalAlignment="Center" Margin="0,2,0,0" Padding="10,3"
+              CornerRadius="11" Background="{DynamicResource BrushSurf2}"
+              Visibility="{Binding StateChipVis}"
+              AutomationProperties.Name="{Binding StateLabel, StringFormat='State: {0}'}">
+        <StackPanel Orientation="Horizontal">
+          <Image Source="{Binding StateIconKey, Converter={StaticResource JtIconConverter}}" Style="{StaticResource JtInlineIcon}"/>
+          <TextBlock Text="{Binding StateLabel}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Border>
+
+      <!-- ── Time display ── -->
+      <TextBlock x:Name="LblTime"
+                 Text="{Binding DisplayTime}"
+                 FontFamily="Cascadia Mono, Consolas, Courier New, monospace"
+                 FontSize="42" FontWeight="Bold"
+                 Foreground="{DynamicResource BrushText}"
+                 HorizontalAlignment="Center"
+                 Margin="0,2,0,6"
+                 AutomationProperties.LiveSetting="Off"
+                 AutomationProperties.Name="Timer display"/>
+
+      <!-- ── DateTime target label (DateTime mode only) ── -->
+      <TextBlock x:Name="LblDateTimeTarget"
+                 Text="{Binding TargetDateTimeLabel}"
+                 FontFamily="Segoe UI"
+                 FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}"
+                 HorizontalAlignment="Center"
+                 Margin="0,-4,0,6"
+                 Visibility="{Binding DateTimeTargetVis}"/>
+
+      <!-- ── Feature 8: Pomodoro phase label (running/paused/done) ── -->
+      <TextBlock x:Name="LblPomodoroPhase"
+                 Text="{Binding PomodoroPhaseLabel}"
+                 FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushBlueText}"
+                 HorizontalAlignment="Center"
+                 Margin="0,-2,0,6"
+                 Visibility="{Binding PomodoroPhaseVis}"
+                 AutomationProperties.LiveSetting="Polite"
+                 AutomationProperties.Name="Pomodoro phase"/>
+
+      <!-- ── F14: Interval phase label (running/paused/done) ── -->
+      <TextBlock x:Name="LblIntervalPhase"
+                 Text="{Binding IntervalPhaseLabel}"
+                 FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushBlueText}"
+                 HorizontalAlignment="Center"
+                 Margin="0,-2,0,6"
+                 Visibility="{Binding IntervalPhaseVis}"
+                 AutomationProperties.LiveSetting="Polite"
+                 AutomationProperties.Name="Interval phase"/>
+
+      <!-- ── Progress bar (countdown only) ── -->
+      <!-- Progress track — aria label updated in code-behind each tick -->
+      <Border x:Name="ProgressTrack"
+              Height="4" CornerRadius="2"
+              Background="{DynamicResource BrushSurf2}"
+              Margin="0,0,0,8" Visibility="{Binding ProgressBarVis}"
+              AutomationProperties.Name="Timer progress"
+              AutomationProperties.HelpText="Visual progress bar showing time elapsed">
+        <Border x:Name="ProgressBar"
+                HorizontalAlignment="Left"
+                Height="4" Width="0"
+                CornerRadius="2"
+                Background="{DynamicResource BrushBlue}"/>
+      </Border>
+      <!-- Screen-reader only progress text (hidden visually) -->
+      <TextBlock x:Name="LblProgressSR"
+                 Visibility="Collapsed"
+                 AutomationProperties.LiveSetting="Polite"/>
+
+      <!-- ── Time inputs (countdown + idle only) — events wired in code-behind ── -->
+      <Grid x:Name="PnlInputs" Margin="0,0,0,8" Visibility="{Binding CountdownInputsVis}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBox x:Name="TxtHours"   Grid.Column="0" TextAlignment="Center"
+                 Text="{Binding Hours, UpdateSourceTrigger=LostFocus}"
+                 FontSize="13" MinHeight="0" ToolTip="Hours (0–99)"
+                 AutomationProperties.Name="Hours"/>
+        <TextBlock Grid.Column="1" Text="h" Foreground="{DynamicResource BrushMuted}"
+                   VerticalAlignment="Center" Margin="4,0"/>
+        <TextBox x:Name="TxtMinutes" Grid.Column="2" TextAlignment="Center"
+                 Text="{Binding Minutes, UpdateSourceTrigger=LostFocus}"
+                 FontSize="13" MinHeight="0" ToolTip="Minutes (0–59)"
+                 AutomationProperties.Name="Minutes"/>
+        <TextBlock Grid.Column="3" Text="m" Foreground="{DynamicResource BrushMuted}"
+                   VerticalAlignment="Center" Margin="4,0"/>
+        <TextBox x:Name="TxtSeconds" Grid.Column="4" TextAlignment="Center"
+                 Text="{Binding Seconds, UpdateSourceTrigger=LostFocus}"
+                 FontSize="13" MinHeight="0" ToolTip="Seconds (0–59)"
+                 AutomationProperties.Name="Seconds"/>
+      </Grid>
+
+      <!-- ── Date/Time target inputs (DateTime mode + idle only) ── -->
+      <Grid x:Name="PnlDateTimeInputs" Margin="0,0,0,8" Visibility="{Binding DateTimeInputsVis}">
+        <Grid.RowDefinitions>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="6"/>
+          <RowDefinition Height="Auto"/>
+          <RowDefinition Height="8"/>
+          <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- Date row -->
+        <TextBlock Grid.Row="0" Grid.Column="0"
+                   Text="Date"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <!-- DatePicker: SelectionChanged wired in code-behind -->
+        <DatePicker x:Name="DpTargetDate"
+                    Grid.Row="0" Grid.Column="1"
+                    FontFamily="Segoe UI" FontSize="12"
+                    ToolTip="Select the target date"
+                    AutomationProperties.Name="Target date"/>
+
+        <!-- Time row -->
+        <TextBlock Grid.Row="2" Grid.Column="0"
+                   Text="Time"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   VerticalAlignment="Center" Margin="0,0,10,0"/>
+        <Grid Grid.Row="2" Grid.Column="1">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <!-- Hour, Minute, Second inputs — events wired in code-behind -->
+          <TextBox x:Name="TxtDtHour"   Grid.Column="0" TextAlignment="Center"
+                   FontSize="13" MinHeight="0" ToolTip="Hour (0–23)"
+                   AutomationProperties.Name="Target hour"/>
+          <TextBlock Grid.Column="1" Text=":" Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="2,0" FontSize="14" FontWeight="Bold"/>
+          <TextBox x:Name="TxtDtMinute" Grid.Column="2" TextAlignment="Center"
+                   FontSize="13" MinHeight="0" ToolTip="Minute (0–59)"
+                   AutomationProperties.Name="Target minute"/>
+          <TextBlock Grid.Column="3" Text=":" Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="2,0" FontSize="14" FontWeight="Bold"/>
+          <TextBox x:Name="TxtDtSecond" Grid.Column="4" TextAlignment="Center"
+                   FontSize="13" MinHeight="0" ToolTip="Second (0–59)"
+                   AutomationProperties.Name="Target second"/>
+          <!-- AM/PM toggle — Click wired in code-behind -->
+          <Button x:Name="BtnAmPm"
+                  Grid.Column="6"
+                  Content="AM"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="{DynamicResource FontSizeCaption}" Padding="8,2" MinHeight="44"
+                  Margin="6,0,0,0"
+                  Click="BtnAmPm_Click"
+                  ToolTip="Toggle AM / PM"
+                  AutomationProperties.Name="Toggle AM or PM"/>
+        </Grid>
+
+        <!-- Import from calendar button -->
+        <Button Grid.Row="4" Grid.Column="0" Grid.ColumnSpan="2"
+                x:Name="BtnImportCalendar"
+                Style="{StaticResource FlatButton}"
+                HorizontalAlignment="Left"
+                Padding="8,4" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}"
+                Click="BtnImportCalendar_Click"
+                ToolTip="Import an event from an ICS file or Outlook calendar to use as the timer target"
+                AutomationProperties.Name="Import event from calendar"
+                AutomationProperties.HelpText="Browse for an ICS file or read directly from Outlook"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Calendar}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Import from Calendar…" VerticalAlignment="Center"/></StackPanel></Button>
+      </Grid>
+
+      <!-- ── Feature 1: Recurrence (DateTime + idle) ── -->
+      <StackPanel x:Name="PnlRecurrence"
+                  Visibility="{Binding RecurrenceSectionVis}"
+                  Margin="0,0,0,8">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="60"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="Repeat"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <ComboBox x:Name="CboRecurrence" Grid.Column="1"
+                    ToolTip="How often to repeat this event after it fires"
+                    AutomationProperties.Name="Recurrence mode"
+                    SelectionChanged="CboRecurrence_SelectionChanged">
+            <ComboBoxItem>None</ComboBoxItem>
+            <ComboBoxItem>Daily</ComboBoxItem>
+            <ComboBoxItem>Weekly</ComboBoxItem>
+            <ComboBoxItem>Monthly</ComboBoxItem>
+          </ComboBox>
+          <TextBlock Grid.Column="2" Text="every"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="8,0"/>
+          <TextBox x:Name="TxtRecurrenceInterval" Grid.Column="3"
+                   Text="{Binding RecurrenceInterval, UpdateSourceTrigger=LostFocus}"
+                   FontSize="12" MinHeight="44" TextAlignment="Center"
+                   ToolTip="Interval: 1 = every day/week/month, 2 = every 2 days/weeks/months, etc."
+                   AutomationProperties.Name="Recurrence interval"/>
+        </Grid>
+        <TextBlock Text="{Binding RecurrenceLabel}"
+                   FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                   Foreground="{DynamicResource BrushBlueText}"
+                   Margin="0,4,0,0"/>
+      </StackPanel>
+
+      <!-- ── Feature 8: Pomodoro settings (Pomodoro + idle) ── -->
+      <StackPanel x:Name="PnlPomodoro"
+                  Visibility="{Binding PomodoroSectionVis}"
+                  Margin="0,0,0,8">
+        <TextBlock Text="Pomodoro settings"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,6"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="6"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="6"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="6"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Work (m)" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushMuted}"
+                       HorizontalAlignment="Center" Margin="0,0,0,3"/>
+            <TextBox x:Name="TxtPomoWork"
+                     Text="{Binding PomodoroWorkMinutes, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Center" FontSize="13" MinHeight="44"
+                     ToolTip="Work session length in minutes (1–120)"
+                     AutomationProperties.Name="Pomodoro work minutes"/>
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Text="Break (m)" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushMuted}"
+                       HorizontalAlignment="Center" Margin="0,0,0,3"/>
+            <TextBox x:Name="TxtPomoBreak"
+                     Text="{Binding PomodoroBreakMinutes, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Center" FontSize="13" MinHeight="44"
+                     ToolTip="Short break length in minutes (1–60)"
+                     AutomationProperties.Name="Pomodoro break minutes"/>
+          </StackPanel>
+          <StackPanel Grid.Column="4">
+            <TextBlock Text="Long (m)" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushMuted}"
+                       HorizontalAlignment="Center" Margin="0,0,0,3"/>
+            <TextBox x:Name="TxtPomoLong"
+                     Text="{Binding PomodoroLongBreakMinutes, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Center" FontSize="13" MinHeight="44"
+                     ToolTip="Long break length in minutes (1–120)"
+                     AutomationProperties.Name="Pomodoro long break minutes"/>
+          </StackPanel>
+          <StackPanel Grid.Column="6">
+            <TextBlock Text="Sessions" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushMuted}"
+                       HorizontalAlignment="Center" Margin="0,0,0,3"/>
+            <TextBox x:Name="TxtPomoLongAfter"
+                     Text="{Binding PomodoroLongBreakAfter, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Center" FontSize="13" MinHeight="44"
+                     ToolTip="Work sessions before a long break (1–10)"
+                     AutomationProperties.Name="Sessions before long break"/>
+          </StackPanel>
+        </Grid>
+        <TextBlock Text="🍅 Work → ☕ Break (×N) → 🌙 Long break → repeat"
+                   FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                   Foreground="{DynamicResource BrushMuted}"
+                   HorizontalAlignment="Center" Margin="0,5,0,0"/>
+      </StackPanel>
+
+      <!-- ── F14: Interval settings (Interval mode + idle) ── -->
+      <StackPanel x:Name="PnlInterval"
+                  Visibility="{Binding IntervalSectionVis}"
+                  Margin="0,0,0,8">
+        <TextBlock Text="Interval settings"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,6"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Work (min)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       HorizontalAlignment="Center" Margin="0,0,0,3"/>
+            <TextBox x:Name="TxtIntervalWork"
+                     Text="{Binding IntervalWorkMinutes, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Center" FontSize="13" MinHeight="44"
+                     TextChanged="TxtIntervalWork_Changed"
+                     ToolTip="Work phase length in minutes (1–480)"
+                     AutomationProperties.Name="Interval work minutes"/>
+          </StackPanel>
+          <StackPanel Grid.Column="2">
+            <TextBlock Text="Rest (min)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       HorizontalAlignment="Center" Margin="0,0,0,3"/>
+            <TextBox x:Name="TxtIntervalRest"
+                     Text="{Binding IntervalRestMinutes, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Center" FontSize="13" MinHeight="44"
+                     TextChanged="TxtIntervalRest_Changed"
+                     ToolTip="Rest phase length in minutes (1–120)"
+                     AutomationProperties.Name="Interval rest minutes"/>
+          </StackPanel>
+          <StackPanel Grid.Column="4">
+            <TextBlock Text="Cycles (0=∞)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       HorizontalAlignment="Center" Margin="0,0,0,3"/>
+            <TextBox x:Name="TxtIntervalCycles"
+                     Text="{Binding IntervalRepeatCount, UpdateSourceTrigger=LostFocus}"
+                     TextAlignment="Center" FontSize="13" MinHeight="44"
+                     TextChanged="TxtIntervalCycles_Changed"
+                     ToolTip="Number of work cycles to run; 0 = run until stopped"
+                     AutomationProperties.Name="Interval cycle count"/>
+          </StackPanel>
+        </Grid>
+        <TextBlock Text="⏱ Work → 😌 Rest → repeat (×N cycles)"
+                   FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                   Foreground="{DynamicResource BrushMuted}"
+                   HorizontalAlignment="Center" Margin="0,5,0,0"/>
+      </StackPanel>
+
+      <!-- ── Control buttons ── -->
+      <Grid x:Name="PnlButtons" Margin="0,0,0,8">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="8"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="BtnAction" Grid.Column="0"
+                Visibility="{Binding ActionButtonVis}"
+                Style="{StaticResource PrimaryButton}"
+                Command="{Binding ActionCommand}"
+                AutomationProperties.Name="{Binding ActionButtonContent}"><StackPanel Orientation="Horizontal"><Image Source="{Binding ActionIconKey, Converter={StaticResource JtIconConverter}}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="{Binding ActionButtonContent}" VerticalAlignment="Center"/></StackPanel></Button>
+        <Button x:Name="BtnReset"  Grid.Column="2"
+                Style="{StaticResource FlatButton}"
+                Visibility="{Binding ResetButtonVis}"
+                Command="{Binding ResetCommand}"
+                AutomationProperties.Name="Reset timer"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Undo}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Reset" VerticalAlignment="Center"/></StackPanel></Button>
+      </Grid>
+
+      <!-- ── Alert action buttons (alert state only) ── -->
+      <Grid x:Name="PnlAlertButtons" Visibility="{Binding AlertButtonsVis}" Margin="0,0,0,6">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="8"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="BtnDismiss"
+                Grid.Column="0"
+                Style="{StaticResource DangerButton}"
+                Command="{Binding DismissCommand}"
+                AutomationProperties.Name="Dismiss timer alert"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.AlarmOff}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Dismiss Alert" VerticalAlignment="Center"/></StackPanel></Button>
+        <Button x:Name="BtnSnooze"
+                Grid.Column="2"
+                Style="{StaticResource FlatButton}"
+                Padding="14,8" MinHeight="44"
+                Command="{Binding SnoozeCommand}"
+                ToolTip="Snooze — re-alert in configured snooze duration"
+                AutomationProperties.Name="Snooze timer alert"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Snooze}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Snooze" VerticalAlignment="Center"/></StackPanel></Button>
+      </Grid>
+
+      <!-- ── Alert name label (alert state) ── -->
+      <TextBlock x:Name="LblAlertMsg"
+                 Text="{Binding AlertMessage}"
+                 FontSize="12" FontWeight="SemiBold"
+                 HorizontalAlignment="Center"
+                 Visibility="{Binding AlertMsgVis}"
+                 Margin="0,0,0,4"/>
+
+      <!-- ── F16: Lap button (Stopwatch running/paused) ── -->
+      <Button x:Name="BtnLap"
+              Style="{StaticResource FlatButton}"
+              Visibility="{Binding LapButtonVis}"
+              Command="{Binding LapCommand}"
+              Margin="0,0,0,4"
+              AutomationProperties.Name="{Binding LapButtonLabel}"
+              ToolTip="Record a lap split time"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Lap}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="{Binding LapButtonLabel}" VerticalAlignment="Center"/></StackPanel></Button>
+
+      <!-- ── Time-since label (shown after Done state: how long since alert fired) ── -->
+      <TextBlock x:Name="LblTimeSince"
+                 Text="{Binding TimeSinceText}"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}"
+                 HorizontalAlignment="Center"
+                 Margin="0,0,0,2"
+                 Visibility="{Binding TimeSinceVis}"/>
+
+      <!-- ── Feature 5: Last-fired label ── -->
+      <TextBlock x:Name="LblLastFired"
+                 Text="{Binding LastFiredLabel}"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}"
+                 HorizontalAlignment="Center"
+                 Margin="0,0,0,6"
+                 Visibility="{Binding LastFiredVis}"
+                 AutomationProperties.Name="Last fired time"/>
+
+      <!-- ── F16: Lap split table (Stopwatch, shown when laps recorded) ── -->
+      <StackPanel x:Name="PnlLapTable"
+                  Visibility="{Binding LapTableVis}"
+                  Margin="0,0,0,8">
+        <TextBlock Text="Lap splits" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,4"/>
+        <ItemsControl ItemsSource="{Binding LapTimes}"
+                      AutomationProperties.Name="Lap splits list">
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Grid Margin="0,0,0,2">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <!-- lap number injected via AlternationIndex trick — use code-behind if needed -->
+                <TextBlock Grid.Column="0" FontSize="{DynamicResource FontSizeCaption}"
+                           Foreground="{DynamicResource BrushMuted}"
+                           Text="Lap"
+                           Margin="0,0,6,0"/>
+                <TextBlock Grid.Column="2" FontSize="{DynamicResource FontSizeCaption}"
+                           FontFamily="Cascadia Mono, Consolas"
+                           Text="{Binding StringFormat={}{0:hh\\:mm\\:ss\\.ff}}"/>
+              </Grid>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </StackPanel>
+
+      <!-- ── Notes panel (always available, collapsible) ── -->
+      <StackPanel x:Name="PnlNotesSection">
+        <Button x:Name="BtnNotesToggle"
+                Style="{StaticResource FlatButton}"
+                Background="Transparent"
+                Foreground="{DynamicResource BrushMuted}"
+                HorizontalAlignment="Left"
+                Padding="0,3" MinHeight="44"
+                FontSize="{DynamicResource FontSizeCaption}"
+                Click="BtnNotesToggle_Click"
+                ToolTip="Expand or collapse notes"
+                AutomationProperties.Name="Toggle notes panel"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.StickyNote}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="{Binding NotesToggleContent}" VerticalAlignment="Center"/></StackPanel></Button>
+        <!-- F22: Edit / Preview toggle -->
+        <StackPanel Orientation="Horizontal" Margin="0,2,0,2" Visibility="Collapsed"
+                    x:Name="PnlNotesToolbar">
+          <Button x:Name="BtnNotesEdit"
+                  Style="{StaticResource FlatButton}"
+                  Padding="8,2" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}"
+                  Click="BtnNotesEdit_Click"
+                  AutomationProperties.Name="Edit notes"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Rename}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Edit" VerticalAlignment="Center"/></StackPanel></Button>
+          <Button x:Name="BtnNotesPreview"
+                  Style="{StaticResource FlatButton}"
+                  Padding="8,2" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}"
+                  Margin="2,0,0,0"
+                  Click="BtnNotesPreview_Click"
+                  AutomationProperties.Name="Preview markdown notes"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Eye}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Preview" VerticalAlignment="Center"/></StackPanel></Button>
+        </StackPanel>
+        <TextBox x:Name="TxtNotes"
+                 Text="{Binding Notes, UpdateSourceTrigger=PropertyChanged}"
+                 Visibility="Collapsed"
+                 Style="{x:Null}"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 Background="{DynamicResource BrushSurf2}"
+                 Foreground="{DynamicResource BrushText}"
+                 CaretBrush="{DynamicResource BrushText}"
+                 SelectionBrush="{DynamicResource BrushBlue}"
+                 BorderThickness="0"
+                 Padding="8,6"
+                 TextWrapping="Wrap"
+                 AcceptsReturn="True"
+                 MinHeight="60"
+                 MaxHeight="120"
+                 VerticalScrollBarVisibility="Auto"
+                 Margin="0,4,0,4"
+                 ToolTip="Add notes or description for this timer. Supports **bold**, *italic*, `code`, # headers, - bullets."
+                 AutomationProperties.Name="Timer notes (markdown)"/>
+        <!-- F22: Markdown preview panel (read-only RichTextBox) -->
+        <RichTextBox x:Name="RtbNotesPreview"
+                     Visibility="Collapsed"
+                     IsReadOnly="True"
+                     BorderThickness="0"
+                     Background="{DynamicResource BrushSurf2}"
+                     Foreground="{DynamicResource BrushText}"
+                     Padding="8,6"
+                     MinHeight="40"
+                     MaxHeight="120"
+                     Margin="0,4,0,4"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     AutomationProperties.Name="Notes preview"/>
+      </StackPanel>
+
+      <!-- ═══════════════════════════════════════════════════════════════════
+           SETTINGS PANEL (idle only, expandable)
+           ═══════════════════════════════════════════════════════════════════ -->
+      <StackPanel x:Name="PnlSettings" Visibility="{Binding SettingsPanelVis}">
+        <Separator Margin="0,4,0,6"/>
+
+        <!-- Settings toggle header -->
+        <Button x:Name="BtnSettingsToggle"
+                Style="{StaticResource FlatButton}"
+                Background="Transparent"
+                Foreground="{DynamicResource BrushMuted}"
+                HorizontalAlignment="Left"
+                Padding="0,4" MinHeight="44"
+                FontSize="{DynamicResource FontSizeCaption}"
+                Command="{Binding ToggleSettingsCommand}"
+                ToolTip="Expand or collapse alert settings"
+                AutomationProperties.Name="Toggle alert settings panel"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Alarm}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="{Binding SettingsToggleContent}" VerticalAlignment="Center"/></StackPanel></Button>
+
+        <!-- Expandable settings content — collapsed by default -->
+        <StackPanel x:Name="PnlSettingsContent"
+                         Visibility="{Binding SettingsExpandedVisible, Converter={StaticResource StringToVisibilityConverter}}"
+                         Margin="0,6,0,0">
+        <Separator Margin="0,0,0,10"/>
+
+        <!-- ── Quick presets ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="Quick preset"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <!-- SelectionChanged wired in code-behind -->
+          <ComboBox x:Name="CboPreset" Grid.Column="1"
+                    ToolTip="Apply a preset timer configuration"
+                    AutomationProperties.Name="Quick preset selector"
+                    AutomationProperties.HelpText="Choose a preset to instantly configure hours, minutes, and mode.">
+            <ComboBoxItem>— choose —</ComboBoxItem>
+            <ComboBoxItem>Pomodoro (25 min)</ComboBoxItem>
+            <ComboBoxItem>Short break (5 min)</ComboBoxItem>
+            <ComboBoxItem>Long break (15 min)</ComboBoxItem>
+            <ComboBoxItem>1 hour</ComboBoxItem>
+            <ComboBoxItem>End of day (5:00 PM)</ComboBoxItem>
+            <ComboBoxItem>Midnight</ComboBoxItem>
+          </ComboBox>
+        </Grid>
+
+        <!-- ── Category colour override (DateTime mode only) ── -->
+        <Grid x:Name="PnlCategoryColorOverride" Visibility="{Binding CategoryOverrideVis}" Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Use custom alert colour"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,2"/>
+            <TextBlock Text="Override category colour with the palette below"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       TextWrapping="Wrap"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkOverrideCategoryColor"
+                    IsChecked="{Binding OverrideCategoryColor}"
+                    Grid.Column="1" VerticalAlignment="Center"
+                    Margin="8,0,0,0"
+                    ToolTip="When checked, use the colour palette below instead of the category colour"
+                    AutomationProperties.Name="Override category colour"/>
+        </Grid>
+
+        <!-- ── Card background tint ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Card background tint"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,2"/>
+            <TextBlock Text="Subtle color on the card body (not the alert)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="BtnCardTint" MinHeight="44" MinWidth="44" Margin="0,0,6,0"
+                    Style="{StaticResource FlatButton}"
+                    Click="BtnCardTint_Click"
+                    ToolTip="Choose card background tint color"
+                    AutomationProperties.Name="Choose card background tint"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Swatches}" Style="{StaticResource JtInlineIcon}" Margin="0,0,4,0"/><Border x:Name="CardTintSwatch" Width="14" Height="14" CornerRadius="3" BorderThickness="1" BorderBrush="{DynamicResource BrushHint}" Background="{DynamicResource BrushSurf2}" VerticalAlignment="Center"/></StackPanel></Button>
+            <Button
+                    Style="{StaticResource FlatButton}"
+                    FontSize="{DynamicResource FontSizeCaption}" Padding="6,4" MinHeight="44" MinWidth="44"
+                    Click="BtnClearCardTint_Click"
+                    ToolTip="Remove card tint"
+                    AutomationProperties.Name="Clear card tint"><Image Source="{StaticResource JtIcon.ClearAll}" Style="{StaticResource JtMenuIcon}"/></Button>
+          </StackPanel>
+        </Grid>
+
+        <!-- ── Alert background color ── -->
+        <TextBlock Text="Alert background color" 
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,5"/>
+        <WrapPanel x:Name="PnlColors" Margin="0,0,0,10"/>
+
+        <!-- ── Alert title (name) font color ── -->
+        <TextBlock Text="Alert title color"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,5"/>
+        <WrapPanel x:Name="PnlTitleColors" Margin="0,0,0,12"/>
+
+        <!-- ── Alert style ── -->
+        <TextBlock Text="Alert style"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,5"/>
+        <!-- SelectionChanged wired in code-behind -->
+        <ComboBox x:Name="CboAlertStyle" Margin="0,0,0,10"
+                  AutomationProperties.Name="Alert style"
+                  AutomationProperties.HelpText="Lens: small corner popup. Fullscreen: fills entire screen. Both: fires both at once.">
+          <ComboBoxItem>Lens (small popup)</ComboBoxItem>
+          <ComboBoxItem>Fullscreen flash</ComboBoxItem>
+          <ComboBoxItem>Both</ComboBoxItem>
+        </ComboBox>
+
+        <!-- ── Alert sound + preview ── -->
+        <Grid Margin="0,0,0,6">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Alert sound"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,5"/>
+            <ComboBox x:Name="CboSound"
+                      AutomationProperties.Name="Alert sound"
+                      AutomationProperties.HelpText="Built-in alert sound played when timer fires. Override with a custom file below.">
+              <ComboBoxItem>Beep</ComboBoxItem>
+              <ComboBoxItem>Chime</ComboBoxItem>
+              <ComboBoxItem>Alarm</ComboBoxItem>
+              <ComboBoxItem>Bell</ComboBoxItem>
+              <ComboBoxItem>Ping</ComboBoxItem>
+              <ComboBoxItem>Silent</ComboBoxItem>
+            </ComboBox>
+          </StackPanel>
+          <Button Grid.Column="2"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="{DynamicResource FontSizeCaption}" Padding="10,6"
+                  MinHeight="44" VerticalAlignment="Bottom"
+                  Click="BtnPreview_Click"
+                  ToolTip="Preview the selected alert sound"
+                  AutomationProperties.Name="Preview alert sound"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Sound}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Preview" VerticalAlignment="Center"/></StackPanel></Button>
+        </Grid>
+
+        <!-- ── Custom sound file ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Custom sound file  (overrides above)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,3"/>
+            <TextBlock x:Name="LblCustomSound"
+                       Text="None"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}"
+                       TextTrimming="CharacterEllipsis"
+                       AutomationProperties.Name="Custom sound file path"/>
+          </StackPanel>
+          <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Bottom">
+            <Button
+                    Style="{StaticResource FlatButton}"
+                    FontSize="{DynamicResource FontSizeCaption}" Padding="8,4" MinHeight="44" Margin="0,0,4,0"
+                    Click="BtnPickCustomSound_Click"
+                    ToolTip="Browse for a .wav or .mp3 sound file"
+                    AutomationProperties.Name="Browse for custom sound file"><Image Source="{StaticResource JtIcon.Open}" Style="{StaticResource JtMenuIcon}"/></Button>
+            <Button
+                    Style="{StaticResource FlatButton}"
+                    FontSize="{DynamicResource FontSizeCaption}" Padding="6,4" MinHeight="44"
+                    Click="BtnClearCustomSound_Click"
+                    ToolTip="Clear custom sound — use built-in sound"
+                    AutomationProperties.Name="Clear custom sound"><Image Source="{StaticResource JtIcon.ClearAll}" Style="{StaticResource JtMenuIcon}"/></Button>
+          </StackPanel>
+        </Grid>
+
+        <!-- ── Feature 3: Alert volume (custom sounds only) ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Volume  (custom sound files only)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,5"/>
+            <Slider x:Name="SldVolume"
+                    Minimum="0" Maximum="1" TickFrequency="0.05"
+                    IsSnapToTickEnabled="True"
+                    Value="{Binding AlertVolume}"
+                    ToolTip="Volume for custom .wav/.mp3 files. Built-in beeps always use system volume. Use left/right arrow keys to adjust."
+                    AutomationProperties.Name="Alert volume slider"
+                    AutomationProperties.HelpText="Use left and right arrow keys to adjust in 5% steps. Range: 0% to 100%. Applies to custom sound files only."/>
+          </StackPanel>
+          <TextBlock x:Name="LblVolumeVal"
+                     Grid.Column="2"
+                     Text="100%"
+                     FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Bottom" Margin="0,0,0,2"
+                     Width="44" TextAlignment="Right"/>
+        </Grid>
+
+        <!-- ── Snooze duration ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Snooze duration (minutes)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,5"/>
+            <Slider x:Name="SldSnooze"
+                    Minimum="1" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True"
+                    Value="{Binding SnoozeDurationMinutes}"
+                    ToolTip="Minutes to snooze when Snooze is pressed on alert. Use left/right arrow keys to adjust."
+                    AutomationProperties.Name="Snooze duration slider"
+                    AutomationProperties.HelpText="Use left and right arrow keys to adjust in 1-minute steps. Range: 1 to 60 minutes. Current value shown to the right."/>
+          </StackPanel>
+          <TextBlock x:Name="LblSnoozeVal"
+                     Grid.Column="2"
+                     Text="5 min"
+                     FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Bottom" Margin="0,0,0,2" Width="40"/>
+        </Grid>
+
+        <!-- ── Alert font size ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Alert text size"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,5"/>
+            <!-- ValueChanged wired in code-behind -->
+            <Slider x:Name="SldFontSize"
+                    Minimum="12" Maximum="72" TickFrequency="2"
+                    IsSnapToTickEnabled="True"
+                    Value="{Binding AlertFontSize}"
+                    ToolTip="Font size for the timer name shown in alert windows. Range 12–72 px. Use left/right arrow keys to adjust."
+                    AutomationProperties.Name="Alert text size"
+                    AutomationProperties.HelpText="Use left and right arrow keys to adjust in 2-point steps. Range: 12 to 72. Current value shown to the right."/>
+          </StackPanel>
+          <TextBlock x:Name="LblFontSizeVal"
+                     Grid.Column="2"
+                     Text="22"
+                     FontSize="12" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Bottom" Margin="0,0,0,2"
+                     Width="28" TextAlignment="Right"/>
+        </Grid>
+
+        <!-- ── Lens popup position ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <TextBlock Grid.Row="0"
+                     Text="Popup position"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     Margin="0,0,0,6"/>
+          <!-- 3x3 position grid — 44x44px per button (WCAG 2.5.5) -->
+          <Grid Grid.Row="1" Width="138" HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="44"/>
+              <RowDefinition Height="44"/>
+              <RowDefinition Height="44"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="44"/>
+              <ColumnDefinition Width="44"/>
+              <ColumnDefinition Width="44"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="BtnPosTopLeft"     Grid.Row="0" Grid.Column="0" Content="↖" Tag="0" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Top left" AutomationProperties.Name="Popup position: Top left"/>
+            <Button x:Name="BtnPosTopCenter"   Grid.Row="0" Grid.Column="1" Content="↑" Tag="1" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Top center" AutomationProperties.Name="Popup position: Top center"/>
+            <Button x:Name="BtnPosTopRight"    Grid.Row="0" Grid.Column="2" Content="↗" Tag="2" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Top right" AutomationProperties.Name="Popup position: Top right"/>
+            <Button x:Name="BtnPosMidLeft"     Grid.Row="1" Grid.Column="0" Content="←" Tag="3" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Middle left" AutomationProperties.Name="Popup position: Middle left"/>
+            <Button x:Name="BtnPosCenter"      Grid.Row="1" Grid.Column="1" Content="·" Tag="4" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Center" AutomationProperties.Name="Popup position: Center"/>
+            <Button x:Name="BtnPosMidRight"    Grid.Row="1" Grid.Column="2" Content="→" Tag="5" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Middle right" AutomationProperties.Name="Popup position: Middle right"/>
+            <Button x:Name="BtnPosBotLeft"     Grid.Row="2" Grid.Column="0" Content="↙" Tag="6" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Bottom left" AutomationProperties.Name="Popup position: Bottom left"/>
+            <Button x:Name="BtnPosBotCenter"   Grid.Row="2" Grid.Column="1" Content="↓" Tag="7" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Bottom center" AutomationProperties.Name="Popup position: Bottom center"/>
+            <Button x:Name="BtnPosBotRight"    Grid.Row="2" Grid.Column="2" Content="↘" Tag="8" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnPos_Click" ToolTip="Bottom right (default)" AutomationProperties.Name="Popup position: Bottom right (default)"/>
+          </Grid>
+        </Grid>
+
+        <!-- ── Flash duration ── -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Alert duration (seconds)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,5" TextWrapping="Wrap"/>
+            <!-- TextChanged wired in code-behind -->
+            <TextBox x:Name="TxtFlashSeconds"
+                     Text="{Binding FlashSeconds, UpdateSourceTrigger=LostFocus}"
+                     FontSize="12" MinHeight="0"
+                     ToolTip="Seconds before auto-dismiss. 0 = manual dismiss only."
+                     AutomationProperties.Name="Alert auto-dismiss duration in seconds"
+                     AutomationProperties.HelpText="Enter 0 to require manual dismissal. Enter a positive number to auto-dismiss after that many seconds."/>
+          </StackPanel>
+          <TextBlock Grid.Column="2"
+                     Text="0 = manual" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Bottom" Margin="0,0,0,4"/>
+        </Grid>
+
+        <!-- ── F9: Alert repeat limit ── -->
+        <Grid Margin="0,8,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Alert repeat limit"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,2"/>
+            <TextBlock Text="Max repeat plays after first alert (0 = unlimited)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       TextWrapping="Wrap"/>
+          </StackPanel>
+          <TextBox x:Name="TxtAlertRepeatLimit"
+                   Grid.Column="1"
+                   Text="{Binding AlertRepeatLimit, UpdateSourceTrigger=LostFocus}"
+                   FontSize="12" Width="50" MinHeight="0"
+                   TextAlignment="Center"
+                   ToolTip="0 = unlimited repeat plays; 1–100 = stop after N additional plays"
+                   AutomationProperties.Name="Alert repeat limit"/>
+          <TextBlock Grid.Column="2"
+                     Text="plays" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="4,0,0,0"/>
+        </Grid>
+
+        <!-- ── F11: Escalate Lens → Fullscreen ── -->
+        <Grid Margin="0,8,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Escalate to fullscreen"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,2"/>
+            <TextBlock Text="Lens alert → fullscreen if not dismissed after N sec (0 = off)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       TextWrapping="Wrap"/>
+          </StackPanel>
+          <TextBox x:Name="TxtEscalateAfter"
+                   Grid.Column="1"
+                   Text="{Binding EscalateAfterSeconds, UpdateSourceTrigger=LostFocus}"
+                   FontSize="12" Width="50" MinHeight="0"
+                   TextAlignment="Center"
+                   ToolTip="Seconds before escalating lens alert to fullscreen. 0 = disabled."
+                   AutomationProperties.Name="Escalate after seconds"/>
+          <TextBlock Grid.Column="2"
+                     Text="sec" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="4,0,0,0"/>
+        </Grid>
+
+        <!-- ── Pill overlay exclusion ── -->
+        <Grid Margin="0,8,0,0">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Hide from Pill overlay"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,2"/>
+            <TextBlock Text="Exclude this timer from the compact Pill display"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       TextWrapping="Wrap"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkExcludeFromPill"
+                    IsChecked="{Binding ExcludeFromPill}"
+                    Grid.Column="1" VerticalAlignment="Center"
+                    Margin="8,0,0,0"
+                    ToolTip="When checked, this timer will not appear in the Pill overlay"
+                    AutomationProperties.Name="Hide from Pill overlay"/>
+        </Grid>
+
+        <!-- ── Auto-reset (Countdown only — hidden for DateTime and Stopwatch) ── -->
+        <Grid x:Name="PnlAutoReset" Visibility="{Binding AutoResetRowVis}">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Auto-reset &amp; repeat"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,2"/>
+            <TextBlock Text="Restart countdown after alert clears"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       TextWrapping="Wrap"/>
+          </StackPanel>
+          <!-- Checked/Unchecked wired in code-behind -->
+          <CheckBox x:Name="ChkAutoReset"
+                    IsChecked="{Binding AutoReset}"
+                    Grid.Column="1" VerticalAlignment="Center"
+                    Margin="8,0,0,0"
+                    ToolTip="Automatically restart countdown after each alert"
+                    AutomationProperties.Name="Auto-reset and repeat countdown"/>
+        </Grid>
+
+        <!-- ── Reminder section (DateTime mode only) ── -->
+        <StackPanel x:Name="PnlReminderSection" Visibility="{Binding ReminderSectionVis}">
+          <Separator Margin="0,8,0,8"/>
+          <Grid>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Grid.Column="0">
+              <TextBlock Style="{StaticResource SectionHeader}" Text="Early reminder"
+                         FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BrushText}"
+                         Margin="0,0,0,2"/>
+              <TextBlock Text="Alert before the target time"
+                         FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                         TextWrapping="Wrap"/>
+            </StackPanel>
+            <!-- Checked/Unchecked wired in code-behind -->
+            <CheckBox x:Name="ChkReminderEnabled"
+                      IsChecked="{Binding ReminderEnabled}"
+                      Grid.Column="1" VerticalAlignment="Center"
+                      Margin="8,0,0,0"
+                      ToolTip="Enable early reminder alerts before the target time"
+                      AutomationProperties.Name="Enable early reminder"
+                      AutomationProperties.HelpText="When enabled, an alert fires before the target time"/>
+          </Grid>
+
+          <!-- Reminder detail controls — only shown when enabled -->
+          <StackPanel x:Name="PnlReminderDetail" Visibility="{Binding ReminderDetailVisible}" Margin="0,10,0,0">
+
+            <!-- ── Lead time ─────────────────────────────────────── -->
+            <TextBlock Text="Start reminding before target"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,6" TextWrapping="Wrap"/>
+
+            <!-- H / M input boxes -->
+            <Grid Margin="0,0,0,4">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <!-- Hours box -->
+              <TextBox x:Name="TxtReminderLeadH"
+                       Grid.Column="0"
+                       Width="46" TextAlignment="Center"
+                       FontSize="13" MinHeight="0"
+                       Text="1"
+                       ToolTip="Hours before target (0–72)"
+                       AutomationProperties.Name="Reminder lead hours"/>
+              <TextBlock Grid.Column="1"
+                         Text="h" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}"
+                         VerticalAlignment="Center" Margin="4,0,0,0"/>
+              <!-- Minutes box -->
+              <TextBox x:Name="TxtReminderLeadM"
+                       Grid.Column="3"
+                       Width="46" TextAlignment="Center"
+                       FontSize="13" MinHeight="0"
+                       Text="0"
+                       ToolTip="Additional minutes before target (0–59)"
+                       AutomationProperties.Name="Reminder lead minutes"/>
+              <TextBlock Grid.Column="4"
+                         Text="m" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}"
+                         VerticalAlignment="Center" Margin="4,0,0,0"/>
+            </Grid>
+
+            <!-- Slider (syncs with boxes) — hidden label kept for compat -->
+            <Slider x:Name="SldReminderLead"
+                    Minimum="1" Maximum="4320"
+                    TickFrequency="1" IsSnapToTickEnabled="True"
+                    Margin="0,4,0,0"
+                    ToolTip="Drag to set total lead time in minutes (1 min – 72 hours). Use left/right arrow keys to adjust."
+                    AutomationProperties.Name="Reminder lead time slider"
+                    AutomationProperties.HelpText="Use left and right arrow keys to adjust in 1-minute steps. Range: 1 minute to 72 hours. Summary shown below."/>
+            <TextBlock x:Name="LblReminderLeadVal"  Visibility="Collapsed" Text="60"/>
+            <TextBlock x:Name="LblReminderLeadUnit" Visibility="Collapsed" Text="min"/>
+
+            <!-- Human-readable summary -->
+            <TextBlock x:Name="LblReminderLeadHuman"
+                       Text="= 1 hour before target"
+                       FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                       Foreground="{DynamicResource BrushBlueText}"
+                       Margin="0,3,0,12"/>
+
+            <!-- ── Repeat interval ────────────────────────────────── -->
+            <TextBlock Text="Repeat reminder every"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                       Margin="0,0,0,6" TextWrapping="Wrap"/>
+
+            <!-- H / M input boxes for interval -->
+            <Grid Margin="0,0,0,4">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <!-- Hours box -->
+              <TextBox x:Name="TxtReminderIntH"
+                       Grid.Column="0"
+                       Width="46" TextAlignment="Center"
+                       FontSize="13" MinHeight="0"
+                       Text="0"
+                       ToolTip="Interval hours (0–72)"
+                       AutomationProperties.Name="Reminder interval hours"/>
+              <TextBlock Grid.Column="1"
+                         Text="h" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}"
+                         VerticalAlignment="Center" Margin="4,0,0,0"/>
+              <!-- Minutes box -->
+              <TextBox x:Name="TxtReminderIntM"
+                       Grid.Column="3"
+                       Width="46" TextAlignment="Center"
+                       FontSize="13" MinHeight="0"
+                       Text="0"
+                       ToolTip="Interval minutes (0–59)"
+                       AutomationProperties.Name="Reminder interval minutes"/>
+              <TextBlock Grid.Column="4"
+                         Text="m" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}"
+                         VerticalAlignment="Center" Margin="4,0,0,0"/>
+              <!-- "0 = once" hint on the right -->
+              <TextBlock Grid.Column="6"
+                         Text="0 = once only"
+                         FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}"
+                         VerticalAlignment="Center"/>
+            </Grid>
+
+            <!-- Interval slider (syncs with boxes) -->
+            <Slider x:Name="SldReminderInterval"
+                    Minimum="0" Maximum="4320"
+                    TickFrequency="1" IsSnapToTickEnabled="True"
+                    Margin="0,4,0,0"
+                    ToolTip="Drag to set repeat interval in minutes (0 = fire once only). Use left/right arrow keys to adjust."
+                    AutomationProperties.Name="Reminder interval slider"
+                    AutomationProperties.HelpText="Use left and right arrow keys to adjust in 1-minute steps. Set to 0 for a single reminder with no repeats. Summary shown below."/>
+            <TextBlock x:Name="LblReminderIntervalVal" Visibility="Collapsed" Text="0"/>
+
+            <!-- Human-readable interval summary -->
+            <TextBlock x:Name="LblReminderIntervalHuman"
+                       Text="= remind once only"
+                       FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                       Foreground="{DynamicResource BrushBlueText}"
+                       Margin="0,3,0,0"/>
+
+            <!-- Send email on each reminder fire -->
+            <Grid Margin="0,10,0,0">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel Grid.Column="0">
+                <TextBlock Text="Send email on repeat reminders"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+                <TextBlock Text="First reminder always emails · Requires email alerts enabled in Settings → Email Settings"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"/>
+              </StackPanel>
+              <CheckBox x:Name="ChkSendEmailOnReminder"
+                        Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                        MinWidth="44" MinHeight="44"
+                        ToolTip="First reminder always emails if email alerts are enabled. Enable this to also email on each repeat reminder."
+                        AutomationProperties.Name="Send email on repeat reminders"
+                        Checked="ChkSendEmailOnReminder_Changed"
+                        Unchecked="ChkSendEmailOnReminder_Changed"/>
+            </Grid>
+
+          </StackPanel><!-- /PnlReminderDetail -->
+
+          <!-- ── Override email recipients ──────────────────────────────── -->
+          <Separator Margin="0,10,0,8"/>
+          <TextBlock Style="{StaticResource SectionHeader}" Text="Override email recipients"
+                     FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+          <TextBlock Text="Leave blank to use default address from Settings → Email Settings"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,4"
+                     TextWrapping="Wrap"/>
+          <TextBox x:Name="TxtAlertEmailTo"
+                   FontSize="{DynamicResource FontSizeCaption}"
+                   MinHeight="44"
+                   Padding="6,4"
+                   AcceptsReturn="False"
+                   ToolTip="Override email recipients for all alerts and reminders on this event. Separate multiple addresses with commas."
+                   AutomationProperties.Name="Override email recipients for this event"
+                   AutomationProperties.HelpText="Enter one or more addresses separated by commas. Leave blank to use the global default from Email Settings."
+                   TextChanged="TxtAlertEmailTo_TextChanged"/>
+          <TextBlock Text="e.g. alice@example.com, bob@example.com"
+                     FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                     Foreground="{DynamicResource BrushMuted}" Margin="0,3,0,0"/>
+
+        </StackPanel><!-- /PnlReminderSection -->
+
+        <!-- ── Feature 2: Webhook URL ── -->
+        <Separator Margin="0,8,0,8"/>
+        <TextBlock Style="{StaticResource SectionHeader}" Text="Webhook  (on alert fire)"
+                   FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+        <TextBlock Text="HTTPS POST sent when this timer fires. Plain http is allowed for local-network addresses. Leave blank to disable."
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,4" TextWrapping="Wrap"/>
+        <TextBox x:Name="TxtWebhookUrl"
+                 Text="{Binding WebhookUrl, UpdateSourceTrigger=LostFocus}"
+                 FontSize="{DynamicResource FontSizeCaption}" MinHeight="44" Padding="6,4"
+                 AcceptsReturn="False"
+                 ToolTip="HTTPS URL to receive a JSON POST when the timer fires. Blank = disabled."
+                 AutomationProperties.Name="Webhook URL">
+          <TextBox.Style>
+            <Style TargetType="TextBox" BasedOn="{StaticResource {x:Type TextBox}}">
+              <Setter Property="AutomationProperties.HelpText"
+                      Value="Enter an HTTPS URL. Timer name, fired time, and notes are included in the payload."/>
+              <Style.Triggers>
+                <DataTrigger Binding="{Binding WebhookUrlErrorVisible}" Value="Visible">
+                  <Setter Property="BorderBrush" Value="{DynamicResource BrushRedText}"/>
+                  <Setter Property="BorderThickness" Value="2"/>
+                  <Setter Property="AutomationProperties.HelpText" Value="{Binding WebhookUrlError}"/>
+                </DataTrigger>
+                <!-- focus ring wins over the error border (error text stays visible) -->
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                  <Setter Property="BorderBrush" Value="{DynamicResource FocusRingBrush}"/>
+                </Trigger>
+              </Style.Triggers>
+            </Style>
+          </TextBox.Style>
+        </TextBox>
+        <TextBlock Visibility="{Binding WebhookUrlErrorVisible, Converter={StaticResource StringToVisibilityConverter}}"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushRedText}"
+                   TextWrapping="Wrap" Margin="0,4,0,0"
+                   AutomationProperties.LiveSetting="Assertive"><InlineUIContainer BaselineAlignment="Center"><Image Source="{StaticResource JtIcon.Warning}" Style="{StaticResource JtInlineIcon}"/></InlineUIContainer><Run Text="{Binding WebhookUrlError, Mode=OneWay}"/></TextBlock>
+        <TextBlock Text="e.g. https://hooks.slack.com/services/…"
+                   FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                   Foreground="{DynamicResource BrushMuted}" Margin="0,3,0,0"/>
+
+        </StackPanel><!-- /PnlSettingsContent -->
+      </StackPanel><!-- /PnlSettings -->
+
+      </StackPanel><!-- /PnlBody -->
+
+    </StackPanel>
+  </Border>
+</UserControl>

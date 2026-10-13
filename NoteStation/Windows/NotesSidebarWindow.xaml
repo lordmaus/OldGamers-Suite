@@ -1,0 +1,213 @@
+<Window x:Class="NoteStation.NotesSidebarWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        Topmost="True"
+        ShowInTaskbar="False"
+        ResizeMode="CanResize"
+        Width="52"
+        MinWidth="44"
+        MaxWidth="220"
+        SizeToContent="Height"
+        MinHeight="60"
+        Closing="Window_Closing"
+        KeyDown="Window_KeyDown"
+        PreviewKeyDown="Window_PreviewKeyDown"
+        SizeChanged="Window_SizeChanged"
+        AutomationProperties.Name="Notes sidebar">
+
+  <!-- Docked strip of colored note tabs. Click a tab to pop its note out (StickyNoteWindow);
+       right-click a tab for options; the + slot at the bottom adds a new pinned note.
+       Position/size are computed in code-behind (DockToEdge) against the work area, not fixed here.
+       BgLayer and the tab content are split so "Bar Opacity" (right-click) can fade the chrome
+       to nothing while the tabs themselves stay fully opaque and clickable. -->
+  <Grid MouseRightButtonUp="EmptyArea_MouseRightButtonUp"
+        MouseLeftButtonDown="EmptyArea_MouseLeftButtonDown">
+    <Border x:Name="BgLayer"
+            Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushSurf2}"
+            BorderThickness="1"
+            CornerRadius="8,0,0,8"
+            IsHitTestVisible="False"/>
+
+    <!-- Width resize grip — runs the full height of the bar along whichever edge faces the
+         screen interior (the outer edge stays pinned to the dock edge). Edge flipped in code-behind
+         (DockToEdge). Suite AccessibleResizeGrip in width-only mode (WCAG 2.1.3/2.4.7): drag, or
+         focus it and use Left/Right arrows; always-visible glyph (was invisible until hover). -->
+    <ctl:AccessibleResizeGrip x:Name="ResizeGrip" Edge="Left"/>
+
+    <DockPanel LastChildFill="True" Margin="4,10">
+
+      <!-- Drag handle — only shown while undocked (right-click -> Undock). Sits below the "+"
+           slot since BtnAddTab already claims the outer Dock="Bottom" edge; declaring this
+           Border first pushes it further out, below BtnAddTab. Toggled in DockToEdge/Undock. -->
+      <Border x:Name="UndockGrip"
+              DockPanel.Dock="Bottom"
+              Visibility="Collapsed"
+              Height="44"
+              Margin="0,8,0,0"
+              Background="{DynamicResource BrushSurf2}"
+              CornerRadius="4"
+              Cursor="SizeAll"
+              MouseLeftButtonDown="EmptyArea_MouseLeftButtonDown"
+              ToolTip="Drag to move the sidebar — or Alt+Arrow keys"
+              AutomationProperties.Name="Move sidebar"
+              AutomationProperties.HelpText="Drag to reposition the free-floating sidebar, or press Alt+Arrow keys. Shift+F10 opens the sidebar menu.">
+        <TextBlock Text="&#8226;&#8226;&#8226;&#8226;&#8226;&#8226;" FontSize="{DynamicResource FontSizeCaption}"
+                   HorizontalAlignment="Center" VerticalAlignment="Center"
+                   Foreground="{DynamicResource BrushText}"
+                   IsHitTestVisible="False"/>
+      </Border>
+
+      <Button x:Name="BtnAddTab"
+              DockPanel.Dock="Bottom"
+              Content="+"
+              Click="BtnAddTab_Click"
+              Style="{StaticResource FlatButton}"
+              Width="44" Height="44" Margin="0,10,0,0"
+              FontSize="18" FontWeight="Bold"
+              ToolTip="New sidebar note"
+              AutomationProperties.Name="New sidebar note"
+              AutomationProperties.HelpText="Creates a new note pinned to this sidebar."/>
+
+      <ScrollViewer VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Disabled">
+        <ItemsControl x:Name="TabsList">
+          <ItemsControl.ItemsPanel>
+            <ItemsPanelTemplate>
+              <StackPanel Orientation="Vertical"/>
+            </ItemsPanelTemplate>
+          </ItemsControl.ItemsPanel>
+          <ItemsControl.ItemTemplate>
+            <DataTemplate>
+              <Button Click="Tab_Click"
+                      Tag="{Binding}"
+                      MouseRightButtonUp="Tab_MouseRightButtonUp"
+                      MouseEnter="Tab_MouseEnter"
+                      MouseLeave="Tab_MouseLeave"
+                      Width="44" Height="92" Margin="0,0,0,6"
+                      Padding="0" Cursor="Hand"
+                      ToolTip="{Binding Title}"
+                      FocusVisualStyle="{x:Null}"
+                      AutomationProperties.Name="{Binding Title}"
+                      AutomationProperties.HelpText="Open this note. Right-click for options.">
+                <Button.Template>
+                  <ControlTemplate TargetType="Button">
+                    <Grid>
+                      <Border x:Name="FocusRing"
+                              BorderBrush="{DynamicResource FocusRingBrush}"
+                              BorderThickness="2" CornerRadius="6"
+                              Margin="-2" Opacity="0"/>
+                      <Border x:Name="Bd" CornerRadius="6"
+                              BorderThickness="1"
+                              BorderBrush="#33000000">
+                        <Border.Background>
+                          <SolidColorBrush Color="{Binding BackgroundColor, Converter={StaticResource StringToColorConverter}}"/>
+                        </Border.Background>
+                        <Grid>
+                          <TextBlock Text="{Binding Title}"
+                                     FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="SemiBold"
+                                     TextTrimming="CharacterEllipsis" MaxWidth="76"
+                                     HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock.LayoutTransform>
+                              <RotateTransform Angle="-90"/>
+                            </TextBlock.LayoutTransform>
+                            <TextBlock.Foreground>
+                              <SolidColorBrush Color="{Binding TextColor, Converter={StaticResource StringToColorConverter}}"/>
+                            </TextBlock.Foreground>
+                          </TextBlock>
+                          <Image Source="{StaticResource JtIcon.EyeOff}" Style="{StaticResource JtInlineIcon}"
+                                 VerticalAlignment="Top" HorizontalAlignment="Center"
+                                 Margin="0,4,0,0"
+                                 AutomationProperties.Name="Hidden note"
+                                 Visibility="{Binding IsLocked, Converter={StaticResource BoolToVis}}"/>
+                        </Grid>
+                      </Border>
+                    </Grid>
+                    <ControlTemplate.Triggers>
+                      <!-- Hover: 2px BrushText outline (was Opacity 0.82 → dimmed the tab title) -->
+                      <Trigger Property="IsMouseOver" Value="True">
+                        <Setter TargetName="Bd" Property="BorderBrush"     Value="{DynamicResource BrushText}"/>
+                        <Setter TargetName="Bd" Property="BorderThickness" Value="2"/>
+                      </Trigger>
+                      <Trigger Property="IsKeyboardFocused" Value="True">
+                        <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+                      </Trigger>
+                    </ControlTemplate.Triggers>
+                  </ControlTemplate>
+                </Button.Template>
+              </Button>
+            </DataTemplate>
+          </ItemsControl.ItemTemplate>
+        </ItemsControl>
+      </ScrollViewer>
+
+    </DockPanel>
+
+    <!-- Hover preview — the note "slides out" on mouse-over instead of opening for real.
+         Right-click a tab (see Tab_MouseRightButtonUp) for the actual Open command. -->
+    <Popup x:Name="PreviewPopup"
+           AllowsTransparency="True"
+           StaysOpen="True"
+           PopupAnimation="None"
+           MouseEnter="PreviewPopup_MouseEnter"
+           MouseLeave="PreviewPopup_MouseLeave">
+      <Border x:Name="PreviewBorder"
+              Width="240" MinHeight="60" MaxHeight="280"
+              CornerRadius="8"
+              BorderThickness="1" BorderBrush="#33000000"
+              Padding="12,10">
+        <Border.RenderTransform>
+          <TranslateTransform x:Name="PreviewSlide" X="0"/>
+        </Border.RenderTransform>
+        <Border.Effect>
+          <DropShadowEffect BlurRadius="18" ShadowDepth="4" Opacity="0.4" Color="Black"/>
+        </Border.Effect>
+        <StackPanel x:Name="PreviewStack" Cursor="IBeam" Background="Transparent"
+                    MouseLeftButtonDown="PreviewStack_MouseLeftButtonDown">
+          <TextBlock x:Name="PreviewTitle"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
+                     TextTrimming="CharacterEllipsis" Margin="0,0,0,6"/>
+          <TextBox x:Name="PreviewTitleBox" Visibility="Collapsed"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
+                   Margin="0,0,0,6" Padding="0" Background="Transparent" BorderThickness="0"
+                   TextWrapping="NoWrap"
+                   LostKeyboardFocus="PreviewEditBox_LostKeyboardFocus"
+                   PreviewKeyDown="PreviewEditBox_PreviewKeyDown"
+                   AutomationProperties.Name="Note title (editing)"/>
+          <!-- Read-only rich preview — mirrors the real note's own font family/size/color and
+               formatting (bold/italic/color runs, paragraph spacing), not a flattened plain
+               string. IsHitTestVisible="False" so a click here still bubbles up to PreviewStack
+               and starts editing, same as clicking anywhere else in the popout. -->
+          <RichTextBox x:Name="PreviewBodyView"
+                       AutomationProperties.Name="Note preview"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                       Background="Transparent" BorderThickness="0" Padding="0"
+                       IsReadOnly="True" Focusable="False" IsHitTestVisible="False"
+                       VerticalScrollBarVisibility="Disabled" HorizontalScrollBarVisibility="Disabled"
+                       MaxHeight="180">
+            <RichTextBox.Resources>
+              <Style TargetType="Paragraph">
+                <Setter Property="Margin" Value="0"/>
+              </Style>
+            </RichTextBox.Resources>
+          </RichTextBox>
+          <TextBox x:Name="PreviewBodyBox" Visibility="Collapsed"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                   TextWrapping="Wrap" MaxHeight="180" MinHeight="44"
+                   Padding="0" Background="Transparent" BorderThickness="0"
+                   AcceptsReturn="True" AcceptsTab="True"
+                   VerticalScrollBarVisibility="Auto"
+                   LostKeyboardFocus="PreviewEditBox_LostKeyboardFocus"
+                   PreviewKeyDown="PreviewEditBox_PreviewKeyDown"
+                   AutomationProperties.Name="Note content (editing)"/>
+          <TextBlock x:Name="PreviewHint" Text="Right-click the tab to open"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Margin="0,8,0,0"/>
+        </StackPanel>
+      </Border>
+    </Popup>
+  </Grid>
+</Window>

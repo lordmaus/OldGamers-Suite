@@ -1,0 +1,1873 @@
+<Window x:Class="NoteStation.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:local="clr-namespace:NoteStation"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        Title="NoteStation"
+        Width="960" Height="760"
+        MinWidth="520" MinHeight="480"
+        Icon="Assets/app.ico"
+        Background="{DynamicResource BrushBg}"
+        Loaded="Window_Loaded"
+        Closing="Window_Closing">
+
+  <Window.InputBindings>
+    <KeyBinding Command="ApplicationCommands.New"    Key="N"  Modifiers="Ctrl"/>
+    <KeyBinding Command="ApplicationCommands.Delete" Key="Delete"/>
+    <KeyBinding Command="ApplicationCommands.Help"   Key="F1"/>
+    <!-- Cycle UI size -->
+    <KeyBinding Key="OemPlus" Modifiers="Ctrl" Command="{x:Static local:MainWindow.CycleSizeCommand}"/>
+    <!-- Overlay toggles -->
+    <KeyBinding Key="C" Modifiers="Ctrl+Shift" Command="{x:Static local:MainWindow.ToggleClipOverlayCommand}"/>
+    <KeyBinding Key="T" Modifiers="Ctrl+Shift" Command="{x:Static local:MainWindow.ToggleTaskOverlayCommand}"/>
+    <KeyBinding Key="B" Modifiers="Ctrl+Shift" Command="{x:Static local:MainWindow.ToggleNotesSidebarCommand}"/>
+  </Window.InputBindings>
+
+  <Window.CommandBindings>
+    <CommandBinding Command="ApplicationCommands.New"    Executed="CmdNewTask_Executed"/>
+    <CommandBinding Command="ApplicationCommands.Delete" Executed="CmdDelete_Executed"/>
+    <CommandBinding Command="ApplicationCommands.Help"   Executed="CmdAbout_Executed"/>
+    <CommandBinding Command="{x:Static local:MainWindow.CycleSizeCommand}"        Executed="BtnCycleSize_Click"/>
+    <CommandBinding Command="{x:Static local:MainWindow.ToggleClipOverlayCommand}" Executed="BtnClipOverlay_Click"/>
+    <CommandBinding Command="{x:Static local:MainWindow.ToggleTaskOverlayCommand}" Executed="BtnTaskOverlay_Click"/>
+    <CommandBinding Command="{x:Static local:MainWindow.ToggleNotesSidebarCommand}" Executed="BtnNotesSidebar_Click"/>
+  </Window.CommandBindings>
+
+  <Window.Resources>
+    <!-- ── Shared folder tree node template ── -->
+    <HierarchicalDataTemplate x:Key="FolderNodeTemplate"
+                               DataType="{x:Type local:FolderNode}"
+                               ItemsSource="{Binding Children}">
+      <Grid MinHeight="34" VerticalAlignment="Center"
+            AutomationProperties.Name="{Binding Name}">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/> <!-- icon / chip -->
+          <ColumnDefinition Width="*"/>    <!-- name + category -->
+          <ColumnDefinition Width="Auto"/> <!-- count badge -->
+        </Grid.ColumnDefinitions>
+
+        <!-- Icon column: accent bar (user folders only; name always shown, so color is
+             never the only cue) + fixed-color JT icon. Icon = key or legacy emoji. -->
+        <StackPanel x:Name="IconHost" Grid.Column="0" Orientation="Horizontal"
+                    VerticalAlignment="Center" Margin="0,0,7,0">
+          <Border x:Name="AccentBar" Width="4" Height="22" CornerRadius="2" Margin="0,0,6,0"
+                  Background="{Binding AccentColor, Converter={StaticResource FolderAccentBar}}"
+                  Visibility="Collapsed"/>
+          <Image x:Name="PlainIcon" Width="20" Height="20" Stretch="Uniform"
+                 VerticalAlignment="Center"
+                 Source="{Binding Icon, Converter={StaticResource JtIconConv}}"/>
+        </StackPanel>
+
+        <!-- Name (+ inline rename box) + category pill -->
+        <StackPanel Grid.Column="1" Orientation="Vertical" VerticalAlignment="Center" Margin="2,0,0,0">
+          <Grid>
+            <TextBlock x:Name="NameText"
+                       Text="{Binding Name}"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FolderFontBase}"
+                       VerticalAlignment="Center"
+                       TextTrimming="CharacterEllipsis"/>
+            <TextBox x:Name="RenameBox"
+                     Text="{Binding Name, Mode=OneWay}"
+                     Tag="{Binding}"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FolderFontBase}"
+                     Padding="2,0" Visibility="Collapsed"
+                     Loaded="FolderRenameBox_Loaded"
+                     KeyDown="FolderRenameBox_KeyDown"
+                     LostFocus="FolderRenameBox_LostFocus"
+                     AutomationProperties.Name="Rename folder"/>
+          </Grid>
+          <Border x:Name="CatPill"
+                  CornerRadius="4" Padding="6,1" Margin="0,2,0,0" HorizontalAlignment="Left"
+                  Background="{Binding Category, Converter={StaticResource CategoryToColor}}"
+                  Visibility="{Binding Category, Converter={StaticResource StringToVisibilityConverter}}">
+            <TextBlock Text="{Binding Category}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{Binding Category, Converter={StaticResource CategoryToTextColor}}"/>
+          </Border>
+        </StackPanel>
+
+        <!-- Count badge -->
+        <Border x:Name="CountPill" Grid.Column="2"
+                CornerRadius="8"
+                Background="{DynamicResource BrushSurf2}"
+                Padding="6,1" Margin="12,0,2,0"
+                VerticalAlignment="Center">
+          <TextBlock Text="{Binding CountLabel}"
+                     FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FolderFontBase}"
+                     Foreground="{DynamicResource BrushMuted}"/>
+        </Border>
+      </Grid>
+
+      <HierarchicalDataTemplate.Triggers>
+        <!-- User folder: show the accent bar next to the icon -->
+        <DataTrigger Binding="{Binding IsUserFolder}" Value="True">
+          <Setter TargetName="AccentBar" Property="Visibility" Value="Visible"/>
+        </DataTrigger>
+
+        <!-- Section header (Favorites / Quick views / Folders): muted label, no icon/count -->
+        <DataTrigger Binding="{Binding IsHeaderStyle}" Value="True">
+          <Setter TargetName="IconHost"  Property="Visibility" Value="Collapsed"/>
+          <Setter TargetName="CountPill" Property="Visibility" Value="Collapsed"/>
+          <Setter TargetName="NameText"  Property="FontFamily" Value="{DynamicResource DisplayFontFamily}"/>
+          <Setter TargetName="NameText"  Property="FontStyle"  Value="Italic"/>
+          <Setter TargetName="NameText"  Property="FontWeight" Value="Normal"/>
+          <Setter TargetName="NameText"  Property="FontSize"   Value="14"/>
+          <Setter TargetName="NameText"  Property="Foreground" Value="{DynamicResource BrushMuted}"/>
+        </DataTrigger>
+
+        <!-- Empty count: drop the pill fill so it stops shouting — text keeps full Muted contrast
+             (was Opacity 0.4 → ~2.5:1, WCAG 1.4.6 fail) -->
+        <DataTrigger Binding="{Binding Count}" Value="0">
+          <Setter TargetName="CountPill" Property="Background" Value="Transparent"/>
+        </DataTrigger>
+
+        <!-- Inline rename in progress: swap label for editable box -->
+        <DataTrigger Binding="{Binding IsRenaming}" Value="True">
+          <Setter TargetName="NameText"  Property="Visibility" Value="Collapsed"/>
+          <Setter TargetName="RenameBox" Property="Visibility" Value="Visible"/>
+          <Setter TargetName="CatPill"   Property="Visibility" Value="Collapsed"/>
+        </DataTrigger>
+      </HierarchicalDataTemplate.Triggers>
+    </HierarchicalDataTemplate>
+  </Window.Resources>
+
+  <Window.TaskbarItemInfo>
+    <TaskbarItemInfo x:Name="TaskbarInfo" Description="NoteStation"/>
+  </Window.TaskbarItemInfo>
+
+  <!-- Root scale target -->
+  <Grid x:Name="RootLayout">
+    <Grid.LayoutTransform>
+      <ScaleTransform x:Name="RootScale" ScaleX="1" ScaleY="1"/>
+    </Grid.LayoutTransform>
+
+    <DockPanel>
+
+      <!-- ══ SECTION 1 — Identity, Config & Scaling ═════════════════════════ -->
+      <Border DockPanel.Dock="Top"
+              Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}"
+              BorderThickness="0,0,0,1"
+              MinHeight="52" Padding="14,0">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <StackPanel Grid.Column="0" VerticalAlignment="Center">
+            <TextBlock Text="NoteStation"
+                       FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic"
+                       FontSize="21" FontWeight="Normal"
+                       Foreground="{DynamicResource BrushText}"
+                       AutomationProperties.HeadingLevel="Level1"/>
+            <!-- Status bar: clickable segments switch tabs -->
+            <StackPanel Orientation="Horizontal"
+                        AutomationProperties.LiveSetting="Polite"
+                        AutomationProperties.Name="Status">
+              <!-- Non-interactive summary — the NavRow tabs are the single way to switch tabs
+                   (2026-09-07 review #9: these used to duplicate NavRow's Click behavior). -->
+              <TextBlock x:Name="BtnStatusClips" Foreground="{DynamicResource BrushMuted}"
+                         FontSize="{DynamicResource FontSizeCaption}" VerticalAlignment="Center"
+                         AutomationProperties.Name="Clipboard count"/>
+              <TextBlock Text=" • " Foreground="{DynamicResource BrushMuted}"
+                         FontSize="{DynamicResource FontSizeCaption}" VerticalAlignment="Center"/>
+              <TextBlock x:Name="BtnStatusNotes" Foreground="{DynamicResource BrushMuted}"
+                         FontSize="{DynamicResource FontSizeCaption}" VerticalAlignment="Center"
+                         AutomationProperties.Name="Notes count"/>
+              <TextBlock Text=" • " Foreground="{DynamicResource BrushMuted}"
+                         FontSize="{DynamicResource FontSizeCaption}" VerticalAlignment="Center"/>
+              <TextBlock x:Name="BtnStatusTasks" Foreground="{DynamicResource BrushMuted}"
+                         FontSize="{DynamicResource FontSizeCaption}" VerticalAlignment="Center"
+                         AutomationProperties.Name="Tasks count"/>
+            </StackPanel>
+          </StackPanel>
+
+          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+
+            <Button x:Name="BtnSettings"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnSettings_Click"
+                    ToolTip="Open application settings"
+                    AutomationProperties.Name="Settings"
+                    AutomationProperties.AccessKey="S"
+                    AutomationProperties.HelpText="Open application settings">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Settings" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+
+            <Button x:Name="BtnTheme"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44" FontSize="12" Margin="0,0,10,0"
+                    Click="BtnTheme_Click"
+                    ToolTip="Toggle dark / light theme"
+                    AutomationProperties.Name="Theme"
+                    AutomationProperties.AccessKey="T"
+                    AutomationProperties.HelpText="Toggle dark / light theme">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Theme}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Theme" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+
+            <Rectangle Width="1" Height="24" Fill="{DynamicResource BrushSurf2}"
+                       VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+            <Button x:Name="BtnClipOverlay"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnClipOverlay_Click"
+                    ToolTip="Toggle clipboard overlay (Ctrl+Shift+C)"
+                    AutomationProperties.Name="Toggle clipboard overlay">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Clip Overlay" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnTaskOverlay"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnTaskOverlay_Click"
+                    ToolTip="Toggle task overlay (Ctrl+Shift+T)"
+                    AutomationProperties.Name="Toggle task overlay">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Tasks}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Task Overlay" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnNotesSidebar"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnNotesSidebar_Click"
+                    ToolTip="Toggle notes sidebar (Ctrl+Shift+B)"
+                    AutomationProperties.Name="Toggle notes sidebar">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Sidebar}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Sidebar" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+
+            <Rectangle Width="1" Height="24" Fill="{DynamicResource BrushSurf2}"
+                       VerticalAlignment="Center" Margin="0,0,10,0"/>
+
+            <!-- Overflow: Hotkeys / About / UI size — reached less often than
+                 Settings/Theme/the overlay toggles, so they don't compete for
+                 space in the main row. -->
+            <Button x:Name="BtnMoreMenu"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44" FontSize="12"
+                    Click="BtnMoreMenu_Click"
+                    ToolTip="More: Hotkeys, About, UI size"
+                    AutomationProperties.Name="More actions"
+                    AutomationProperties.AccessKey="U"
+                    AutomationProperties.HelpText="Hotkeys, About, and UI size options">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.More}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="More" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+              <Button.ContextMenu>
+                <ContextMenu Placement="Bottom">
+                  <MenuItem Header="Hotkeys" Click="BtnHotkeys_Click"
+                            ToolTip="View keyboard shortcuts (F1)"
+                            AutomationProperties.Name="Hotkeys"
+                            AutomationProperties.HelpText="View keyboard shortcuts (F1)"><MenuItem.Icon><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon></MenuItem>
+                  <MenuItem Header="About" Click="BtnAbout_Click"
+                            ToolTip="About NoteStation (F1)"
+                            AutomationProperties.Name="About"
+                            AutomationProperties.HelpText="About NoteStation"><MenuItem.Icon><Image Source="{StaticResource JtIcon.About}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon></MenuItem>
+                  <Separator/>
+                  <MenuItem x:Name="BtnCycleSize" Header="⊞ Standard (1.0×)" Click="BtnCycleSize_Click"
+                            ToolTip="Cycle UI size: Standard → Medium → Large → XL (Ctrl+=)"
+                            AutomationProperties.Name="Cycle UI size"
+                            AutomationProperties.HelpText="Cycle UI size: Standard → Medium → Large → XL (Ctrl+=)"/>
+                </ContextMenu>
+              </Button.ContextMenu>
+            </Button>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- ══ SECTION 2 — NavRow (Clipboard | Notes | Tasks) — segmented pill ═ -->
+      <Border DockPanel.Dock="Top"
+              Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}"
+              BorderThickness="0,0,0,1"
+              MinHeight="52" Padding="8,0">
+        <Border Background="{DynamicResource BrushSurf}"
+                CornerRadius="26" Padding="4" HorizontalAlignment="Left">
+          <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+
+            <Button x:Name="BtnTabClipboard"
+                    Style="{StaticResource NavButton}"
+                    Click="BtnTabClipboard_Click"
+                    ToolTip="Clipboard history manager"
+                    AutomationProperties.Name="Clipboard tab"
+                    AutomationProperties.ItemType="Tab">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Clipboard" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+
+            <Button x:Name="BtnTabNotes"
+                    Style="{StaticResource NavButton}"
+                    Click="BtnTabNotes_Click"
+                    ToolTip="Sticky notes manager"
+                    AutomationProperties.Name="Sticky Notes tab"
+                    AutomationProperties.ItemType="Tab">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.StickyNote}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Notes" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+
+            <Button x:Name="BtnTabTasks"
+                    Style="{StaticResource NavButton}"
+                    Click="BtnTabTasks_Click"
+                    ToolTip="Task manager with drag-sort and timers"
+                    AutomationProperties.Name="Tasks tab"
+                    AutomationProperties.ItemType="Tab">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Tasks}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Tasks" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+
+          </StackPanel>
+        </Border>
+      </Border>
+
+      <!-- ══ SECTION 2b — Category filter chips ══════════════════════════════ -->
+      <Border x:Name="CategoryBar"
+              DockPanel.Dock="Top"
+              Background="{DynamicResource BrushSurf}"
+              BorderBrush="{DynamicResource BrushSurf2}"
+              BorderThickness="0,0,0,1"
+              MinHeight="44" Padding="8,4">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <ScrollViewer Grid.Column="0"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Disabled">
+            <WrapPanel x:Name="CategoryChips"
+                       Orientation="Horizontal"
+                       VerticalAlignment="Center"/>
+          </ScrollViewer>
+          <Button Grid.Column="1"
+                  Style="{StaticResource FlatButton}"
+                  MinHeight="44" Padding="8,4" FontSize="{DynamicResource FontSizeCaption}"
+                  Click="BtnManageCategories_Click"
+                  ToolTip="Add, rename or delete categories"
+                  AutomationProperties.Name="Manage categories">
+            <Button.Content>
+              <StackPanel Orientation="Horizontal">
+                <Image Source="{StaticResource JtIcon.Tag}" Style="{StaticResource JtBtnIcon}"/>
+                <TextBlock Text="Categories" VerticalAlignment="Center"/>
+              </StackPanel>
+            </Button.Content>
+          </Button>
+        </Grid>
+      </Border>
+
+      <!-- ══ SECTION 3 — Tab toolbar (context-sensitive) ═══════════════════ -->
+      <Border DockPanel.Dock="Top"
+              Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}"
+              BorderThickness="0,0,0,1"
+              MinHeight="52" Padding="8,0">
+        <Grid>
+          <!-- WCAG 2.5.5: every target is 44px, so the toolbars wrap (WrapPanel) instead of
+               overflowing at narrow widths / large UI scale; search is a fixed 240px field. -->
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- ── Clipboard toolbar ── -->
+          <WrapPanel x:Name="PanelClipToolbar" Grid.Column="0" Margin="0,4"
+                      Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="BtnClipPaste"
+                    Style="{StaticResource PrimaryButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,6,0"
+                    Click="BtnClipPaste_Click"
+                    ToolTip="Paste selected clipboard entry to active app"
+                    AutomationProperties.Name="Paste selected clipboard item">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Paste}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Paste Selected" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnClipCopyIndex"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnClipPrev_Click"
+                    ToolTip="Select previous clipboard item (mouse XButton1)"
+                    AutomationProperties.Name="Previous clipboard item">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Prev}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Prev" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnClipNext"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,6,0"
+                    Click="BtnClipNext_Click"
+                    ToolTip="Select next clipboard item"
+                    AutomationProperties.Name="Next clipboard item">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Next}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Next" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnClipPin"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnClipPin_Click"
+                    ToolTip="Pin/unpin selected item so it stays at top"
+                    AutomationProperties.Name="Pin clipboard item">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Pin}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Pin" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnClipDelete"
+                    Style="{StaticResource DangerButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnClipDelete_Click"
+                    ToolTip="Remove selected clipboard entry"
+                    AutomationProperties.Name="Delete clipboard item">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Delete}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Delete" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnClipClear"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnClipClear_Click"
+                    ToolTip="Clear entire clipboard history (pinned items kept)"
+                    AutomationProperties.Name="Clear all clipboard history">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.ClearAll}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Clear All" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnClipSort"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnClipSort_Click"
+                    ToolTip="Cycle clipboard sort order: Date → Title"
+                    AutomationProperties.Name="Cycle clipboard sort order">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Sort}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock x:Name="TxtClipSortLabel" Text="Sort: Date" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnExportClip"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12"
+                    Click="BtnExportClip_Click"
+                    ToolTip="Export clipboard history to .txt or .csv"
+                    AutomationProperties.Name="Export clipboard history">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Export" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+          </WrapPanel>
+
+          <!-- ── Notes toolbar ── -->
+          <WrapPanel x:Name="PanelNotesToolbar" Grid.Column="0" Margin="0,4"
+                      Orientation="Horizontal" VerticalAlignment="Center"
+                      Visibility="Collapsed">
+            <Button x:Name="BtnNewNote"
+                    Style="{StaticResource PrimaryButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,6,0"
+                    Click="BtnNewNote_Click"
+                    ToolTip="Create a new sticky note (Ctrl+Shift+N)"
+                    AutomationProperties.Name="New sticky note">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.NewNote}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="New Note" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnShowAllNotes"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnShowAllNotes_Click"
+                    ToolTip="Show all hidden sticky notes"
+                    AutomationProperties.Name="Show all notes">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Eye}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Show All" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnHideAllNotes"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnHideAllNotes_Click"
+                    ToolTip="Hide all sticky notes (still accessible from this list)"
+                    AutomationProperties.Name="Hide all notes">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.EyeOff}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Hide All" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnNoteSort"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnNoteSort_Click"
+                    ToolTip="Cycle note sort order: Modified → Created → Title → Manual"
+                    AutomationProperties.Name="Cycle note sort order">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Sort}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock x:Name="TxtNoteSortLabel" Text="Sort: Modified" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnExportNotes"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnExportNotes_Click"
+                    ToolTip="Export visible notes to .txt or .md file"
+                    AutomationProperties.Name="Export notes to file">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Export…" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnNoteView"
+                    Style="{StaticResource FlatButton}"
+                    Click="BtnNoteView_Click"
+                    ToolTip="Toggle grid/list view"
+                    Padding="10,6" Margin="0,0,4,0"
+                    AutomationProperties.Name="Toggle note grid view"
+                    Cursor="Hand"><Image Source="{StaticResource JtIcon.GridView}" Style="{StaticResource JtSoloIcon}"/></Button>
+            <!-- ── F14: Memoboard toggle ───────────────────────────────────── -->
+            <RadioButton x:Name="BtnMemoboardView" GroupName="NoteViewMode"
+                         Style="{StaticResource FilterChip}"
+                         Checked="BtnMemoboardView_Checked"
+                         AutomationProperties.Name="Memoboard — freeform canvas view"
+                         ToolTip="Memoboard canvas view"><Image Source="{StaticResource JtIcon.Memoboard}" Style="{StaticResource JtSoloIcon}"/></RadioButton>
+          </WrapPanel>
+
+          <!-- ── Tasks toolbar ── -->
+          <WrapPanel x:Name="PanelTasksToolbar" Grid.Column="0" Margin="0,4"
+                      Orientation="Horizontal" VerticalAlignment="Center"
+                      Visibility="Collapsed">
+            <Button x:Name="BtnNewTask"
+                    Style="{StaticResource PrimaryButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,6,0"
+                    Click="BtnNewTask_Click"
+                    ToolTip="Add a new task (Ctrl+N)"
+                    AutomationProperties.Name="New task">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.NewTask}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="New Task" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnTaskComplete"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnTaskComplete_Click"
+                    ToolTip="Mark selected task as complete/incomplete"
+                    AutomationProperties.Name="Toggle task complete">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Complete}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Complete" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnTaskTimer"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnTaskTimer_Click"
+                    ToolTip="Push this task as a countdown to Timer Studio"
+                    AutomationProperties.Name="Push task to Timer Studio">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Timer}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Push to Timer" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnTaskDelete"
+                    Style="{StaticResource DangerButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnTaskDelete_Click"
+                    ToolTip="Delete selected task (Delete key)"
+                    AutomationProperties.Name="Delete task">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Delete}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Delete" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnTaskSort"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnTaskSort_Click"
+                    ToolTip="Cycle task sort: Default → Due Date → Title → Starred"
+                    AutomationProperties.Name="Cycle task sort order">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Sort}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock x:Name="TxtTaskSortLabel" Text="Sort: Default" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnExportTasks"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnExportTasks_Click"
+                    ToolTip="Export visible tasks to .csv or .ics file"
+                    AutomationProperties.Name="Export tasks to file">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Export…" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <Button x:Name="BtnJumpToday"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" FontSize="12" Margin="0,0,4,0"
+                    Click="BtnJumpToday_Click"
+                    ToolTip="Scroll to first task due today or overdue"
+                    AutomationProperties.Name="Jump to today's tasks"
+                    Cursor="Hand">
+              <Button.Content>
+                <StackPanel Orientation="Horizontal">
+                  <Image Source="{StaticResource JtIcon.Today}" Style="{StaticResource JtBtnIcon}"/>
+                  <TextBlock Text="Today" VerticalAlignment="Center"/>
+                </StackPanel>
+              </Button.Content>
+            </Button>
+            <!-- ── F16: Calendar view toggle ───────────────────────────────── -->
+            <RadioButton x:Name="BtnCalendarView" GroupName="TaskViewMode"
+                         Style="{StaticResource FilterChip}"
+                         Checked="BtnCalendarView_Checked"
+                         AutomationProperties.Name="Calendar view — tasks by due date"
+                         ToolTip="Calendar view"><Image Source="{StaticResource JtIcon.Calendar}" Style="{StaticResource JtSoloIcon}"/></RadioButton>
+            <!-- ── F18: Focus Mode button ──────────────────────────────────── -->
+            <Button x:Name="BtnFocusMode" Padding="10,6" Margin="0,0,4,0"
+                    Style="{StaticResource FlatButton}"
+                    Click="BtnFocusMode_Click"
+                    AutomationProperties.Name="Open Focus Mode — full screen task view"
+                    ToolTip="Focus Mode (Ctrl+F)"><Image Source="{StaticResource JtIcon.Focus}" Style="{StaticResource JtSoloIcon}"/></Button>
+            <!-- ── F19: Priority matrix toggle ────────────────────────────── -->
+            <RadioButton x:Name="BtnMatrixView" GroupName="TaskViewMode"
+                         Style="{StaticResource FilterChip}"
+                         Checked="BtnMatrixView_Checked"
+                         Unchecked="BtnMatrixView_Unchecked"
+                         AutomationProperties.Name="Eisenhower matrix — priority and urgency grid"
+                         ToolTip="Priority matrix view"><Image Source="{StaticResource JtIcon.Matrix}" Style="{StaticResource JtSoloIcon}"/></RadioButton>
+          </WrapPanel>
+
+          <!-- Search box (Clipboard + Tasks) -->
+          <TextBox x:Name="TxtSearch"
+                   Grid.Column="1" Width="240" VerticalAlignment="Center"
+                   Margin="12,0,4,0" MinHeight="44" MaxHeight="44"
+                   VerticalContentAlignment="Center"
+                   Text=""
+                   ToolTip="Search / filter current list"
+                   TextChanged="TxtSearch_TextChanged"
+                   AutomationProperties.Name="Search"
+                   AutomationProperties.HelpText="Type to filter the current list"/>
+
+          <!-- ── F8: Regex toggle ──────────────────────────────────────────── -->
+          <ToggleButton x:Name="BtnRegexToggle"
+                        Grid.Column="2"
+                        Content=".*" Padding="10,6" VerticalAlignment="Center"
+                        FontFamily="Consolas" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                        Checked="BtnRegexToggle_Checked"
+                        Unchecked="BtnRegexToggle_Unchecked"
+                        AutomationProperties.Name="Toggle regex search mode"
+                        ToolTip="Regex search mode (.*)"/>
+
+        </Grid>
+      </Border>
+
+      <!-- ══ SECTION 5 — Presets row ════════════════════════════════════════ -->
+      <Border DockPanel.Dock="Bottom"
+              Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}"
+              BorderThickness="0,1,0,0"
+              MinHeight="52" Padding="8,0">
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Grid.Column="0" Text="Quick Paste:"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center" Margin="4,0,8,0"/>
+
+          <!-- 5 quick-paste preset slots (top-5 pinned clipboard items) -->
+          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="BtnPreset1" Style="{StaticResource FlatButton}"
+                    Padding="8,6" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}" Margin="0,0,6,0"
+                    Click="BtnPreset_Click" Tag="0"
+                    ToolTip="Quick-paste slot 1 (Ctrl+1)"
+                    AutomationProperties.Name="Quick paste slot 1">
+              <StackPanel Orientation="Horizontal">
+                <Border Background="{DynamicResource BrushSurf2}" CornerRadius="4" Padding="5,2" Margin="0,0,7,0">
+                  <TextBlock Text="Ctrl+1" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}"/>
+                </Border>
+                <TextBlock x:Name="TxtPreset1" Text="—"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="BtnPreset2" Style="{StaticResource FlatButton}"
+                    Padding="8,6" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}" Margin="0,0,6,0"
+                    Click="BtnPreset_Click" Tag="1"
+                    ToolTip="Quick-paste slot 2 (Ctrl+2)"
+                    AutomationProperties.Name="Quick paste slot 2">
+              <StackPanel Orientation="Horizontal">
+                <Border Background="{DynamicResource BrushSurf2}" CornerRadius="4" Padding="5,2" Margin="0,0,7,0">
+                  <TextBlock Text="Ctrl+2" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}"/>
+                </Border>
+                <TextBlock x:Name="TxtPreset2" Text="—"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="BtnPreset3" Style="{StaticResource FlatButton}"
+                    Padding="8,6" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}" Margin="0,0,6,0"
+                    Click="BtnPreset_Click" Tag="2"
+                    ToolTip="Quick-paste slot 3 (Ctrl+3)"
+                    AutomationProperties.Name="Quick paste slot 3">
+              <StackPanel Orientation="Horizontal">
+                <Border Background="{DynamicResource BrushSurf2}" CornerRadius="4" Padding="5,2" Margin="0,0,7,0">
+                  <TextBlock Text="Ctrl+3" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}"/>
+                </Border>
+                <TextBlock x:Name="TxtPreset3" Text="—"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="BtnPreset4" Style="{StaticResource FlatButton}"
+                    Padding="8,6" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}" Margin="0,0,6,0"
+                    Click="BtnPreset_Click" Tag="3"
+                    ToolTip="Quick-paste slot 4 (Ctrl+4)"
+                    AutomationProperties.Name="Quick paste slot 4">
+              <StackPanel Orientation="Horizontal">
+                <Border Background="{DynamicResource BrushSurf2}" CornerRadius="4" Padding="5,2" Margin="0,0,7,0">
+                  <TextBlock Text="Ctrl+4" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}"/>
+                </Border>
+                <TextBlock x:Name="TxtPreset4" Text="—"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"/>
+              </StackPanel>
+            </Button>
+            <Button x:Name="BtnPreset5" Style="{StaticResource FlatButton}"
+                    Padding="8,6" MinHeight="44" FontSize="{DynamicResource FontSizeCaption}"
+                    Click="BtnPreset_Click" Tag="4"
+                    ToolTip="Quick-paste slot 5 (Ctrl+5)"
+                    AutomationProperties.Name="Quick paste slot 5">
+              <StackPanel Orientation="Horizontal">
+                <Border Background="{DynamicResource BrushSurf2}" CornerRadius="4" Padding="5,2" Margin="0,0,7,0">
+                  <TextBlock Text="Ctrl+5" FontFamily="{DynamicResource MonoFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}"/>
+                </Border>
+                <TextBlock x:Name="TxtPreset5" Text="—"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"/>
+              </StackPanel>
+            </Button>
+          </StackPanel>
+
+          <!-- Resize grip — suite-canonical AccessibleResizeGrip (WCAG 2.1.3/2.4.7/2.5.5):
+               focusable, arrow keys resize, 2px focus ring, UIA Thumb. -->
+          <ctl:AccessibleResizeGrip Grid.Column="2"/>
+        </Grid>
+      </Border>
+
+      <!-- ══ SECTION 4 — Main content (switches per tab) ════════════════════ -->
+      <Grid x:Name="PanelMain">
+
+        <!-- ── Clipboard panel ── -->
+        <Grid x:Name="PanelClipboard">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="ClipTreeCol" Width="Auto" MinWidth="120" MaxWidth="600"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- Folder tree -->
+          <Border Grid.Column="0"
+                  Background="{DynamicResource BrushSurf}"
+                  BorderBrush="{DynamicResource BrushSurf2}"
+                  BorderThickness="0,0,1,0">
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Margin="6,6,6,4" Padding="8,0"
+                      Background="{DynamicResource BrushSurf2}" CornerRadius="6">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Image Grid.Column="0" Source="{StaticResource JtIcon.Search}" Style="{StaticResource JtInlineIcon}"/>
+                  <TextBox x:Name="ClipFolderFilter" Grid.Column="1"
+                           Background="Transparent" BorderThickness="0" MinHeight="44"
+                           VerticalContentAlignment="Center"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FolderFontBase}"
+                           Tag="Clipboard"
+                           TextChanged="FolderFilter_TextChanged"
+                           ToolTip="Filter folders by name"
+                           AutomationProperties.Name="Filter clipboard folders"/>
+                </Grid>
+              </Border>
+              <TreeView x:Name="ClipFolderTree"
+                        VirtualizingPanel.IsVirtualizing="False"
+                        ScrollViewer.CanContentScroll="False"
+                        ItemTemplate="{StaticResource FolderNodeTemplate}"
+                        SelectedItemChanged="ClipFolderTree_SelectedItemChanged"
+                        PreviewMouseRightButtonDown="FolderTree_PreviewMouseRightButtonDown"
+                        PreviewMouseLeftButtonDown="FolderTree_PreviewMouseLeftButtonDown"
+                        PreviewMouseMove="FolderTree_PreviewMouseMove"
+                        PreviewKeyDown="FolderTree_PreviewKeyDown"
+                        AllowDrop="True"
+                        DragOver="FolderTree_DragOver"
+                        Drop="FolderTree_Drop"
+                        AutomationProperties.Name="Clipboard folders">
+                <TreeView.ItemContainerStyle>
+                  <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                  </Style>
+                </TreeView.ItemContainerStyle>
+              </TreeView>
+
+            </DockPanel>
+          </Border>
+
+          <!-- Splitter -->
+          <GridSplitter Grid.Column="1"
+                        Width="4"
+                        HorizontalAlignment="Stretch"
+                        Background="{DynamicResource BrushSurf2}"
+                        ResizeBehavior="PreviousAndNext"/>
+
+          <!-- Existing content -->
+          <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="*"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+          <!-- List of clipboard items -->
+          <ListBox x:Name="ListClipboard"
+                   Grid.Row="0"
+                   Background="{DynamicResource BrushBg}"
+                   BorderThickness="0"
+                   SelectionMode="Extended"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.CanContentScroll="True"
+                   VirtualizingPanel.IsVirtualizing="True"
+                   VirtualizingPanel.VirtualizationMode="Recycling"
+                   SelectionChanged="ListClipboard_SelectionChanged"
+                   MouseDoubleClick="ListClipboard_DoubleClick"
+                   PreviewMouseLeftButtonDown="ClipList_PreviewMouseLeftButtonDown"
+                   PreviewMouseMove="ClipList_PreviewMouseMove"
+                   PreviewMouseRightButtonUp="ClipList_PreviewMouseRightButtonUp"
+                   AutomationProperties.Name="Clipboard history"
+                   AutomationProperties.HelpText="Your clipboard history. Double-click an item to paste it. Drag to reorder.">
+            <ListBox.ContextMenu>
+              <ContextMenu>
+                <MenuItem Header="Link to Task…" Click="BtnLinkClipToTask_Click"
+                          AutomationProperties.Name="Link this clip to a task"/>
+                <MenuItem Header="Unlink from Task" Click="BtnUnlinkClipFromTask_Click"
+                          AutomationProperties.Name="Remove task link from this clip"/>
+                <Separator/>
+              </ContextMenu>
+            </ListBox.ContextMenu>
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Grid MinHeight="44" Margin="0,2">
+                  <Grid.ToolTip>
+                    <TextBlock Text="{Binding Preview}" MaxWidth="320" TextWrapping="Wrap"/>
+                  </Grid.ToolTip>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>   <!-- category dot -->
+                    <ColumnDefinition Width="Auto"/>   <!-- pin -->
+                    <ColumnDefinition Width="*"/>      <!-- text -->
+                    <ColumnDefinition Width="Auto"/>   <!-- tag -->
+                  </Grid.ColumnDefinitions>
+
+                  <!-- Category dot -->
+                  <Button Grid.Column="0"
+                          Width="44" Height="44" Padding="0"
+                          Tag="{Binding}"
+                          Style="{StaticResource FlatButton}"
+                          ToolTip="{Binding Category}"
+                          Click="ClipCategoryDot_Click"
+                          AutomationProperties.Name="Set category">
+                    <Ellipse Width="12" Height="12"
+                             Fill="{Binding Category, Converter={StaticResource CategoryToColor}}"/>
+                  </Button>
+
+                  <!-- Pin indicator -->
+                  <Image Grid.Column="1" Source="{StaticResource JtIcon.Pin}"
+                             Style="{StaticResource JtInlineIcon}" Margin="0,0,6,0"
+                             ToolTip="Pinned" AutomationProperties.Name="Pinned"
+                             Visibility="{Binding IsPinned, Converter={StaticResource BoolToVis}}"/>
+
+                  <Grid Grid.Column="2" VerticalAlignment="Center">
+                    <!-- Text entry -->
+                    <StackPanel Visibility="{Binding IsText, Converter={StaticResource BoolToVis}}">
+                      <TextBlock Text="{Binding Title}"
+                                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource ClipFontBase}" FontWeight="SemiBold"
+                                 Foreground="{DynamicResource BrushText}"
+                                 TextTrimming="CharacterEllipsis" MaxWidth="600"
+                                 Visibility="{Binding Title, Converter={StaticResource StringToVisibilityConverter}}"
+                                 ToolTip="{Binding Title}"
+                                 AutomationProperties.Name="Clip title"/>
+                      <TextBlock local:RichTextDisplay.FormattedText="{Binding FormatSource}"
+                                 local:RichTextDisplay.MaxChars="160"
+                                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource ClipFontBase}"
+                                 Foreground="{DynamicResource BrushText}"
+                                 TextTrimming="CharacterEllipsis"
+                                 MaxWidth="600"/>
+                      <TextBlock Text="{Binding CapturedAt, StringFormat='{}{0:MMM d, h:mm tt}'}"
+                                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                                 Foreground="{DynamicResource BrushMuted}"
+                                 Margin="0,1,0,0"/>
+                      <!-- ── F9: Tag chips ──────────────────────────────────── -->
+                      <ItemsControl ItemsSource="{Binding ParsedTags}" Margin="0,2,0,0">
+                        <ItemsControl.ItemsPanel>
+                          <ItemsPanelTemplate><WrapPanel Orientation="Horizontal"/></ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                          <DataTemplate>
+                            <Border Background="{DynamicResource BrushBlue}" CornerRadius="8"
+                                    Padding="5,1" Margin="0,0,3,1">
+                              <TextBlock Text="{Binding}" FontSize="{DynamicResource FontSizeCaption}"
+                                         Foreground="{DynamicResource BrushOnAccent}"/>
+                            </Border>
+                          </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                      </ItemsControl>
+                    </StackPanel>
+                    <!-- Image entry -->
+                    <StackPanel Orientation="Horizontal"
+                                Visibility="{Binding IsImage, Converter={StaticResource BoolToVis}}">
+                      <Image Source="{Binding ImagePath, Converter={StaticResource ClipImageConv}}" Width="48" Height="48"
+                             Stretch="Uniform" Margin="0,0,8,0"
+                             AutomationProperties.Name="Clipboard image thumbnail"/>
+                      <StackPanel VerticalAlignment="Center">
+                        <TextBlock Text="{Binding Title}"
+                                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource ClipFontBase}" FontWeight="SemiBold"
+                                   Foreground="{DynamicResource BrushText}"
+                                   Visibility="{Binding Title, Converter={StaticResource StringToVisibilityConverter}}"
+                                   TextTrimming="CharacterEllipsis" MaxWidth="400"
+                                   AutomationProperties.Name="Clip title"/>
+                        <TextBlock Text="[Image]"
+                                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource ClipFontBase}"
+                                   Foreground="{DynamicResource BrushText}"/>
+                        <TextBlock Text="{Binding CapturedAt, StringFormat='{}{0:MMM d, h:mm tt}'}"
+                                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushMuted}"
+                                   Margin="0,1,0,0"/>
+                      </StackPanel>
+                    </StackPanel>
+                  </Grid>
+
+                  <StackPanel Grid.Column="3" Orientation="Vertical" VerticalAlignment="Center">
+                    <TextBlock Text="{Binding Tag}"
+                               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                               Foreground="{DynamicResource BrushHint}"
+                               Margin="6,0,0,0"/>
+                    <Image Source="{StaticResource JtIcon.Link}" Style="{StaticResource JtInlineIcon}"
+                               Width="14" Height="14" Margin="6,0,0,0"
+                               AutomationProperties.Name="Linked to a task"
+                               ToolTip="Linked to a task"
+                               Visibility="{Binding IsLinkedToTask, Converter={StaticResource BoolToVis}}"/>
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+            <ListBox.ItemContainerStyle>
+              <Style TargetType="ListBoxItem" BasedOn="{StaticResource {x:Type ListBoxItem}}">
+                <Setter Property="AutomationProperties.Name" Value="{Binding Preview}"/>
+                <Setter Property="AutomationProperties.ItemType" Value="Clipboard item"/>
+                <Setter Property="MinHeight" Value="44"/>
+              </Style>
+            </ListBox.ItemContainerStyle>
+          </ListBox>
+
+          <!-- Empty state hint -->
+          <TextBlock x:Name="TxtClipEmpty"
+                     Grid.Row="0"
+                     Text="No clips yet — copy something!"
+                     Foreground="{DynamicResource BrushMuted}"
+                     FontSize="13" HorizontalAlignment="Center"
+                     VerticalAlignment="Center" Margin="0,24,0,0"
+                     IsHitTestVisible="False"
+                     Visibility="Collapsed"/>
+
+          <!-- Preview pane -->
+          <Border Grid.Row="1"
+                  Background="{DynamicResource BrushSurf}"
+                  BorderBrush="{DynamicResource BrushSurf2}"
+                  BorderThickness="0,1,0,0"
+                  MaxHeight="140" Padding="12,8">
+            <Grid>
+              <!-- Text preview -->
+              <ScrollViewer VerticalScrollBarVisibility="Auto">
+                <TextBlock x:Name="ClipPreview"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}"
+                           TextWrapping="Wrap"
+                           Text="Select an item to preview…"
+                           AutomationProperties.Name="Clipboard item preview"/>
+              </ScrollViewer>
+              <!-- Image preview -->
+              <Image x:Name="ClipImagePreview"
+                     Stretch="Uniform"
+                     HorizontalAlignment="Left"
+                     MaxHeight="120"
+                     Visibility="Collapsed"
+                     AutomationProperties.Name="Clipboard image preview"/>
+            </Grid>
+          </Border>
+          </Grid> <!-- /inner content Grid -->
+        </Grid>   <!-- /PanelClipboard -->
+
+        <!-- ── Notes panel ── -->
+        <Grid x:Name="PanelNotes" Visibility="Collapsed">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="NoteTreeCol" Width="Auto" MinWidth="120" MaxWidth="600"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- Folder tree -->
+          <Border Grid.Column="0"
+                  Background="{DynamicResource BrushSurf}"
+                  BorderBrush="{DynamicResource BrushSurf2}"
+                  BorderThickness="0,0,1,0">
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Margin="6,6,6,4" Padding="8,0"
+                      Background="{DynamicResource BrushSurf2}" CornerRadius="6">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Image Grid.Column="0" Source="{StaticResource JtIcon.Search}" Style="{StaticResource JtInlineIcon}"/>
+                  <TextBox x:Name="NoteFolderFilter" Grid.Column="1"
+                           Background="Transparent" BorderThickness="0" MinHeight="44"
+                           VerticalContentAlignment="Center"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FolderFontBase}"
+                           Tag="Notes"
+                           TextChanged="FolderFilter_TextChanged"
+                           ToolTip="Filter folders by name"
+                           AutomationProperties.Name="Filter note folders"/>
+                </Grid>
+              </Border>
+              <TreeView x:Name="NoteFolderTree"
+                        VirtualizingPanel.IsVirtualizing="False"
+                        ScrollViewer.CanContentScroll="False"
+                        ItemTemplate="{StaticResource FolderNodeTemplate}"
+                        SelectedItemChanged="NoteFolderTree_SelectedItemChanged"
+                        PreviewMouseRightButtonDown="FolderTree_PreviewMouseRightButtonDown"
+                        PreviewMouseLeftButtonDown="FolderTree_PreviewMouseLeftButtonDown"
+                        PreviewMouseMove="FolderTree_PreviewMouseMove"
+                        PreviewKeyDown="FolderTree_PreviewKeyDown"
+                        AllowDrop="True"
+                        DragOver="FolderTree_DragOver"
+                        Drop="FolderTree_Drop"
+                        AutomationProperties.Name="Notes folders">
+                <TreeView.ItemContainerStyle>
+                  <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                  </Style>
+                </TreeView.ItemContainerStyle>
+              </TreeView>
+            </DockPanel>
+          </Border>
+
+          <!-- Splitter -->
+          <GridSplitter Grid.Column="1"
+                        Width="4"
+                        HorizontalAlignment="Stretch"
+                        Background="{DynamicResource BrushSurf2}"
+                        ResizeBehavior="PreviousAndNext"/>
+
+          <!-- Existing content -->
+          <Grid Grid.Column="2">
+          <!-- Grid view (tile view) for notes -->
+          <ScrollViewer x:Name="NoteGridScroll"
+                        Visibility="Collapsed"
+                        VerticalScrollBarVisibility="Auto"
+                        HorizontalScrollBarVisibility="Disabled">
+              <WrapPanel x:Name="NoteGridPanel"
+                         Orientation="Horizontal"
+                         Margin="4"/>
+          </ScrollViewer>
+
+          <!-- ── F14: Memoboard canvas ────────────────────────────────────── -->
+          <ScrollViewer x:Name="MemoboardScroll" Visibility="Collapsed"
+                        HorizontalScrollBarVisibility="Auto"
+                        VerticalScrollBarVisibility="Auto">
+              <Canvas x:Name="MemoboardCanvas" Width="3000" Height="2000"
+                      Background="Transparent"
+                      AllowDrop="True"/>
+          </ScrollViewer>
+
+          <ListBox x:Name="ListNotes"
+                   Background="{DynamicResource BrushBg}"
+                   BorderThickness="0"
+                   SelectionMode="Extended"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.CanContentScroll="True"
+                   VirtualizingPanel.IsVirtualizing="True"
+                   VirtualizingPanel.VirtualizationMode="Recycling"
+                   SelectionChanged="ListNotes_SelectionChanged"
+                   MouseDoubleClick="ListNotes_MouseDoubleClick"
+                   PreviewMouseLeftButtonDown="NoteList_PreviewMouseLeftButtonDown"
+                   PreviewMouseMove="NoteList_PreviewMouseMove"
+                   PreviewMouseRightButtonUp="NoteList_PreviewMouseRightButtonUp"
+                   AutomationProperties.Name="Sticky notes list"
+                   AutomationProperties.HelpText="List of all sticky notes. Click to select, double-click to show/focus.">
+            <ListBox.ItemTemplate>
+              <DataTemplate>
+                <Grid MinHeight="54" Margin="0,2">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>  <!-- category dot -->
+                    <ColumnDefinition Width="8"/>     <!-- color stripe -->
+                    <ColumnDefinition Width="*"/>     <!-- text -->
+                    <ColumnDefinition Width="Auto"/>  <!-- visibility badge -->
+                  </Grid.ColumnDefinitions>
+
+                  <!-- Category dot (left, matching Clipboard layout) -->
+                  <Button Grid.Column="0"
+                          Width="44" Height="44" Padding="0"
+                          Tag="{Binding}"
+                          Style="{StaticResource FlatButton}"
+                          ToolTip="{Binding Category}"
+                          Click="NoteCategoryDot_Click"
+                          AutomationProperties.Name="Set category">
+                    <Ellipse Width="12" Height="12"
+                             Fill="{Binding Category, Converter={StaticResource CategoryToColor}}"/>
+                  </Button>
+
+                  <!-- Color stripe -->
+                  <Border Grid.Column="1"
+                          CornerRadius="3,0,0,3" Margin="0,6,0,6">
+                    <Border.Background>
+                      <SolidColorBrush Color="{Binding BackgroundColor, Converter={StaticResource StringToColorConverter}}"/>
+                    </Border.Background>
+                  </Border>
+
+                  <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0">
+                    <TextBlock Text="{Binding Title}"
+                               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource NoteFontBase}" FontWeight="SemiBold"
+                               Foreground="{DynamicResource BrushText}"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock local:RichTextDisplay.FormattedText="{Binding SafeFormatSource}"
+                               local:RichTextDisplay.MaxChars="160"
+                               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                               Foreground="{DynamicResource BrushMuted}"
+                               TextTrimming="CharacterEllipsis"/>
+                    <TextBlock Text="{Binding ModifiedAt, StringFormat='{}{0:MMM d, h:mm tt}'}"
+                               FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                               Foreground="{DynamicResource BrushMuted}"
+                               Margin="0,1,0,0"/>
+                  </StackPanel>
+
+                  <!-- Visibility badge + pin -->
+                  <StackPanel Grid.Column="3" Orientation="Horizontal" VerticalAlignment="Center">
+                    <Image Source="{StaticResource JtIcon.Pin}" Style="{StaticResource JtInlineIcon}"
+                               ToolTip="Pinned" AutomationProperties.Name="Pinned"
+                               Visibility="{Binding IsPinned, Converter={StaticResource BoolToVis}}"/>
+                    <Border CornerRadius="4"
+                            Background="{DynamicResource BrushSurf2}"
+                            Padding="6,3" VerticalAlignment="Center">
+                      <TextBlock FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                                 Foreground="{DynamicResource BrushMuted}"
+                                 Text="{Binding IsVisible, Converter={StaticResource BoolToVisibleText}}"/>
+                    </Border>
+                  </StackPanel>
+                </Grid>
+              </DataTemplate>
+            </ListBox.ItemTemplate>
+          </ListBox>
+
+          <!-- Empty state hint -->
+          <TextBlock x:Name="TxtNoteEmpty"
+                     Text="No notes yet — create one with Ctrl+Shift+N"
+                     Foreground="{DynamicResource BrushMuted}"
+                     FontSize="13" HorizontalAlignment="Center"
+                     VerticalAlignment="Center" Margin="0,24,0,0"
+                     IsHitTestVisible="False"
+                     Visibility="Collapsed"/>
+
+          </Grid> <!-- /Notes content grid -->
+        </Grid>   <!-- /PanelNotes -->
+
+        <!-- ── Tasks panel ── -->
+        <Grid x:Name="PanelTasks" Visibility="Collapsed">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition x:Name="TaskTreeCol" Width="Auto" MinWidth="120" MaxWidth="600"/>
+            <ColumnDefinition Width="4"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- Folder tree -->
+          <Border Grid.Column="0"
+                  Background="{DynamicResource BrushSurf}"
+                  BorderBrush="{DynamicResource BrushSurf2}"
+                  BorderThickness="0,0,1,0">
+            <DockPanel>
+              <Border DockPanel.Dock="Top" Margin="6,6,6,4" Padding="8,0"
+                      Background="{DynamicResource BrushSurf2}" CornerRadius="6">
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Image Grid.Column="0" Source="{StaticResource JtIcon.Search}" Style="{StaticResource JtInlineIcon}"/>
+                  <TextBox x:Name="TaskFolderFilter" Grid.Column="1"
+                           Background="Transparent" BorderThickness="0" MinHeight="44"
+                           VerticalContentAlignment="Center"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FolderFontBase}"
+                           Tag="Tasks"
+                           TextChanged="FolderFilter_TextChanged"
+                           ToolTip="Filter folders by name"
+                           AutomationProperties.Name="Filter task folders"/>
+                </Grid>
+              </Border>
+              <TreeView x:Name="TaskFolderTree"
+                        VirtualizingPanel.IsVirtualizing="False"
+                        ScrollViewer.CanContentScroll="False"
+                        ItemTemplate="{StaticResource FolderNodeTemplate}"
+                        SelectedItemChanged="TaskFolderTree_SelectedItemChanged"
+                        PreviewMouseRightButtonDown="FolderTree_PreviewMouseRightButtonDown"
+                        PreviewMouseLeftButtonDown="FolderTree_PreviewMouseLeftButtonDown"
+                        PreviewMouseMove="FolderTree_PreviewMouseMove"
+                        PreviewKeyDown="FolderTree_PreviewKeyDown"
+                        AllowDrop="True"
+                        DragOver="FolderTree_DragOver"
+                        Drop="FolderTree_Drop"
+                        AutomationProperties.Name="Task folders">
+                <TreeView.ItemContainerStyle>
+                  <Style TargetType="TreeViewItem" BasedOn="{StaticResource {x:Type TreeViewItem}}">
+                    <Setter Property="IsExpanded" Value="{Binding IsExpanded, Mode=TwoWay}"/>
+                  </Style>
+                </TreeView.ItemContainerStyle>
+              </TreeView>
+            </DockPanel>
+          </Border>
+
+          <!-- Splitter -->
+          <GridSplitter Grid.Column="1"
+                        Width="4"
+                        HorizontalAlignment="Stretch"
+                        Background="{DynamicResource BrushSurf2}"
+                        ResizeBehavior="PreviousAndNext"/>
+
+          <!-- Existing content -->
+          <Grid Grid.Column="2">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+
+          <!-- Due-date filter chips -->
+          <Border Grid.Row="0"
+                  Background="{DynamicResource BrushSurf}"
+                  BorderBrush="{DynamicResource BrushSurf2}"
+                  BorderThickness="0,0,0,1"
+                  MinHeight="40" Padding="8,4">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+              <Button x:Name="BtnDueAll"
+                      Content="All" Tag="All"
+                      Style="{StaticResource FlatButton}"
+                      MinHeight="44" Padding="14,4" Margin="0,0,4,0"
+                      Click="BtnDueFilter_Click"
+                      ToolTip="Show all tasks"
+                      AutomationProperties.Name="Show all tasks"/>
+              <Button x:Name="BtnDueOverdue"
+                      Content="Overdue" Tag="Overdue"
+                      Style="{StaticResource FlatButton}"
+                      MinHeight="44" Padding="14,4" Margin="0,0,4,0"
+                      Click="BtnDueFilter_Click"
+                      ToolTip="Show tasks past their due date"
+                      AutomationProperties.Name="Show overdue tasks"/>
+              <Button x:Name="BtnDueToday"
+                      Content="Today" Tag="Today"
+                      Style="{StaticResource FlatButton}"
+                      MinHeight="44" Padding="14,4" Margin="0,0,4,0"
+                      Click="BtnDueFilter_Click"
+                      ToolTip="Show tasks due today"
+                      AutomationProperties.Name="Show tasks due today"/>
+              <Button x:Name="BtnDueWeek"
+                      Content="This Week" Tag="Week"
+                      Style="{StaticResource FlatButton}"
+                      MinHeight="44" Padding="14,4" Margin="0,0,4,0"
+                      Click="BtnDueFilter_Click"
+                      ToolTip="Show tasks due in the next 7 days"
+                      AutomationProperties.Name="Show tasks due this week"/>
+              <RadioButton x:Name="RbHabit" Content="Habit" Style="{StaticResource FilterChip}"
+                           Checked="TaskFilter_Checked"
+                           Unchecked="TaskFilter_Unchecked"
+                           AutomationProperties.Name="Show habit tasks only"/>
+            </StackPanel>
+          </Border>
+
+          <ListBox x:Name="TaskList"
+                   Grid.Row="1"
+                   AllowDrop="True"
+                   Background="{DynamicResource BrushBg}"
+                   BorderThickness="0"
+                   SelectionMode="Extended"
+                   ScrollViewer.HorizontalScrollBarVisibility="Disabled"
+                   ScrollViewer.CanContentScroll="True"
+                   VirtualizingPanel.IsVirtualizing="True"
+                   VirtualizingPanel.VirtualizationMode="Recycling"
+                   SelectionChanged="TaskList_SelectionChanged"
+                   KeyDown="TaskList_KeyDown"
+                   AutomationProperties.Name="Task list"
+                   AutomationProperties.HelpText="Arrow keys navigate. Space toggles complete. Delete removes task.">
+            <!-- Strip default ListBoxItem chrome; keep custom card visuals + focus ring -->
+            <ListBox.ItemContainerStyle>
+              <Style TargetType="ListBoxItem">
+                <Setter Property="Padding"    Value="0"/>
+                <Setter Property="Margin"     Value="0"/>
+                <Setter Property="Background" Value="Transparent"/>
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                <Setter Property="Template">
+                  <Setter.Value>
+                    <ControlTemplate TargetType="ListBoxItem">
+                      <Grid>
+                        <Border x:Name="FocusRing"
+                                BorderBrush="{DynamicResource FocusRingBrush}"
+                                BorderThickness="2" CornerRadius="3"
+                                Margin="1" Opacity="0" IsHitTestVisible="False"/>
+                        <ContentPresenter/>
+                        <!-- Hover: 1px BrushText outline (non-colour cue; card fill unchanged) -->
+                        <Border x:Name="HoverRing"
+                                BorderBrush="{DynamicResource BrushText}"
+                                BorderThickness="1" CornerRadius="3"
+                                Margin="1" Opacity="0" IsHitTestVisible="False"/>
+                      </Grid>
+                      <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                          <Setter TargetName="HoverRing" Property="Opacity" Value="1"/>
+                        </Trigger>
+                        <Trigger Property="IsKeyboardFocused" Value="True">
+                          <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+                        </Trigger>
+                      </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                  </Setter.Value>
+                </Setter>
+              </Style>
+            </ListBox.ItemContainerStyle>
+            <ListBox.ItemTemplate>
+                <DataTemplate>
+                  <Border x:Name="TaskCard"
+                          Background="{DynamicResource BrushSurf}"
+                          BorderBrush="{DynamicResource BrushSurf2}"
+                          BorderThickness="0,0,0,1"
+                          Padding="12,8"
+                          MinHeight="60"
+                          Margin="0,0,0,2"
+                          Cursor="Hand"
+                          MouseLeftButtonDown="TaskCard_MouseDown"
+                          MouseRightButtonUp="TaskCard_RightClick"
+                          AllowDrop="True"
+                          DragOver="TaskCard_DragOver"
+                          Drop="TaskCard_Drop"
+                          AutomationProperties.Name="{Binding Title}"
+                          AutomationProperties.ItemType="ListItem">
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/>   <!-- category dot -->
+                        <ColumnDefinition Width="Auto"/>   <!-- drag handle -->
+                        <ColumnDefinition Width="Auto"/>   <!-- checkbox -->
+                        <ColumnDefinition Width="*"/>      <!-- content -->
+                        <ColumnDefinition Width="Auto"/>   <!-- star + timer -->
+                      </Grid.ColumnDefinitions>
+
+                      <!-- Category dot (left, matching Clipboard layout) -->
+                      <Button Grid.Column="0"
+                              Width="44" Height="44" Padding="0"
+                              Tag="{Binding}"
+                              Style="{StaticResource FlatButton}"
+                              ToolTip="{Binding Category}"
+                              Click="TaskCategoryDot_Click"
+                              AutomationProperties.Name="Set category">
+                        <Ellipse Width="12" Height="12"
+                                 Fill="{Binding Category, Converter={StaticResource CategoryToColor}}"/>
+                      </Button>
+
+                      <!-- Drag handle -->
+                      <TextBlock Grid.Column="1" Text="⠿"
+                                 FontSize="16" Foreground="{DynamicResource BrushHint}"
+                                 VerticalAlignment="Center" Margin="0,0,8,0"
+                                 ToolTip="Drag to reorder"
+                                 AutomationProperties.Name="Drag to reorder task"/>
+
+                      <!-- Complete checkbox -->
+                      <CheckBox Grid.Column="2"
+                                IsChecked="{Binding IsCompleted}"
+                                VerticalAlignment="Center" Margin="0,0,8,0"
+                                Checked="TaskComplete_Checked" Unchecked="TaskComplete_Unchecked"
+                                AutomationProperties.Name="Mark task complete"/>
+
+                      <!-- Title + notes + timestamps -->
+                      <StackPanel Grid.Column="3" VerticalAlignment="Center">
+                        <StackPanel Orientation="Horizontal">
+                          <Border Background="Transparent" CornerRadius="10"
+                                  BorderBrush="{DynamicResource BrushAmberText}" BorderThickness="1"
+                                  Padding="6,1" Margin="0,0,4,0"
+                                  Visibility="{Binding HasPriorityRank, Converter={StaticResource BoolToVis}}"
+                                  ToolTip="Manual rank">
+                            <TextBlock Foreground="{DynamicResource BrushAmberText}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold">
+                              <Run Text="#"/>
+                              <Run Text="{Binding PriorityRank}"/>
+                            </TextBlock>
+                          </Border>
+                          <TextBlock Text="{Binding Title}"
+                                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource TaskFontBase}"
+                                     Foreground="{DynamicResource BrushText}"
+                                     TextWrapping="Wrap"
+                                     TextDecorations="{Binding IsCompleted, Converter={StaticResource BoolToStrike}}"/>
+                          <Border Background="{DynamicResource BrushBlue}" CornerRadius="10"
+                                  Padding="6,2" Margin="4,0,0,0"
+                                  Visibility="{Binding IsHabit, Converter={StaticResource BoolToVis}}">
+                            <StackPanel Orientation="Horizontal">
+                              <Image Source="{StaticResource JtIcon.Flame}" Width="14" Height="14" Margin="0,0,4,0" VerticalAlignment="Center"
+                                     AutomationProperties.Name="Habit streak"/>
+                              <TextBlock Foreground="{DynamicResource BrushOnAccent}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                                         VerticalAlignment="Center">
+                                <Run Text="{Binding HabitStreak, Mode=OneWay}"/><Run Text="-day streak"/>
+                              </TextBlock>
+                            </StackPanel>
+                          </Border>
+                        </StackPanel>
+                        <TextBlock Text="{Binding DueDateDisplay}"
+                                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushAmberText}"
+                                   Margin="0,2,0,0"
+                                   Visibility="{Binding HasDueDate, Converter={StaticResource BoolToVis}}"/>
+                        <TextBlock local:RichTextDisplay.FormattedText="{Binding Notes}"
+                                   local:RichTextDisplay.MaxChars="160"
+                                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushMuted}"
+                                   TextTrimming="CharacterEllipsis"
+                                   Margin="0,1,0,0"
+                                   MaxHeight="40"
+                                   Visibility="{Binding HasNotes, Converter={StaticResource BoolToVis}}"/>
+                        <TextBlock Text="{Binding CreatedAt, StringFormat='{}Created {0:MMM d, h:mm tt}'}"
+                                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushMuted}"
+                                   Margin="0,1,0,0"/>
+                        <TextBlock Text="{Binding CompletedAtDisplay}"
+                                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushHint}"
+                                   Margin="0,1,0,0"
+                                   Visibility="{Binding HasCompletedAt, Converter={StaticResource BoolToVis}}"/>
+                        <!-- Subtask progress bar — visible only when HasSubTasks -->
+                        <Grid Margin="0,2,0,0"
+                              Visibility="{Binding HasSubTasks, Converter={StaticResource BoolToVis}}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+                            <ProgressBar Grid.Column="0"
+                                         Value="{Binding SubTaskProgress, Mode=OneWay}"
+                                         Minimum="0" Maximum="1"
+                                         Height="6"
+                                         VerticalAlignment="Center"
+                                         AutomationProperties.Name="Subtask progress"/>
+                            <TextBlock Grid.Column="1"
+                                       Text="{Binding SubTaskSummary}"
+                                       FontSize="{DynamicResource FontSizeCaption}"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       Margin="6,0,0,0"
+                                       VerticalAlignment="Center"/>
+                        </Grid>
+                      </StackPanel>
+
+                      <!-- Star + priority + timer badge -->
+                      <StackPanel Grid.Column="4" Orientation="Horizontal" VerticalAlignment="Center">
+                        <!-- Focus (Pomodoro) button -->
+                        <Button x:Name="BtnFocusTask" Width="44" Height="44" Padding="0"
+                                Background="Transparent" BorderThickness="0"
+                                Foreground="{DynamicResource BrushMuted}"
+                                Click="BtnFocusTask_Click"
+                                AutomationProperties.Name="Start focus session (Pomodoro)"
+                                ToolTip="Focus (Pomodoro → TimerStudio)"><Image Source="{StaticResource JtIcon.Focus}" Style="{StaticResource JtSoloIcon}"/></Button>
+                        <!-- D3-4: Priority indicator (1=Low/cyan 2=Medium/amber 3=High/red) -->
+                        <Border CornerRadius="3" Padding="4,2" Margin="0,0,4,0"
+                                Visibility="{Binding Priority, Converter={StaticResource NonZeroToVis}}"
+                                Background="{Binding Priority, Converter={StaticResource PriorityToColor}}"
+                                ToolTip="{Binding Priority, Converter={StaticResource PriorityToLabel}}">
+                          <TextBlock Text="{Binding Priority, Converter={StaticResource PriorityToGlyph}}"
+                                     FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                                     Foreground="#000000"
+                                     AutomationProperties.Name="{Binding Priority, Converter={StaticResource PriorityToLabel}}"/>
+                        </Border>
+                        <Image Source="{StaticResource JtIcon.Star}" Style="{StaticResource JtInlineIcon}" Margin="4,0"
+                                   Visibility="{Binding IsStarred, Converter={StaticResource BoolToVis}}"
+                                   ToolTip="Starred task"
+                                   AutomationProperties.Name="Starred"/>
+                        <Image Source="{StaticResource JtIcon.Timer}" Style="{StaticResource JtInlineIcon}" Margin="4,0,0,0"
+                               Visibility="{Binding PushedToTimer, Converter={StaticResource BoolToVis}}"
+                               ToolTip="Timer pushed to Timer Studio"
+                               AutomationProperties.Name="Has timer in Timer Studio"/>
+                      </StackPanel>
+                    </Grid>
+                  </Border>
+                  <DataTemplate.Triggers>
+                    <DataTrigger Binding="{Binding IsSelected, RelativeSource={RelativeSource AncestorType=ListBoxItem}}" Value="True">
+                      <Setter TargetName="TaskCard" Property="BorderBrush" Value="{DynamicResource BrushBlueText}"/>
+                      <Setter TargetName="TaskCard" Property="BorderThickness" Value="4,0,0,1"/>
+                    </DataTrigger>
+                  </DataTemplate.Triggers>
+                </DataTemplate>
+              </ListBox.ItemTemplate>
+            </ListBox>
+
+          <!-- ── F16: Calendar view ─────────────────────────────────────── -->
+          <Grid x:Name="CalendarPanel" Grid.Row="1" Visibility="Collapsed">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- Month navigation header -->
+            <Grid Grid.Row="0" Margin="4,4,4,8">
+              <Button x:Name="BtnCalPrev" Padding="10,6"
+                      HorizontalAlignment="Left"
+                      Style="{StaticResource FlatButton}"
+                      Click="BtnCalPrev_Click"
+                      AutomationProperties.Name="Previous month"><Image Source="{StaticResource JtIcon.Back}" Style="{StaticResource JtSoloIcon}"/></Button>
+              <TextBlock x:Name="TxtCalMonth" FontSize="15" FontWeight="SemiBold"
+                         AutomationProperties.HeadingLevel="Level2"
+                         AutomationProperties.LiveSetting="Polite"
+                         Foreground="{DynamicResource BrushText}"
+                         HorizontalAlignment="Center" VerticalAlignment="Center"/>
+              <Button x:Name="BtnCalNext" Padding="10,6"
+                      HorizontalAlignment="Right"
+                      Style="{StaticResource FlatButton}"
+                      Click="BtnCalNext_Click"
+                      AutomationProperties.Name="Next month"><Image Source="{StaticResource JtIcon.Forward}" Style="{StaticResource JtSoloIcon}"/></Button>
+            </Grid>
+
+            <!-- Day-of-week headers -->
+            <UniformGrid Grid.Row="1" Rows="1" Columns="7" Margin="4,0,4,4"
+                         MinHeight="24">
+              <TextBlock Text="Mon" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BrushMuted}"/>
+              <TextBlock Text="Tue" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BrushMuted}"/>
+              <TextBlock Text="Wed" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BrushMuted}"/>
+              <TextBlock Text="Thu" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BrushMuted}"/>
+              <TextBlock Text="Fri" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BrushMuted}"/>
+              <TextBlock Text="Sat" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BrushMuted}"/>
+              <TextBlock Text="Sun" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" HorizontalAlignment="Center" Foreground="{DynamicResource BrushMuted}"/>
+            </UniformGrid>
+
+            <!-- Calendar grid (built dynamically in code) -->
+            <ScrollViewer Grid.Row="1" Margin="0,24,0,0" VerticalScrollBarVisibility="Auto">
+              <UniformGrid x:Name="CalendarGrid" Rows="6" Columns="7" Margin="4,0,4,4"/>
+            </ScrollViewer>
+          </Grid>
+
+          <!-- ── F19: Eisenhower priority matrix ────────────────────────── -->
+          <Grid x:Name="MatrixPanel" Grid.Row="1" Visibility="Collapsed" Margin="4">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="*"/>
+              <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+
+            <!-- Column headers -->
+            <StackPanel Grid.Row="0" Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4" VerticalAlignment="Center">
+              <Image Source="{StaticResource JtIcon.Flame}" Style="{StaticResource JtInlineIcon}"/>
+              <TextBlock Style="{StaticResource SectionHeader}" Text="Urgent" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BrushText}" Margin="0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Grid.Row="0" Grid.Column="2" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,4" VerticalAlignment="Center">
+              <Image Source="{StaticResource JtIcon.Hourglass}" Style="{StaticResource JtInlineIcon}"/>
+              <TextBlock Style="{StaticResource SectionHeader}" Text="Not Urgent" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BrushMuted}" Margin="0" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Row headers -->
+            <StackPanel Grid.Row="1" Grid.Column="0" Orientation="Horizontal" Margin="4,0" VerticalAlignment="Center">
+              <Image Source="{StaticResource JtIcon.Star}" Style="{StaticResource JtInlineIcon}"/>
+              <TextBlock Style="{StaticResource SectionHeader}" Text="Important" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BrushText}" Margin="0" VerticalAlignment="Center"/>
+            </StackPanel>
+            <StackPanel Grid.Row="2" Grid.Column="0" Orientation="Horizontal" Margin="4,0" VerticalAlignment="Center">
+              <Image Source="{StaticResource JtIcon.ListView}" Style="{StaticResource JtInlineIcon}"/>
+              <TextBlock Style="{StaticResource SectionHeader}" Text="Other" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BrushMuted}" Margin="0" VerticalAlignment="Center"/>
+            </StackPanel>
+
+            <!-- Q1: Urgent + Important (DO) -->
+            <Border Grid.Row="1" Grid.Column="1" BorderBrush="{DynamicResource BrushRed}" BorderThickness="2" Margin="2" CornerRadius="4">
+              <DockPanel>
+                <TextBlock Style="{StaticResource SectionHeader}" DockPanel.Dock="Top" Text="Do First" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                           Foreground="{DynamicResource BrushRedText}" Margin="6,4,6,2"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <ItemsControl x:Name="MatrixQ1" Margin="4,0,4,4">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Title}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushText}"
+                                   Padding="4,2" TextTrimming="CharacterEllipsis"/>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </ScrollViewer>
+              </DockPanel>
+            </Border>
+
+            <!-- Q2: Not Urgent + Important (SCHEDULE) -->
+            <Border Grid.Row="1" Grid.Column="2" BorderBrush="{DynamicResource BrushBlue}" BorderThickness="2" Margin="2" CornerRadius="4">
+              <DockPanel>
+                <TextBlock Style="{StaticResource SectionHeader}" DockPanel.Dock="Top" Text="Schedule" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                           Foreground="{DynamicResource BrushBlueText}" Margin="6,4,6,2"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <ItemsControl x:Name="MatrixQ2" Margin="4,0,4,4">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Title}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushText}"
+                                   Padding="4,2" TextTrimming="CharacterEllipsis"/>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </ScrollViewer>
+              </DockPanel>
+            </Border>
+
+            <!-- Q3: Urgent + Not Important (DELEGATE) -->
+            <Border Grid.Row="2" Grid.Column="1" BorderBrush="{DynamicResource BrushAmber}" BorderThickness="2" Margin="2" CornerRadius="4">
+              <DockPanel>
+                <TextBlock Style="{StaticResource SectionHeader}" DockPanel.Dock="Top" Text="Delegate" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                           Foreground="{DynamicResource BrushAmberText}" Margin="6,4,6,2"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <ItemsControl x:Name="MatrixQ3" Margin="4,0,4,4">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Title}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushText}"
+                                   Padding="4,2" TextTrimming="CharacterEllipsis"/>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </ScrollViewer>
+              </DockPanel>
+            </Border>
+
+            <!-- Q4: Not Urgent + Not Important (ELIMINATE) -->
+            <Border Grid.Row="2" Grid.Column="2" BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1" Margin="2" CornerRadius="4">
+              <DockPanel>
+                <TextBlock Style="{StaticResource SectionHeader}" DockPanel.Dock="Top" Text="Later / Drop" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                           Foreground="{DynamicResource BrushMuted}" Margin="6,4,6,2"/>
+                <ScrollViewer VerticalScrollBarVisibility="Auto">
+                  <ItemsControl x:Name="MatrixQ4" Margin="4,0,4,4">
+                    <ItemsControl.ItemTemplate>
+                      <DataTemplate>
+                        <TextBlock Text="{Binding Title}" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushMuted}"
+                                   Padding="4,2" TextTrimming="CharacterEllipsis"/>
+                      </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                  </ItemsControl>
+                </ScrollViewer>
+              </DockPanel>
+            </Border>
+          </Grid>
+
+          <!-- Empty state hint -->
+          <TextBlock x:Name="TxtTaskEmpty"
+                     Grid.Row="1"
+                     Text="No tasks yet — add one above"
+                     Foreground="{DynamicResource BrushMuted}"
+                     FontSize="13" HorizontalAlignment="Center"
+                     VerticalAlignment="Center" Margin="0,24,0,0"
+                     IsHitTestVisible="False"
+                     Visibility="Collapsed"/>
+
+          <!-- Quick-add bar -->
+          <Border Grid.Row="2"
+                  Background="{DynamicResource BrushBar}"
+                  BorderBrush="{DynamicResource BrushSurf2}"
+                  BorderThickness="0,1,0,0"
+                  Padding="12,8">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+              </Grid.RowDefinitions>
+
+              <TextBox x:Name="TxtQuickTask"
+                       Grid.Column="0"
+                       MinHeight="44" VerticalContentAlignment="Center"
+                       KeyDown="TxtQuickTask_KeyDown"
+                       ToolTip="Type a task and press Enter to add (or Ctrl+N)"
+                       AutomationProperties.Name="Quick add task"
+                       AutomationProperties.HelpText="Type a task title and press Enter to add it"/>
+
+              <DatePicker x:Name="TaskDatePicker"
+                          Grid.Column="1"
+                          Margin="6,0,0,0" MinHeight="44"
+                          Width="130"
+                          ToolTip="Optional due date"
+                          AutomationProperties.Name="Task due date"/>
+
+              <TextBox x:Name="TxtDueTime"
+                       Grid.Column="2"
+                       Width="90" MinHeight="44"
+                       Margin="4,0,0,0"
+                       VerticalContentAlignment="Center"
+                       ToolTip="Optional due time (HH:MM, 24-hour)"
+                       AutomationProperties.Name="Task due time (HH:MM)"/>
+
+              <Button Grid.Column="3"
+                      Style="{StaticResource PrimaryButton}"
+                      Padding="12,6" MinHeight="44" Margin="6,0,0,0"
+                      Click="BtnAddTask_Click"
+                      AutomationProperties.Name="Add task">
+                <Button.Content>
+                  <StackPanel Orientation="Horizontal">
+                    <Image Source="{StaticResource JtIcon.NewTask}" Style="{StaticResource JtBtnIcon}"/>
+                    <TextBlock Text="Add" VerticalAlignment="Center"/>
+                  </StackPanel>
+                </Button.Content>
+              </Button>
+
+              <!-- NLP date phrase recognised but rejected (out of range / invalid) — task still added. -->
+              <TextBlock x:Name="TxtQuickTaskHint"
+                         Grid.Row="1" Grid.ColumnSpan="4"
+                         Margin="2,6,0,0" TextWrapping="Wrap"
+                         Foreground="{DynamicResource BrushAmberText}"
+                         FontSize="{DynamicResource FontSizeCaption}"
+                         Visibility="Collapsed"
+                         AutomationProperties.LiveSetting="Polite"
+                         AutomationProperties.Name="Quick add hint"/>
+            </Grid>
+          </Border>
+          <!-- Undo delete toast (overlays task list) -->
+          <Border x:Name="DeleteUndoToast"
+                  Grid.Row="1"
+                  VerticalAlignment="Bottom" HorizontalAlignment="Stretch"
+                  Panel.ZIndex="10"
+                  Background="{DynamicResource BrushSurf2}"
+                  CornerRadius="6" Margin="12,0,12,12"
+                  Padding="12,10"
+                  BorderBrush="{DynamicResource BrushText}" BorderThickness="1"
+                  Visibility="Collapsed"
+                  MouseEnter="DeleteUndoToast_HoldChanged" MouseLeave="DeleteUndoToast_HoldChanged"
+                  IsKeyboardFocusWithinChanged="DeleteUndoToast_FocusChanged">
+            <Grid>
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <TextBlock x:Name="TxtUndoToast"
+                         Grid.Column="0" TextWrapping="Wrap"
+                         AutomationProperties.LiveSetting="Assertive"
+                         FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                         Foreground="{DynamicResource BrushText}"
+                         VerticalAlignment="Center"/>
+              <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                <Button x:Name="BtnUndoDelete"
+                        Content="Undo"
+                        Style="{StaticResource PrimaryButton}"
+                        MinHeight="44" Padding="16,4"
+                        Click="BtnUndoDelete_Click"
+                        AutomationProperties.Name="Undo task delete"/>
+                <Button x:Name="BtnDismissUndo"
+                        Content="✕" Margin="6,0,0,0"
+                        Style="{StaticResource FlatButton}"
+                        Click="BtnDismissUndo_Click"
+                        ToolTip="Dismiss (the delete stays)"
+                        AutomationProperties.Name="Dismiss undo prompt"/>
+              </StackPanel>
+            </Grid>
+          </Border>
+
+          </Grid> <!-- /Tasks inner content Grid -->
+        </Grid>   <!-- /PanelTasks -->
+
+      </Grid>
+
+    </DockPanel>
+  </Grid>
+</Window>

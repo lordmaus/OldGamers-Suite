@@ -1,0 +1,147 @@
+<Window x:Class="BadgeOverlay.WelcomeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:BadgeOverlay.Controls"
+        Title="Welcome to Badge Overlay"
+        Width="540" Height="540"
+        MinWidth="500" MinHeight="500"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Background="{DynamicResource BrushBg}"
+        Foreground="{DynamicResource BrushText}"
+        FontFamily="Segoe UI"
+        AutomationProperties.Name="Welcome to Badge Overlay">
+
+    <Grid Margin="32,24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Step indicator pills -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,24">
+            <Ellipse x:Name="Pill1" Width="10" Height="10" Margin="4,0"
+                     Fill="{DynamicResource BrushBlue}"/>
+            <Ellipse x:Name="Pill2" Width="10" Height="10" Margin="4,0"
+                     Fill="{DynamicResource BrushSurf2}"/>
+            <Ellipse x:Name="Pill3" Width="10" Height="10" Margin="4,0"
+                     Fill="{DynamicResource BrushSurf2}"/>
+        </StackPanel>
+
+        <!-- Page content (one of three Grids visible at a time) -->
+        <Grid Grid.Row="1">
+
+            <!-- Step 1 — What -->
+            <StackPanel x:Name="Step1" Visibility="Visible">
+                <TextBlock Text="What it does" AutomationProperties.HeadingLevel="Level1"
+                           FontSize="22" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushBlueText}"
+                           Margin="0,0,0,12"/>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22"
+                           Foreground="{DynamicResource BrushText}">
+                    Badge Overlay shows colour-coded labels for the UI element under your cursor — a Button, a Tab, a Link, an Icon, or a Text Field — in real time, in any app.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,16,0,0"
+                           Foreground="{DynamicResource BrushText}">
+                    It's designed for low-vision users, screen-reader supplementers, accessibility auditors, and anyone who wants a second pair of eyes on what they're about to click.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,16,0,0"
+                           Foreground="{DynamicResource BrushMuted}">
+                    Badge Overlay never replaces your cursor — it works alongside YoloMouse, Windows custom cursors, and any third-party cursor tool.
+                </TextBlock>
+            </StackPanel>
+
+            <!-- Step 2 — How -->
+            <StackPanel x:Name="Step2" Visibility="Collapsed">
+                <TextBlock Text="How to use it" AutomationProperties.HeadingLevel="Level1"
+                           FontSize="22" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushBlueText}"
+                           Margin="0,0,0,12"/>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22"
+                           Foreground="{DynamicResource BrushText}">
+                    1.   Move your cursor over any UI element. A pill appears next to your pointer with the element's name.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,12,0,0"
+                           Foreground="{DynamicResource BrushText}">
+                    2.   Open the Info Overlay (low-vision panel) for a larger, draggable readout — toggle it from Settings.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,12,0,0"
+                           Foreground="{DynamicResource BrushText}">
+                    3.   Use Ctrl+Shift+O to pause the overlay any time. Press F1 to see every shortcut.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,16,0,0"
+                           Foreground="{DynamicResource BrushMuted}">
+                    All settings save automatically — your changes persist between launches.
+                </TextBlock>
+            </StackPanel>
+
+            <!-- Step 3 — Help -->
+            <StackPanel x:Name="Step3" Visibility="Collapsed">
+                <TextBlock Text="Where to get help" AutomationProperties.HeadingLevel="Level1"
+                           FontSize="22" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushBlueText}"
+                           Margin="0,0,0,12"/>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22"
+                           Foreground="{DynamicResource BrushText}">
+                    •   Press F1 anywhere in Badge Overlay for the keyboard shortcut reference.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,12,0,0"
+                           Foreground="{DynamicResource BrushText}">
+                    •   Open the About dialog (Alt+A) for the README, the issue tracker, and the privacy statement.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,12,0,0"
+                           Foreground="{DynamicResource BrushText}">
+                    •   You can re-open this welcome from About → "Show welcome again" any time.
+                </TextBlock>
+                <TextBlock TextWrapping="Wrap" FontSize="14" LineHeight="22" Margin="0,16,0,0"
+                           Foreground="{DynamicResource BrushBlueText}">
+                    Click "Get started" below to begin.
+                </TextBlock>
+            </StackPanel>
+        </Grid>
+
+        <!-- Skip — FlatButton with muted foreground so it's clearly
+             secondary to the primary "Next / Get started" action, but
+             still keyboard-reachable and 44 px compliant. Hyperlink
+             was not Tab-stop-friendly. -->
+        <Button Grid.Row="2" Content="Skip — don't show this again"
+                Style="{StaticResource FlatButton}"
+                HorizontalAlignment="Center"
+                Padding="14,6" MinHeight="44"
+                Margin="0,0,0,12"
+                Foreground="{DynamicResource BrushMuted}"
+                FontSize="{DynamicResource FontSizeCaption}"
+                AutomationProperties.Name="Skip welcome tour"
+                AutomationProperties.HelpText="Close this tour and don't show it again on launch. You can replay it from About."
+                ToolTip="Close this tour. You can replay it any time from About → Show welcome tour again."
+                Click="Skip_Click"/>
+
+        <!-- Nav buttons -->
+        <Grid Grid.Row="3" Margin="0,0,20,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="BtnBack" Grid.Column="0"
+                    Style="{StaticResource FlatButton}"
+                    MinWidth="100" Padding="14,6"
+                    HorizontalAlignment="Left"
+                    IsEnabled="False"
+                    Click="Back_Click"
+                    AutomationProperties.Name="Back"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Back}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Back" VerticalAlignment="Center"/></StackPanel></Button>
+            <Button x:Name="BtnNext" Grid.Column="1"
+                    Style="{StaticResource PrimaryButton}"
+                    MinWidth="120" Padding="14,6"
+                    IsDefault="True"
+                    Click="Next_Click"
+                    AutomationProperties.Name="Next"><StackPanel Orientation="Horizontal"><Image x:Name="BtnNextIcon" Source="{StaticResource JtIcon.Forward}" Style="{StaticResource JtBtnIcon}"/><TextBlock x:Name="BtnNextText" Text="Next" VerticalAlignment="Center"/></StackPanel></Button>
+        </Grid>
+
+        <!-- WCAG 2.2 AAA grip: 44px, focusable, arrow-key resize, 2px focus ring (suite-canonical) -->
+        <ctl:AccessibleResizeGrip Margin="0,0,-32,-24"/>
+    </Grid>
+</Window>

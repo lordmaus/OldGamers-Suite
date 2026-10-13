@@ -1,0 +1,33 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Sundowner — late afternoon sunset -->
+  <SolidColorBrush x:Key="BrushBg"           Color="#1C1008"/>
+  <SolidColorBrush x:Key="BrushSurf"         Color="#281508"/>
+  <SolidColorBrush x:Key="BrushSurf2"        Color="#381E0E"/>
+  <SolidColorBrush x:Key="BrushText"         Color="#FFD0A0"/>
+  <SolidColorBrush x:Key="BrushMuted"        Color="#FF9A55"/>
+  <SolidColorBrush x:Key="BrushHint"         Color="#E58F5B"/>
+  <SolidColorBrush x:Key="BrushBlue"         Color="#80D8FF"/>
+  <SolidColorBrush x:Key="BrushRed"          Color="#FF5E5E"/>
+  <SolidColorBrush x:Key="BrushGreen"        Color="#CCFF90"/>
+  <SolidColorBrush x:Key="BrushAmber"        Color="#FFD740"/>
+  <SolidColorBrush x:Key="BrushOrange"       Color="#FF6A00"/>
+  <SolidColorBrush x:Key="BrushYellow"       Color="#FFD740"/>
+  <SolidColorBrush x:Key="BrushPurple"       Color="#EA80FC"/>
+  <SolidColorBrush x:Key="BrushPink"         Color="#FF80AB"/>
+  <SolidColorBrush x:Key="BrushTeal"         Color="#A7FFEB"/>
+  <SolidColorBrush x:Key="BrushBar"          Color="#140A05"/>
+  <!-- BrushDisabled exempt per WCAG — inactive UI -->
+  <SolidColorBrush x:Key="BrushDisabled"     Color="#5A3010"/>
+  <!-- Focus ring — 7:1+ contrast on BrushBg -->
+  <SolidColorBrush x:Key="FocusRingBrush"    Color="#FFD700"/>
+  <!-- CheckBox glyph on BrushBlue fill -->
+  <SolidColorBrush x:Key="BrushBgForChecked" Color="#000000"/>
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#CC6020"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#FF7C7C"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#80D8FF"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#CCFF90"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#FFD740"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#000000"/>
+</ResourceDictionary>

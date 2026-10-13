@@ -1,0 +1,64 @@
+<Window x:Class="NoteStation.PinSetupDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Set Note PIN"
+        Width="320" SizeToContent="Height"
+        ResizeMode="NoResize"
+        WindowStartupLocation="CenterOwner"
+        ShowInTaskbar="False"
+        Background="{DynamicResource BrushBg}"
+        Foreground="{DynamicResource BrushText}"
+        KeyDown="Window_KeyDown">
+  <!-- WCAG AAA resize-grip EXCEPTION (documented 2026-09-25): fixed-width PIN prompt, two fields,
+       nothing to reveal by resizing; standard title bar keeps OS keyboard move (Alt+Space → Move). -->
+  <Grid Margin="16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <StackPanel Grid.Row="0" Margin="0,0,0,12">
+      <TextBlock Text="Enter a 4–9 digit PIN for this note."
+                 TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}"/>
+      <DockPanel Margin="0,8,0,0">
+        <Image DockPanel.Dock="Left" Source="{StaticResource JtIcon.EyeOff}" Style="{StaticResource JtInlineIcon}"
+               VerticalAlignment="Top" Margin="0,2,6,0" AutomationProperties.Name="Hide note"/>
+        <TextBlock TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   Text="Hide Note covers this note until the PIN is entered. It does not encrypt the note — the text stays in NoteStation's data folder."/>
+      </DockPanel>
+    </StackPanel>
+
+    <TextBlock Grid.Row="1" Text="New PIN:" Style="{StaticResource SectionHeader}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
+    <PasswordBox x:Name="PinBox1" Grid.Row="2" MaxLength="9"
+                 MinHeight="44"
+                 AutomationProperties.Name="New PIN (4 to 9 digits)"
+                 Margin="0,0,0,10"/>
+
+    <TextBlock Grid.Row="3" Text="Confirm PIN:" Style="{StaticResource SectionHeader}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
+    <PasswordBox x:Name="PinBox2" Grid.Row="4" MaxLength="9"
+                 MinHeight="44"
+                 AutomationProperties.Name="Confirm new PIN"
+                 Margin="0,0,0,8"/>
+
+    <TextBlock x:Name="ErrorText" Grid.Row="5"
+               Text="" Foreground="{DynamicResource BrushRedText}" FontSize="{DynamicResource FontSizeCaption}"
+               TextWrapping="Wrap" Margin="0,4,0,0"
+               Visibility="Collapsed"/>
+
+    <StackPanel Grid.Row="6" Orientation="Horizontal"
+                HorizontalAlignment="Right" Margin="0,8,0,0">
+      <Button Content="OK" Width="72" MinHeight="44" Margin="0,0,8,0"
+              Style="{StaticResource PrimaryButton}"
+              IsDefault="True" Click="BtnOk_Click"
+              AutomationProperties.Name="Confirm PIN"/>
+      <Button Content="Cancel" Width="72" MinHeight="44"
+              IsCancel="True" Click="BtnCancel_Click"
+              AutomationProperties.Name="Cancel"/>
+    </StackPanel>
+  </Grid>
+</Window>

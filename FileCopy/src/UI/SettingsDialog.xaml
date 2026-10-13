@@ -1,0 +1,173 @@
+<Window x:Class="FileCopy.SettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:FileCopy.Controls"
+        Title="Settings — File Copy Studio"
+        Width="540" SizeToContent="Height"
+        MinWidth="460"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        Closing="Window_Closing"
+        AutomationProperties.Name="File Copy Studio Settings">
+
+  <!-- Outer grid — resize grip lives outside scaled content -->
+  <Grid>
+  <DockPanel>
+
+    <!-- ── Header banner ── -->
+    <Border DockPanel.Dock="Top"
+            Background="{DynamicResource BrushSurf}"
+            BorderBrush="{DynamicResource BrushBlue}"
+            BorderThickness="0,0,0,3"
+            Padding="14,14,14,14">
+      <StackPanel>
+        <StackPanel Orientation="Horizontal">
+          <Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtHeaderIcon}"/>
+          <TextBlock Text="Settings" VerticalAlignment="Center"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="16" FontWeight="Bold"
+                     Foreground="{DynamicResource BrushText}"/>
+        </StackPanel>
+        <TextBlock Text="Copy behaviour, defaults, and startup options"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,4,0,0"/>
+      </StackPanel>
+    </Border>
+
+    <!-- ── Footer ── -->
+    <Border DockPanel.Dock="Bottom"
+            Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushSurf2}"
+            BorderThickness="0,1,0,0"
+            Padding="14,0" MinHeight="52">
+      <Grid VerticalAlignment="Center">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="LblSaved" Grid.Column="0"
+                   Text="" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushGreenText}"
+                   VerticalAlignment="Center"/>
+        <Button Grid.Column="1"
+                Content="Close"
+                Style="{StaticResource PrimaryButton}"
+                Padding="24,0" MinHeight="44"
+                IsCancel="True"
+                AutomationProperties.Name="Close settings dialog"
+                Click="BtnClose_Click"/>
+      </Grid>
+    </Border>
+
+    <!-- ── Body ── -->
+    <!-- ScrollViewer guards against clipping at low DPI-scaled resolutions (WACK 800×600 test) -->
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+    <StackPanel Margin="14,12,14,12">
+
+      <!-- COPY DEFAULTS -->
+      <TextBlock Text="COPY DEFAULTS" AutomationProperties.HeadingLevel="Level2"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
+      <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,6" Margin="0,0,0,12">
+        <StackPanel>
+          <CheckBox x:Name="ChkVerifyCrc"
+                    Content="Verify CRC32 after each file copy"
+                    MinHeight="44"
+                    ToolTip="Hash source and destination after every copy to confirm bit-perfect transfer"
+                    AutomationProperties.Name="Verify CRC32 after copy"
+                    AutomationProperties.HelpText="Enables CRC32 verification by default for new jobs"
+                    Checked="Pref_Changed" Unchecked="Pref_Changed"/>
+          <CheckBox x:Name="ChkPreserveTimestamps"
+                    Content="Preserve file timestamps"
+                    MinHeight="44"
+                    ToolTip="Copy the source file's LastWriteTime to the destination"
+                    AutomationProperties.Name="Preserve file timestamps"
+                    Checked="Pref_Changed" Unchecked="Pref_Changed"/>
+          <CheckBox x:Name="ChkPreserveAttributes"
+                    Content="Preserve file attributes (read-only, hidden, system)"
+                    MinHeight="44"
+                    ToolTip="Copy DOS file attributes to the destination"
+                    AutomationProperties.Name="Preserve file attributes"
+                    Checked="Pref_Changed" Unchecked="Pref_Changed"/>
+          <CheckBox x:Name="ChkIncludeSubdirs"
+                    Content="Include subdirectories by default"
+                    MinHeight="44"
+                    ToolTip="Recurse into subdirectories when scanning"
+                    AutomationProperties.Name="Include subdirectories by default"
+                    Checked="Pref_Changed" Unchecked="Pref_Changed"/>
+          <CheckBox x:Name="ChkResumePartial"
+                    Content="Resume partial transfers"
+                    MinHeight="44"
+                    ToolTip="Skip the already-copied portion of a file if a .fctemp partial exists"
+                    AutomationProperties.Name="Resume partial transfers"
+                    Checked="Pref_Changed" Unchecked="Pref_Changed"/>
+        </StackPanel>
+      </Border>
+
+      <!-- DISPLAY & FONTS -->
+      <TextBlock Text="DISPLAY &amp; FONTS"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
+      <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,10" Margin="0,0,0,12">
+        <StackPanel>
+          <!-- App font family -->
+          <TextBlock Text="App font family:"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                     Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
+          <ComboBox x:Name="CboAppFontFamily" MinHeight="44" Margin="0,0,0,12"
+                    ToolTip="Choose an app-wide font. Dyslexia-friendly options at the top."
+                    AutomationProperties.Name="App font family"
+                    AutomationProperties.HelpText="Choose the font used across the app. OpenDyslexic and Atkinson Hyperlegible improve readability for low-vision users."
+                    SelectionChanged="CboAppFontFamily_SelectionChanged"/>
+
+          <!-- App font size -->
+          <Grid Margin="0,0,0,4">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="App font size:"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBlock Grid.Column="1" x:Name="LblAppFontSize" Text="13 px"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="SemiBold"
+                       Foreground="{DynamicResource BrushBlueText}" VerticalAlignment="Center"/>
+          </Grid>
+          <Slider x:Name="SldAppFontSize"
+                  Minimum="8" Maximum="72" TickFrequency="2"
+                  IsSnapToTickEnabled="True"
+                  SmallChange="1" LargeChange="4"
+                  ToolTip="Drag to change app body font size (8 to 72 px)"
+                  AutomationProperties.Name="App font size"
+                  AutomationProperties.HelpText="Range 8 to 72 px"
+                  ValueChanged="SldAppFontSize_ValueChanged"/>
+        </StackPanel>
+      </Border>
+
+      <!-- STARTUP -->
+      <TextBlock Text="STARTUP" AutomationProperties.HeadingLevel="Level2"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
+      <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="12,6" Margin="0,0,0,12">
+        <CheckBox x:Name="ChkStartup"
+                  Content="Launch File Copy Studio at Windows startup"
+                  MinHeight="44"
+                  ToolTip="Adds a registry Run key so File Copy Studio starts when you log in to Windows"
+                  AutomationProperties.Name="Launch File Copy Studio at Windows startup"
+                  AutomationProperties.HelpText="When checked, File Copy Studio starts automatically when you log in to Windows"
+                  Checked="ChkStartup_Changed" Unchecked="ChkStartup_Changed"/>
+      </Border>
+
+    </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+    <!-- WCAG: bottom-right drag handle — canonical accessible grip (same pattern as
+         MainWindow.xaml / AboutDialog.xaml / HotkeysDialog.xaml / PresetSlotDialog.xaml):
+         focusable, keyboard-resizable (WCAG 2.5.7), mouse-draggable via WM_NCLBUTTONDOWN
+         through shared NativeMethods. Replaces native ResizeMode="CanResizeWithGrip",
+         which drew a glyph with no keyboard path — converged 2026-09-15. -->
+    <ctl:AccessibleResizeGrip/>
+  </Grid>
+</Window>

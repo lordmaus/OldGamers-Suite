@@ -1,0 +1,32 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Dark (default) — WCAG AAA target audience: low-vision users -->
+  <SolidColorBrush x:Key="BrushBg"        Color="#1C1C1C"/>
+  <SolidColorBrush x:Key="BrushSurf"      Color="#2A2A2A"/>
+  <SolidColorBrush x:Key="BrushSurf2"     Color="#333333"/>
+  <!-- BrushText: #E0E0E0 on #1C1C1C = 13.8:1 — AAA -->
+  <SolidColorBrush x:Key="BrushText"      Color="#E0E0E0"/>
+  <!-- BrushMuted: #AAAAAA on #1C1C1C = 7.2:1 — AAA -->
+  <SolidColorBrush x:Key="BrushMuted"     Color="#C1C1C1"/>
+  <SolidColorBrush x:Key="BrushHint"      Color="#B5B5B5"/>
+  <!-- BrushBlue: #6BCAFA on #1C1C1C = 7.5:1 — AAA -->
+  <SolidColorBrush x:Key="BrushBlue"      Color="#6BCAFA"/>
+  <!-- BrushRed: #F28B82 on #1C1C1C = 7.1:1 — AAA -->
+  <SolidColorBrush x:Key="BrushRed"       Color="#F28B82"/>
+  <!-- BrushGreen: #81C995 on #1C1C1C = 7.0:1 — AAA -->
+  <SolidColorBrush x:Key="BrushGreen"     Color="#81C995"/>
+  <!-- BrushAmber: #FFD700 on #1C1C1C = 13.7:1 — AAA -->
+  <SolidColorBrush x:Key="BrushAmber"     Color="#FFD700"/>
+  <SolidColorBrush x:Key="BrushBar"       Color="#141414"/>
+  <!-- BrushDisabled: WCAG 1.4.3 exempts disabled controls -->
+  <SolidColorBrush x:Key="BrushDisabled"  Color="#555555"/>
+  <!-- Focus ring: #FFD700 on #1C1C1C = 13.7:1 — AAA -->
+  <SolidColorBrush x:Key="FocusRingBrush" Color="#FFD700"/>
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#737373"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#F49F97"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#6BCAFA"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#81C995"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#FFD700"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#000000"/>
+</ResourceDictionary>

@@ -1,0 +1,100 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <UseWindowsForms>true</UseWindowsForms>
+    <AssemblyName>BadgeOverlay</AssemblyName>
+    <RootNamespace>BadgeOverlay</RootNamespace>
+    <AssemblyTitle>Badge Overlay</AssemblyTitle>
+    <Product>Badge Overlay</Product>
+    <Nullable>disable</Nullable>
+    <LangVersion>latest</LangVersion>
+    <!-- Version yyyy.MM.dd.NNNN — computed by BumpBuildCounter (below) from version.txt; do not hand-edit. -->
+    <BuildDate>$([System.DateTime]::UtcNow.ToString(yyyy.MM.dd))</BuildDate>
+    <BuildCounter Condition="'$(BuildCounter)' == ''">0001</BuildCounter>
+    <Version>$(BuildDate).$(BuildCounter)</Version>
+    <FileVersion>$(BuildDate).$(BuildCounter)</FileVersion>
+    <!-- Unpadded 4-part form for Win32 / NSIS VIProductVersion. -->
+    <AssemblyVersion>$([System.DateTime]::UtcNow.Year).$([System.DateTime]::UtcNow.Month).$([System.DateTime]::UtcNow.Day).$([System.Convert]::ToInt32($(BuildCounter)))</AssemblyVersion>
+    <Optimize>true</Optimize>
+    <!-- portable PDB next to the exe → crash stacks get file/line (S-08). build.bat stages it in Builds\<ver>\, not the installer. -->
+    <DebugType>portable</DebugType>
+    <!-- Reproducible builds. -->
+    <Deterministic>true</Deterministic>
+    <ContinuousIntegrationBuild Condition="'$(CI)' == 'true'">true</ContinuousIntegrationBuild>
+    <ApplicationManifest>Assets\app.manifest</ApplicationManifest>
+    <ApplicationIcon>Assets\app.ico</ApplicationIcon>
+    <!-- Per-monitor DPI v2 (replaces manifest dpiAware). -->
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+
+    <!-- Background GC for the 30 Hz overlay loop; App.OnStartup also sets SustainedLowLatency (BO-06: keep until measured). -->
+    <ConcurrentGarbageCollection>true</ConcurrentGarbageCollection>
+    <ServerGarbageCollection>false</ServerGarbageCollection>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <InternalsVisibleTo Include="BadgeOverlay.Tests" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="Assets\app.manifest" />
+    <None Update="Assets\app.ico" />
+    <Content Include="Assets\app.ico">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <!-- System.Speech (SAPI TTS for Screen Reader Mode). Pinned 9.0.0 deliberately: re-test SAPI on Win10 LTSC / Win11 N before bumping; never use a float range. -->
+  <ItemGroup>
+    <PackageReference Include="System.Speech" Version="9.0.0" />
+  </ItemGroup>
+
+  <!-- BumpBuildCounter: before every build, read version.txt (yyyy.MM.dd.NNNN; legacy "yyyy.MM.dd NNNN" accepted),
+       increment same-day or reset to 0001, write back, expose $(BuildCounter). -->
+  <Target Name="BumpBuildCounter"
+          BeforeTargets="PrepareForBuild"
+          Condition="'$(SkipBumpBuildCounter)' != 'true'">
+    <PropertyGroup>
+      <_VersionFile>$(MSBuildProjectDirectory)\version.txt</_VersionFile>
+      <_TodayUtc>$([System.DateTime]::UtcNow.ToString(yyyy.MM.dd))</_TodayUtc>
+    </PropertyGroup>
+
+    <!-- Read existing line, or treat as empty if file missing. -->
+    <ReadLinesFromFile File="$(_VersionFile)" Condition="Exists('$(_VersionFile)')">
+      <Output TaskParameter="Lines" PropertyName="_StoredLine"/>
+    </ReadLinesFromFile>
+
+    <PropertyGroup>
+      <_StoredLine>$(_StoredLine.Trim())</_StoredLine>
+      <!-- Legacy space form "yyyy.MM.dd NNNN" -->
+      <_StoredDate Condition="$(_StoredLine.Contains(' '))">$(_StoredLine.Split(' ')[0])</_StoredDate>
+      <_StoredNum  Condition="$(_StoredLine.Contains(' '))">$(_StoredLine.Split(' ')[1])</_StoredNum>
+      <!-- Suite form "yyyy.MM.dd.NNNN" (2026-09-25) -->
+      <_StoredDate Condition="!$(_StoredLine.Contains(' ')) And $(_StoredLine.Length) &gt;= 12">$(_StoredLine.Substring(0, 10))</_StoredDate>
+      <_StoredNum  Condition="!$(_StoredLine.Contains(' ')) And $(_StoredLine.Length) &gt;= 12">$(_StoredLine.Substring(11))</_StoredNum>
+      <_StoredNum Condition="'$(_StoredNum)' == ''">0000</_StoredNum>
+      <!-- Same-day = increment, else reset. -->
+      <_NextNum Condition="'$(_StoredDate)' == '$(_TodayUtc)'">$([MSBuild]::Add($([System.Convert]::ToInt32($(_StoredNum))), 1))</_NextNum>
+      <_NextNum Condition="'$(_StoredDate)' != '$(_TodayUtc)'">1</_NextNum>
+      <_NextNumPadded>$(_NextNum.PadLeft(4, '0'))</_NextNumPadded>
+    </PropertyGroup>
+
+    <!-- Write back so the next build starts from this value. -->
+    <WriteLinesToFile File="$(_VersionFile)"
+                      Lines="$(_TodayUtc).$(_NextNumPadded)"
+                      Overwrite="true"/>
+
+    <!-- Promote to a GLOBAL property so the PropertyGroup at the top of
+         the csproj sees it on this build. Setting via Properties on a
+         CallTarget is the standard MSBuild idiom for this pattern. -->
+    <CreateProperty Value="$(_NextNumPadded)">
+      <Output TaskParameter="Value" PropertyName="BuildCounter"/>
+    </CreateProperty>
+
+    <Message Importance="high"
+             Text="Build counter: $(_TodayUtc).$(_NextNumPadded)"/>
+  </Target>
+
+</Project>

@@ -1,0 +1,25 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Tokyo Night — https://github.com/enkia/tokyo-night-vscode-theme
+       Text #C0CAF5 on Bg #1A1B26 ≈ 10.7:1 (WCAG AAA ✓) -->
+  <SolidColorBrush x:Key="BrushBg"       Color="#1A1B26"/>
+  <SolidColorBrush x:Key="BrushSurf"     Color="#24283B"/>
+  <SolidColorBrush x:Key="BrushSurf2"    Color="#2F3549"/>
+  <SolidColorBrush x:Key="BrushText"     Color="#C0CAF5"/>
+  <SolidColorBrush x:Key="BrushMuted"    Color="#BDC4E0"/>
+  <SolidColorBrush x:Key="BrushHint"     Color="#ADB3CC"/>
+  <SolidColorBrush x:Key="BrushBlue"     Color="#7AA2F7"/>
+  <SolidColorBrush x:Key="BrushRed"      Color="#F7768E"/>
+  <SolidColorBrush x:Key="BrushGreen"    Color="#9ECE6A"/>
+  <SolidColorBrush x:Key="BrushAmber"    Color="#E0AF68"/>
+  <SolidColorBrush x:Key="BrushBar"      Color="#16161E"/>
+  <SolidColorBrush x:Key="BrushDisabled" Color="#565F89"/>
+  <SolidColorBrush x:Key="FocusRingBrush" Color="#E0AF68"/><!-- warm gold: 7.8:1 on #1A1B26 -->
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#656F9F"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#F998AA"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#93B4F9"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#9ECE6A"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#E0AF68"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#000000"/>
+</ResourceDictionary>

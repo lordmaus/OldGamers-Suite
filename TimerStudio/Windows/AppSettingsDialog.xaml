@@ -1,0 +1,268 @@
+<Window x:Class="TimerStudio.AppSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:TimerStudio.Controls"
+        Title="Timer Studio — Settings"
+        Width="540" SizeToContent="Height" MaxHeight="700"
+        MinWidth="460" MinHeight="480"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        AutomationProperties.Name="Timer Studio Settings">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>   <!-- 0: header bar -->
+      <RowDefinition Height="*"/>      <!-- 1: scrollable content -->
+      <RowDefinition Height="Auto"/>   <!-- 2: footer bar -->
+    </Grid.RowDefinitions>
+
+    <!-- Header bar -->
+    <Border Grid.Row="0" Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1"
+            Padding="20,14" MinHeight="52">
+      <TextBlock Style="{StaticResource DialogTitle}" Text="⚙  Settings"
+                 FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+                 Foreground="{DynamicResource BrushText}"/>
+    </Border>
+
+    <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto">
+      <StackPanel Margin="20,14,20,14">
+
+        <!-- ── EVENT TIMER FONT SIZES ── -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="EVENT TIMER FONT SIZES"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="DateTime / calendar event timers"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,10"/>
+
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="90"/>
+            <ColumnDefinition Width="44"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Countdown display size"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Large time display on each card"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <Slider Grid.Column="1" x:Name="SldEventTimeFontScale"
+                  Minimum="0.5" Maximum="4.0" TickFrequency="0.25" IsSnapToTickEnabled="True"
+                  VerticalAlignment="Center"
+                  AutomationProperties.Name="Event timer countdown font scale"
+                  ValueChanged="SldEventTimeFontScale_Changed"/>
+          <TextBlock Grid.Column="2" x:Name="LblEventTimeFontScale"
+                     Text="1.00×" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="6,0,0,0"/>
+        </Grid>
+
+        <Grid Margin="0,0,0,16">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="90"/>
+            <ColumnDefinition Width="44"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Title font size"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Timer name in the card header"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <Slider Grid.Column="1" x:Name="SldEventTitleFontScale"
+                  Minimum="0.5" Maximum="4.0" TickFrequency="0.25" IsSnapToTickEnabled="True"
+                  VerticalAlignment="Center"
+                  AutomationProperties.Name="Event timer title font scale"
+                  ValueChanged="SldEventTitleFontScale_Changed"/>
+          <TextBlock Grid.Column="2" x:Name="LblEventTitleFontScale"
+                     Text="1.00×" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="6,0,0,0"/>
+        </Grid>
+
+        <Separator Margin="0,0,0,12"/>
+
+        <!-- ── COUNTDOWN / STOPWATCH FONT SIZES ── -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="COUNTDOWN / STOPWATCH FONT SIZES"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="Countdown and Stopwatch timers"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,10"/>
+
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="90"/>
+            <ColumnDefinition Width="44"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Countdown display size"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Large time display on each card"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <Slider Grid.Column="1" x:Name="SldTimeFontScale"
+                  Minimum="0.5" Maximum="4.0" TickFrequency="0.25" IsSnapToTickEnabled="True"
+                  VerticalAlignment="Center"
+                  AutomationProperties.Name="Countdown font scale"
+                  ValueChanged="SldTimeFontScale_Changed"/>
+          <TextBlock Grid.Column="2" x:Name="LblTimeFontScale"
+                     Text="1.00×" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="6,0,0,0"/>
+        </Grid>
+
+        <Grid Margin="0,0,0,16">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="90"/>
+            <ColumnDefinition Width="44"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Title font size"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Timer name in the card header"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <Slider Grid.Column="1" x:Name="SldTitleFontScale"
+                  Minimum="0.5" Maximum="4.0" TickFrequency="0.25" IsSnapToTickEnabled="True"
+                  VerticalAlignment="Center"
+                  AutomationProperties.Name="Title font scale"
+                  ValueChanged="SldTitleFontScale_Changed"/>
+          <TextBlock Grid.Column="2" x:Name="LblTitleFontScale"
+                     Text="1.00×" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="6,0,0,0"/>
+        </Grid>
+
+        <Separator Margin="0,0,0,12"/>
+
+        <!-- ── ALERT DEFAULTS (shared by all timer types) ── -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="ALERT DEFAULTS"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="Applied to all new timers"
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,10"/>
+
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="140"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="Alert sound"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+          <ComboBox Grid.Column="1" x:Name="CboDefaultSound"
+                    AutomationProperties.Name="Default alert sound"
+                    SelectionChanged="CboDefaultSound_Changed">
+            <ComboBoxItem>Beep</ComboBoxItem>
+            <ComboBoxItem>Chime</ComboBoxItem>
+            <ComboBoxItem>Alarm</ComboBoxItem>
+            <ComboBoxItem>Bell</ComboBoxItem>
+            <ComboBoxItem>Ping</ComboBoxItem>
+            <ComboBoxItem>Silent</ComboBoxItem>
+          </ComboBox>
+        </Grid>
+
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="140"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="Alert style"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+          <ComboBox Grid.Column="1" x:Name="CboDefaultStyle"
+                    AutomationProperties.Name="Default alert style"
+                    SelectionChanged="CboDefaultStyle_Changed">
+            <ComboBoxItem>Lens (small popup)</ComboBoxItem>
+            <ComboBoxItem>Fullscreen flash</ComboBoxItem>
+            <ComboBoxItem>Both</ComboBoxItem>
+          </ComboBox>
+        </Grid>
+
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="90"/>
+            <ColumnDefinition Width="44"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Auto-dismiss (seconds)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="0 = require manual dismiss"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <Slider Grid.Column="1" x:Name="SldDefaultFlashSecs"
+                  Minimum="0" Maximum="60" TickFrequency="1" IsSnapToTickEnabled="True"
+                  VerticalAlignment="Center"
+                  AutomationProperties.Name="Default auto-dismiss seconds"
+                  ValueChanged="SldDefaultFlashSecs_Changed"/>
+          <TextBlock Grid.Column="2" x:Name="LblDefaultFlashSecs"
+                     Text="5 s" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="6,0,0,0"/>
+        </Grid>
+
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="90"/>
+            <ColumnDefinition Width="44"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Alert popup text size"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Font size inside the alert popup"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <Slider Grid.Column="1" x:Name="SldDefaultFontSize"
+                  Minimum="12" Maximum="60" TickFrequency="2" IsSnapToTickEnabled="True"
+                  VerticalAlignment="Center"
+                  AutomationProperties.Name="Default alert font size"
+                  ValueChanged="SldDefaultFontSize_Changed"/>
+          <TextBlock Grid.Column="2" x:Name="LblDefaultFontSize"
+                     Text="22 pt" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="6,0,0,0"/>
+        </Grid>
+
+        <Grid Margin="0,0,0,16">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Auto-reset by default"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Countdown timers restart automatically after alert"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"/>
+          </StackPanel>
+          <CheckBox Grid.Column="1" x:Name="ChkDefaultAutoReset"
+                    VerticalAlignment="Center" Margin="8,0,0,0"
+                    MinWidth="44" MinHeight="44"
+                    AutomationProperties.Name="Auto-reset by default"
+                    Checked="ChkDefaultAutoReset_Changed"
+                    Unchecked="ChkDefaultAutoReset_Changed"/>
+        </Grid>
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Footer bar -->
+    <Border Grid.Row="2" Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,1,0,0"
+            Padding="16,10,52,10">
+      <Button Content="Done"
+              Style="{StaticResource PrimaryButton}"
+              HorizontalAlignment="Right"
+              Padding="24,8" MinHeight="44" IsDefault="True" IsCancel="True"
+              AutomationProperties.Name="Close settings"
+              Click="BtnDone_Click"/>
+    </Border>
+
+  <!-- WCAG 2.2 AAA: shared 44x44 keyboard + mouse resize grip (Controls/AccessibleResizeGrip.cs) -->
+  <ctl:AccessibleResizeGrip/>
+  </Grid>
+</Window>

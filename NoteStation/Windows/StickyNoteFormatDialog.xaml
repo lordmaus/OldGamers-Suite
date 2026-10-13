@@ -1,0 +1,243 @@
+<Window x:Class="NoteStation.StickyNoteFormatDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        Title="Note Appearance"
+        Width="400" Height="520" MinWidth="360" MinHeight="460"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        AutomationProperties.Name="Note appearance settings">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+  <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+  <StackPanel Margin="20,16,20,8">
+
+    <TextBlock Style="{StaticResource DialogTitle}" Text="Note Appearance"
+               FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+               Foreground="{DynamicResource BrushText}" Margin="0,0,0,16"/>
+
+    <!-- ── Font Family ── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Font family"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+    <ComboBox x:Name="CboFontFamily"
+              SelectionChanged="CboFontFamily_SelectionChanged"
+              Margin="0,0,0,12"
+              ToolTip="Choose the font for this note's content"
+              AutomationProperties.Name="Font family"/>
+
+    <!-- ── Font Size ── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Font size"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+      <Slider x:Name="SliderFontSize"
+              Minimum="8" Maximum="72" TickFrequency="2"
+              IsSnapToTickEnabled="True"
+              Width="240" VerticalAlignment="Center"
+              ValueChanged="SliderFontSize_ValueChanged"
+              AutomationProperties.Name="Font size slider"
+              AutomationProperties.HelpText="Drag to change font size from 8 to 72 points"/>
+      <TextBlock x:Name="LblFontSize"
+                 Text="14pt"
+                 FontFamily="Segoe UI" FontSize="13"
+                 Foreground="{DynamicResource BrushText}"
+                 VerticalAlignment="Center" Margin="10,0,0,0"
+                 AutomationProperties.Name="Current font size"/>
+    </StackPanel>
+
+    <!-- ── Title Size ── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Title size"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+      <Slider x:Name="SliderTitleSize"
+              Minimum="8" Maximum="32" SmallChange="1" LargeChange="2"
+              IsSnapToTickEnabled="True"
+              Width="240" VerticalAlignment="Center"
+              Value="14"
+              ValueChanged="SliderTitleSize_ValueChanged"
+              AutomationProperties.Name="Title font size"
+              AutomationProperties.HelpText="Drag to change title font size from 8 to 32 points"/>
+      <TextBlock x:Name="LblTitleSize"
+                 Text="14"
+                 FontFamily="Segoe UI" FontSize="13"
+                 Foreground="{DynamicResource BrushText}"
+                 VerticalAlignment="Center" Margin="10,0,0,0"
+                 AutomationProperties.Name="Current title font size"/>
+    </StackPanel>
+
+    <!-- ── Font Weight / Style ── -->
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+      <CheckBox x:Name="ChkBold"
+                Content="Bold"
+                Checked="ChkBold_Changed" Unchecked="ChkBold_Changed"
+                Margin="0,0,20,0"
+                ToolTip="Make note text bold"
+                AutomationProperties.Name="Bold text"/>
+      <CheckBox x:Name="ChkItalic"
+                Content="Italic"
+                Checked="ChkItalic_Changed" Unchecked="ChkItalic_Changed"
+                ToolTip="Make note text italic"
+                AutomationProperties.Name="Italic text"/>
+    </StackPanel>
+
+    <!-- ── Text Color ── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Text color"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+      <Border x:Name="TextColorSwatch"
+              Width="32" Height="44" CornerRadius="4"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1"
+              VerticalAlignment="Center" Margin="0,0,8,0"
+              IsHitTestVisible="False"/>
+      <TextBox x:Name="TxtTextColor"
+               Width="110" MinHeight="44"
+               Text="#FFFFFF"
+               VerticalContentAlignment="Center"
+               TextChanged="TxtTextColor_TextChanged"
+               ToolTip="Enter hex color for note text, e.g. #FFFFFF"
+               AutomationProperties.Name="Text color hex value"/>
+      <Button
+              Width="44" Height="44" MinHeight="44" MinWidth="44"
+              Padding="0" Margin="6,0,0,0"
+              Click="BtnPickTextColor_Click"
+              ToolTip="Open color picker"
+              AutomationProperties.Name="Pick text color"><Image Source="{StaticResource JtIcon.Theme}" Width="20" Height="20"/></Button>
+    </StackPanel>
+    <TextBlock Text="Common: #FFFFFF (white)  #1C1C1C (dark)  #FFD700 (gold)"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,12"/>
+
+    <!-- ── Background Color ── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Background color"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+    <TextBlock Text="Choose a preset:"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
+    <WrapPanel x:Name="BgColorPanel" Margin="0,0,0,8"/>
+    <StackPanel Orientation="Horizontal">
+      <Border x:Name="BgColorSwatch"
+              Width="32" Height="44" CornerRadius="4"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1"
+              VerticalAlignment="Center" Margin="0,0,8,0"
+              IsHitTestVisible="False"/>
+      <TextBox x:Name="TxtBgColor"
+               Width="110" MinHeight="44"
+               Text="#2A2A2A"
+               VerticalContentAlignment="Center"
+               TextChanged="TxtBgColor_TextChanged"
+               ToolTip="Enter hex color for note background"
+               AutomationProperties.Name="Background color hex value"/>
+      <Button
+              Width="44" Height="44" MinHeight="44" MinWidth="44"
+              Padding="0" Margin="6,0,0,0"
+              Click="BtnPickBgColor_Click"
+              ToolTip="Open color picker"
+              AutomationProperties.Name="Pick background color"><Image Source="{StaticResource JtIcon.Theme}" Width="20" Height="20"/></Button>
+    </StackPanel>
+
+    <!-- ── Opacity ── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Window opacity"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushHint}" Margin="0,12,0,4"/>
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+      <Slider x:Name="SliderOpacity"
+              Minimum="0.1" Maximum="1.0" TickFrequency="0.05"
+              IsSnapToTickEnabled="True"
+              Width="240" VerticalAlignment="Center"
+              ValueChanged="SliderOpacity_ValueChanged"
+              AutomationProperties.Name="Note opacity slider"
+              AutomationProperties.HelpText="Drag to set note window opacity from 10% to 100%"/>
+      <TextBlock x:Name="LblOpacity"
+                 Text="100%"
+                 FontFamily="Segoe UI" FontSize="13"
+                 Foreground="{DynamicResource BrushText}"
+                 VerticalAlignment="Center" Margin="10,0,0,0"
+                 AutomationProperties.Name="Current opacity"/>
+    </StackPanel>
+
+    <!-- ── F15: Note texture ─────────────────────────────── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Texture" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushMuted}"
+               Margin="0,12,0,6"/>
+    <WrapPanel x:Name="TexturePanel">
+        <RadioButton x:Name="RbTextureNone"  Content="None"  GroupName="Texture"
+                     Style="{StaticResource FilterChip}" IsChecked="True"
+                     Checked="RbTexture_Checked" Tag=""
+                     AutomationProperties.Name="No texture" Margin="0,0,4,4"/>
+        <RadioButton x:Name="RbTextureLined" Content="Lined" GroupName="Texture"
+                     Style="{StaticResource FilterChip}"
+                     Checked="RbTexture_Checked" Tag="Lined"
+                     AutomationProperties.Name="Lined paper texture" Margin="0,0,4,4"/>
+        <RadioButton x:Name="RbTextureGrid"  Content="Grid"  GroupName="Texture"
+                     Style="{StaticResource FilterChip}"
+                     Checked="RbTexture_Checked" Tag="Grid"
+                     AutomationProperties.Name="Grid texture" Margin="0,0,4,4"/>
+        <RadioButton x:Name="RbTextureKraft" Content="Kraft" GroupName="Texture"
+                     Style="{StaticResource FilterChip}"
+                     Checked="RbTexture_Checked" Tag="Kraft"
+                     AutomationProperties.Name="Kraft paper texture" Margin="0,0,4,4"/>
+        <RadioButton x:Name="RbTextureCork"  Content="Cork"  GroupName="Texture"
+                     Style="{StaticResource FilterChip}"
+                     Checked="RbTexture_Checked" Tag="Cork"
+                     AutomationProperties.Name="Cork board texture" Margin="0,0,4,4"/>
+        <RadioButton x:Name="RbTextureDots"  Content="Dots"  GroupName="Texture"
+                     Style="{StaticResource FilterChip}"
+                     Checked="RbTexture_Checked" Tag="Dots"
+                     AutomationProperties.Name="Dot grid texture" Margin="0,0,4,4"/>
+    </WrapPanel>
+
+    <!-- ── Preview ── -->
+    <TextBlock Style="{StaticResource SectionHeader}" Text="Preview"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushHint}" Margin="0,16,0,6"/>
+    <Border x:Name="PreviewBorder"
+            MinHeight="80" CornerRadius="6"
+            BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1"
+            ClipToBounds="True">
+      <Grid>
+        <Border x:Name="PreviewTexture"
+                IsHitTestVisible="False"
+                Visibility="Collapsed"/>
+        <TextBlock x:Name="PreviewText"
+                   Text="The quick brown fox jumps over the lazy dog."
+                   TextWrapping="Wrap"
+                   Margin="12,8"/>
+      </Grid>
+    </Border>
+
+  </StackPanel>
+  </ScrollViewer>
+
+  <!-- Footer -->
+  <Border Grid.Row="1" Background="{DynamicResource BrushBar}" Padding="16,10">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" >
+      <Button Content="Apply"
+              Style="{StaticResource PrimaryButton}"
+              Padding="30,8" MinHeight="44" Margin="0,0,12,0"
+              Click="BtnApply_Click"
+              AutomationProperties.Name="Apply appearance changes"/>
+      <Button Content="Close"
+              Style="{StaticResource FlatButton}"
+              Padding="30,8" MinHeight="44"
+              IsCancel="True"
+              Click="BtnClose_Click"
+              AutomationProperties.Name="Close appearance dialog"/>
+    </StackPanel>
+  </Border>
+
+  <!-- Resize grip — suite-canonical AccessibleResizeGrip (mouse + keyboard, focus ring, UIA Thumb). -->
+  <ctl:AccessibleResizeGrip/>
+
+  </Grid>
+</Window>

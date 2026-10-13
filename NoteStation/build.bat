@@ -1,0 +1,110 @@
+@echo off
+setlocal EnableDelayedExpansion
+title NoteStation — Build
+
+echo ============================================================
+echo   NoteStation Build Script
+echo ============================================================
+echo.
+
+:: ── Must be run from the NoteStation\ project folder ─────────────────────────
+if not exist "NoteStation.csproj" (
+    echo ERROR: Run this script from the NoteStation\ project folder.
+    echo        e.g.  cd NoteStation ^&^& build.bat
+    exit /b 1
+)
+
+:: ── Auto-increment version ────────────────────────────────────────────────────
+echo [0/5] Computing version...
+powershell -NoProfile -ExecutionPolicy Bypass -File "version_bump.ps1"
+if errorlevel 1 (
+    echo ERROR: Version increment failed.
+    exit /b 1
+)
+
+:: Re-read updated version for staging
+for /f "tokens=3 delims=><" %%V in ('findstr /i "<Version>" NoteStation.csproj') do set APP_VERSION=%%V
+if "!APP_VERSION!"=="" (
+    echo ERROR: Could not read updated ^<Version^> from NoteStation.csproj
+    exit /b 1
+)
+echo.
+
+:: ── 1. Restore ────────────────────────────────────────────────────────────────
+echo [1/5] Restoring NuGet packages...
+dotnet restore NoteStation.csproj
+if errorlevel 1 goto :build_error
+
+:: ── 2. Build Release ─────────────────────────────────────────────────────────
+echo.
+echo [2/5] Building Release...
+dotnet build NoteStation.csproj -c Release --no-restore
+if errorlevel 1 goto :build_error
+
+set OUTDIR=bin\Release\net10.0-windows10.0.22621.0\win-x64
+set EXE=%OUTDIR%\NoteStation.exe
+if not exist "%EXE%" (
+    echo ERROR: Expected output not found: %EXE%
+    goto :build_error
+)
+
+:: ── 3. Copy README to build output ───────────────────────────────────────────
+echo.
+echo [3/5] Copying README to build output...
+if exist "README.md" (
+    copy /Y "README.md" "%OUTDIR%\README.md" >nul
+    echo       Copied README.md to %OUTDIR%\
+) else (
+    echo       NOTE: README.md not found — skipping copy.
+)
+
+:: ── 4. NSIS installer (optional) ─────────────────────────────────────────────
+:: No code-signing certificate exists for this app (or any app in this
+:: suite) and none is planned — builds are unsigned by design.
+echo.
+echo [4/5] Building installer...
+:: Create staging dir first so NSIS can write the output file
+if not exist "Builds\!APP_VERSION!" mkdir "Builds\!APP_VERSION!"
+where makensis >nul 2>&1
+if %errorlevel%==0 (
+    makensis installer.nsi
+    if errorlevel 1 (
+        echo WARNING: Installer build failed -- app build was still successful.
+    ) else (
+        echo       Installer: Builds\!APP_VERSION!\NoteStation_Setup.exe
+    )
+) else (
+    echo NOTE: makensis not found — skipping installer.
+    echo       Install NSIS 3.x from https://nsis.sourceforge.io/
+)
+
+:: ── 5. Stage to Builds\<version>\ ────────────────────────────────────────────
+echo.
+echo [5/5] Staging to Builds\!APP_VERSION!\...
+set STAGE=Builds\!APP_VERSION!
+if not exist "%STAGE%" mkdir "%STAGE%"
+
+copy /Y "%EXE%" "%STAGE%\NoteStation.exe" >nul
+echo       Copied NoteStation.exe
+
+if exist "Builds\!APP_VERSION!\NoteStation_Setup.exe" (
+    echo       Installer already in stage folder.
+)
+
+echo Build: !APP_VERSION!  > "%STAGE%\build_log.txt"
+echo Date:  %DATE% %TIME% >> "%STAGE%\build_log.txt"
+
+echo.
+echo ============================================================
+echo   Build succeeded: !APP_VERSION!
+echo   Staged: %STAGE%\
+echo ============================================================
+echo.
+goto :end
+
+:build_error
+echo.
+echo BUILD FAILED.
+exit /b 1
+
+:end

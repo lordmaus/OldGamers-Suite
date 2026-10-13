@@ -1,0 +1,34 @@
+# ── Build output ──────────────────────────────────────────────────────────────
+bin/
+obj/
+
+# ── Versioned build artifacts (keep folder structure, ignore binaries) ─────────
+Builds/*/TimerStudio.exe
+Builds/*/TimerStudio_Setup.exe
+
+# ── Visual Studio / Rider ─────────────────────────────────────────────────────
+.vs/
+*.user
+*.suo
+*.userprefs
+*.userosscache
+*.sln.docstates
+.idea/
+*.DotSettings.user
+
+# ── NuGet ─────────────────────────────────────────────────────────────────────
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ── OS noise ──────────────────────────────────────────────────────────────────
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ── Code signing — never commit key material ──────────────────────────────────
+*.pfx
+*.p12
+*.snk

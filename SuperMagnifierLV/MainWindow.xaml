@@ -1,0 +1,1136 @@
+<Window x:Class="SuperMagnifier.MainWindow"
+        ResizeMode="CanResize"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:SuperMagnifier.Controls"
+        Title="Super Magnifier LV"
+        SizeToContent="Height"
+        MinWidth="480"
+        MinHeight="400"
+        WindowStyle="SingleBorderWindow"
+        Background="{DynamicResource BrushBg}"
+        Topmost="True"
+        ShowInTaskbar="True"
+        Deactivated="Window_Deactivated"
+        Activated="Window_Activated"
+        Closing="Window_Closing">
+
+  <Window.InputBindings>
+    <KeyBinding Key="OemPlus"  Modifiers="Control" Command="{Binding ZoomUpCommand}"/>
+    <KeyBinding Key="OemMinus" Modifiers="Control" Command="{Binding ZoomDownCommand}"/>
+    <KeyBinding Key="Add"      Modifiers="Control" Command="{Binding ZoomUpCommand}"/>
+    <KeyBinding Key="Subtract" Modifiers="Control" Command="{Binding ZoomDownCommand}"/>
+    <KeyBinding Key="Escape"   Command="{Binding ClosePanelsCommand}"/>
+  </Window.InputBindings>
+
+  <!-- Root Grid hosts content + resize handle overlay -->
+  <Grid>
+  <StackPanel Orientation="Horizontal">
+    <StackPanel.LayoutTransform>
+      <ScaleTransform x:Name="UiScale" ScaleX="1" ScaleY="1"/>
+    </StackPanel.LayoutTransform>
+
+    <ScrollViewer x:Name="MainScrollViewer"
+                  VerticalScrollBarVisibility="Auto"
+                  HorizontalScrollBarVisibility="Disabled"
+                  Focusable="False">
+    <StackPanel Width="480" Margin="0,0,0,12">
+
+      <!-- Header row 1: title + config buttons + size button -->
+      <Border Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1"
+              MinHeight="52" Padding="16,0,12,0">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Grid.Column="0" Text="Super Magnifier LV"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="17" FontWeight="Bold"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"
+                   AutomationProperties.HeadingLevel="Level1"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <Button x:Name="RemapHotkeysBtn"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="12" Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,4,0"
+                  VerticalContentAlignment="Center" VerticalAlignment="Center"
+                  TabIndex="2"
+                  AutomationProperties.Name="Hotkeys"
+                  AutomationProperties.AccessKey="H"
+                  AutomationProperties.HelpText="View all keyboard shortcuts and customise key bindings"
+                  ToolTip="View all keyboard shortcuts and customise key bindings"
+                  Click="RemapHotkeysBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Hotkeys" VerticalAlignment="Center"/></StackPanel></Button>
+          <Button x:Name="SettingsBtn"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="12" Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,4,0"
+                  VerticalContentAlignment="Center" VerticalAlignment="Center"
+                  TabIndex="3"
+                  AutomationProperties.Name="Settings"
+                  AutomationProperties.AccessKey="S"
+                  AutomationProperties.HelpText="Open the Settings dialog to configure default values"
+                  ToolTip="Settings" Click="SettingsBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Settings" VerticalAlignment="Center"/></StackPanel></Button>
+          <!-- Theme button + flyout popup (inline in StackPanel) -->
+          <Grid Margin="0,0,4,0">
+          <Button x:Name="ThemeNavBtn"
+                  AutomationProperties.Name="Theme"
+                  AutomationProperties.AccessKey="T"
+                  AutomationProperties.HelpText="Opens a menu to pick from 19 colour themes"
+                  Content="◑ Theme"
+                  FontSize="12" Padding="10,6" MinHeight="44" MinWidth="44"
+                  VerticalContentAlignment="Center" VerticalAlignment="Center"
+                  TabIndex="5"
+                  ToolTip="Choose colour theme"
+                  Click="ThemeBtn_Click" Style="{StaticResource FlatButton}"/>
+          <Popup x:Name="ThemePopup"
+                 PlacementTarget="{Binding ElementName=ThemeNavBtn}"
+                 Placement="Bottom" StaysOpen="False" AllowsTransparency="True"
+                 PopupAnimation="Fade"
+                 Opened="ThemePopup_Opened">
+            <Border Background="{DynamicResource BrushSurf}"
+                    BorderBrush="{DynamicResource FocusRingBrush}"
+                    BorderThickness="1" CornerRadius="6" Padding="4,6" MinWidth="200">
+              <Border.Effect>
+                <DropShadowEffect ShadowDepth="2" BlurRadius="14" Opacity="0.45" Color="#000000"/>
+              </Border.Effect>
+              <ScrollViewer VerticalScrollBarVisibility="Auto" MaxHeight="720"
+                            Focusable="False">
+              <StackPanel>
+                <TextBlock Text="DARK" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushHint}"
+                           FontFamily="{DynamicResource AppFontFamily}" Margin="12,2,0,2"/>
+                <Button x:Name="TI_Dark"      Tag="Dark"            Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_OneDark"   Tag="OneDark"         Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Gruvbox"   Tag="GruvboxDark"     Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Tokyo"     Tag="TokyoNight"      Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Nord"      Tag="Nord"            Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Dracula"   Tag="Dracula"         Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Mocha"     Tag="Mocha"           Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_RosePine"      Tag="RosePine"        Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_AyuDark"       Tag="AyuDark"         Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_AyuMirage"     Tag="AyuMirage"       Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Cobalt2"       Tag="Cobalt2"         Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Monokai"       Tag="Monokai"         Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_SolarizedDark" Tag="SolarizedDark"   Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Separator Margin="8,6,8,4"/>
+                <TextBlock Text="LIGHT" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushHint}"
+                           FontFamily="{DynamicResource AppFontFamily}" Margin="12,0,0,2"/>
+                <Button x:Name="TI_Light"         Tag="Light"           Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_WarmLight"     Tag="WarmLight"       Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_Latte"         Tag="CatppuccinLatte" Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_GitHub"        Tag="GitHubLight"     Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_AyuLight"      Tag="AyuLight"        Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+                <Button x:Name="TI_SolarizedLight" Tag="SolarizedLight" Click="ThemeItem_Click" Style="{StaticResource ThemeMenuItemStyle}"/>
+              </StackPanel>
+              </ScrollViewer>
+            </Border>
+          </Popup>
+          </Grid>
+          <!-- About -->
+          <Button x:Name="AboutNavBtn"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="12" Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,10,0"
+                  VerticalContentAlignment="Center" VerticalAlignment="Center"
+                  TabIndex="6"
+                  AutomationProperties.Name="About"
+                  AutomationProperties.AccessKey="A"
+                  AutomationProperties.HelpText="View version information, creator details, and build information"
+                  ToolTip="About Super Magnifier LV"
+                  Click="AboutBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.About}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="About" VerticalAlignment="Center"/></StackPanel></Button>
+          <!-- Divider -->
+          <Rectangle Width="1" Height="24"
+                     Fill="{DynamicResource BrushSurf2}"
+                     VerticalAlignment="Center"
+                     Margin="0,0,10,0"/>
+          <!-- Size -->
+          <Button x:Name="SizeBtn"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="12" Padding="10,6" MinHeight="44" MinWidth="44"
+                  VerticalContentAlignment="Center" VerticalAlignment="Center"
+                  TabIndex="7"
+                  AutomationProperties.Name="Cycle UI size"
+                  AutomationProperties.AccessKey="U"
+                  AutomationProperties.HelpText="Cycle through Standard, Medium, Large, and Xtra Large UI sizes"
+                  Content="⊞ Standard (1.0×)"
+                  ToolTip="Cycle UI size" Click="SizeBtn_Click"/>
+        </StackPanel>
+      </Grid>
+      </Border>
+      <!-- Header row 2: app-specific nav — Lens + More -->
+      <Border Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1"
+              MinHeight="52" Padding="8,0">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="LensPanelTabBtn" Grid.Column="0"
+                AutomationProperties.Name="Lens Controls"
+                AutomationProperties.HelpText="Show or hide the Lens Controls panel"
+                AutomationProperties.PositionInSet="1" AutomationProperties.SizeOfSet="2"
+                FontSize="12" Padding="10,6"
+                MinHeight="44"
+                HorizontalAlignment="Center" VerticalContentAlignment="Center" TabIndex="8"
+                ToolTip="Show/hide lens controls"
+                Click="LensPanelTabBtn_Click" Style="{StaticResource FlatButton}"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Magnifier}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Lens" VerticalAlignment="Center" x:Name="LensPanelTabText"/></StackPanel></Button>
+        <Button x:Name="PanelTabBtn" Grid.Column="1"
+                AutomationProperties.Name="More Settings"
+                AutomationProperties.HelpText="Show or hide the Settings panel"
+                AutomationProperties.PositionInSet="2" AutomationProperties.SizeOfSet="2"
+                FontSize="12" Padding="10,6"
+                MinHeight="44"
+                HorizontalAlignment="Center" VerticalContentAlignment="Center" TabIndex="9"
+                ToolTip="Show/hide settings panel"
+                Click="PanelTabBtn_Click" Style="{StaticResource FlatButton}"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Sidebar}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="More" VerticalAlignment="Center" x:Name="PanelTabText"/></StackPanel></Button>
+      </Grid>
+      </Border>
+      <!-- Enable + Freeze — full width spanning both columns -->
+      <Grid Margin="16,4">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="8"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="ToggleBtn" Grid.Column="0"
+                Style="{StaticResource PrimaryButton}"
+                AutomationProperties.Name="Enable Magnifier"
+                AutomationProperties.HelpText="Start or stop the screen magnifier. Keyboard shortcut: Control Alt M"
+                TabIndex="5" FontSize="13" Padding="16,0" MinHeight="44" Click="ToggleBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.QueueNow}" Style="{StaticResource JtBtnIcon}" x:Name="ToggleBtnIcon"/><TextBlock Text="Enable Magnifier" VerticalAlignment="Center" x:Name="ToggleBtnText"/></StackPanel></Button>
+        <Button x:Name="FreezeBtn" Grid.Column="2" Style="{StaticResource FlatButton}"
+                FontSize="12" Padding="10,10" MinWidth="44" MinHeight="44"
+                AutomationProperties.Name="Freeze lens"
+                AutomationProperties.HelpText="Freeze or unfreeze the magnified view. Keyboard shortcut: Control Alt F"
+                TabIndex="6" ToolTip="Freeze lens (Ctrl+Alt+F)" Click="FreezeBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Freeze}" Style="{StaticResource JtBtnIcon}" x:Name="FreezeBtnIcon"/><TextBlock Text="Freeze" VerticalAlignment="Center" x:Name="FreezeBtnText"/></StackPanel></Button>
+      </Grid>
+      <Separator/>
+
+      <!-- ══ TWO-COLUMN BODY ══════════════════════════════════════════════════ -->
+
+      <!-- Zoom preset buttons — full width above the columns -->
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,6,0,4">
+        <Button Content="2x"  Tag="2"  Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="14,6" Margin="3,0" TabIndex="9"  Click="ZoomPreset_Click"
+                AutomationProperties.Name="Set zoom to 2 times"/>
+        <Button Content="3x"  Tag="3"  Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="14,6" Margin="3,0" TabIndex="10" Click="ZoomPreset_Click"
+                AutomationProperties.Name="Set zoom to 3 times"/>
+        <Button Content="4x"  Tag="4"  Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="14,6" Margin="3,0" TabIndex="11" Click="ZoomPreset_Click"
+                AutomationProperties.Name="Set zoom to 4 times"/>
+        <Button Content="6x"  Tag="6"  Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="14,6" Margin="3,0" TabIndex="12" Click="ZoomPreset_Click"
+                AutomationProperties.Name="Set zoom to 6 times"/>
+        <Button Content="8x"  Tag="8"  Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="14,6" Margin="3,0" TabIndex="13" Click="ZoomPreset_Click"
+                AutomationProperties.Name="Set zoom to 8 times"/>
+        <Button Content="12x" Tag="12" Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="14,6" Margin="3,0" TabIndex="14" Click="ZoomPreset_Click"
+                AutomationProperties.Name="Set zoom to 12 times"/>
+      </StackPanel>
+
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- ── LEFT COLUMN ─────────────────────────────────────────────────── -->
+        <StackPanel Grid.Column="0" Margin="0,0,0,4">
+
+          <!-- Zoom -->
+          <TextBlock x:Name="HeadMagnification" Text="Magnification" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                     Foreground="{DynamicResource BrushHint}" HorizontalAlignment="Center"
+                     Margin="0,6,0,0"/>
+          <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,6,0,2">
+            <Button x:Name="ZoomDownBtn" Width="44" Height="44"
+                    FontSize="14" FontWeight="Bold" Style="{StaticResource FlatButton}"
+                    Padding="0" TabIndex="7"
+                    AutomationProperties.Name="Zoom out"
+                    AutomationProperties.HelpText="Decrease magnification by one step"
+                    Click="ZoomDownBtn_Click"
+                    ToolTip="Zoom out (Ctrl+Alt+-)"><Image Source="{StaticResource JtIcon.ZoomOut}" Style="{StaticResource JtSoloIcon}"/></Button>
+            <TextBlock x:Name="ZoomLabel" Text="2.00x"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="22" FontWeight="Bold"
+                       Foreground="{DynamicResource BrushBlueText}"
+                       Width="80" TextAlignment="Center" VerticalAlignment="Center"
+                       AutomationProperties.Name="Current zoom level"
+                       AutomationProperties.LiveSetting="Polite"/>
+            <Button x:Name="ZoomUpBtn" Width="44" Height="44"
+                    FontSize="14" FontWeight="Bold" Style="{StaticResource FlatButton}"
+                    Padding="0" TabIndex="8"
+                    AutomationProperties.Name="Zoom in"
+                    AutomationProperties.HelpText="Increase magnification by one step"
+                    Click="ZoomUpBtn_Click"
+                    ToolTip="Zoom in (Ctrl+Alt+=)"><Image Source="{StaticResource JtIcon.ZoomIn}" Style="{StaticResource JtSoloIcon}"/></Button>
+          </StackPanel>
+          <Slider x:Name="ZoomSlider" Minimum="1.25" Maximum="20" Value="2.0"
+                  TickFrequency="0.25" IsSnapToTickEnabled="True" Margin="12,0"
+                  TabIndex="15"
+                  AutomationProperties.Name="Magnification level"
+                  AutomationProperties.HelpText="Drag to set zoom between 1.25 times and 20 times"
+                  ValueChanged="ZoomSlider_ValueChanged"/>
+          <Grid Margin="12,2,12,0">
+            <TextBlock Text="1.25×" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Left"/>
+            <TextBlock Text="20×" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Right"/>
+          </Grid>
+          <StackPanel Orientation="Horizontal" Margin="12,4,12,6" VerticalAlignment="Center">
+            <TextBlock Text="Step:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushHint}"
+                       VerticalAlignment="Center" Margin="0,0,6,0"/>
+            <TextBlock x:Name="StepDisplay" Text="0.25x" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBlock Text="  (adjust in Settings)" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center"/>
+          </StackPanel>
+
+          <Separator Margin="0,2,0,0"/>
+
+          <!-- Follow Mode -->
+          <TextBlock x:Name="HeadFollowMode" Text="Follow Mode  (Ctrl+Alt+L)" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,6,12,3"
+                     ToolTip="Ctrl+Alt+L toggles between Follow Mouse and Follow Text Caret"/>
+          <StackPanel Margin="12,0,12,6">
+            <RadioButton x:Name="LensFollowMouse"
+                         AutomationProperties.Name="Follow mouse cursor"
+                         AutomationProperties.HelpText="Lens tracks the mouse pointer position"
+                         GroupName="LensFollow" IsChecked="True"
+                         VerticalContentAlignment="Center" Margin="0,1,0,1"
+                         TabIndex="16" Checked="Follow_Checked"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.FollowMouse}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Follow Mouse Cursor" VerticalAlignment="Center"/></StackPanel></RadioButton>
+            <RadioButton x:Name="LensFollowCaret"
+                         AutomationProperties.Name="Follow text caret (typing cursor)"
+                         AutomationProperties.HelpText="Lens tracks the text insertion cursor when typing"
+                         GroupName="LensFollow"
+                         VerticalContentAlignment="Center" Margin="0,1,0,1"
+                         ToolTip="Lens follows the typing cursor as you type"
+                         TabIndex="17" Checked="Follow_Checked"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.FollowCaret}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Follow Text Caret" VerticalAlignment="Center"/></StackPanel></RadioButton>
+            <CheckBox x:Name="SnapToWordCheck" Content="Snap-to-Word"
+                      AutomationProperties.Name="Snap to word (mouse mode)"
+                      AutomationProperties.HelpText="Centre the lens on the nearest word under the cursor for smoother reading. Only active in Follow Mouse mode."
+                      VerticalContentAlignment="Center" Margin="0,2,0,1"
+                      TabIndex="18"
+                      ToolTip="Centre the lens on the nearest word under the cursor — smoother reading experience"
+                      Checked="SnapToWordCheck_Changed" Unchecked="SnapToWordCheck_Changed"/>
+          </StackPanel>
+
+          <Separator Margin="0,0,0,0"/>
+
+          <!-- Lens Shape -->
+          <TextBlock Text="Lens Shape" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,6,12,3"
+                     ToolTip="Choose between fixed rectangular lens or a circular/square lens that follows the cursor"/>
+          <StackPanel Margin="12,0,12,4">
+            <RadioButton x:Name="TrackFixed"  Content="Rectangle (fixed)"
+                         AutomationProperties.Name="Rectangle fixed lens"
+                         AutomationProperties.HelpText="Normal rectangular lens — drag to position, resize by dragging edges"
+                         GroupName="TrackMode" IsChecked="True"
+                         VerticalContentAlignment="Center" Margin="0,1,0,1"
+                         ToolTip="Normal rectangular lens — drag to position, resize by edges"
+                         Checked="TrackMode_Changed"/>
+            <RadioButton x:Name="TrackCircle" Content="Circle  (follows cursor)"
+                         AutomationProperties.Name="Circle lens follows cursor"
+                         AutomationProperties.HelpText="Circular lens centred on the mouse cursor — moves with the cursor automatically"
+                         GroupName="TrackMode"
+                         VerticalContentAlignment="Center" Margin="0,1,0,1"
+                         ToolTip="Circular lens centred on the mouse cursor — moves as you move"
+                         Checked="TrackMode_Changed"/>
+            <RadioButton x:Name="TrackSquare" Content="Square  (follows cursor)"
+                         AutomationProperties.Name="Square lens follows cursor"
+                         AutomationProperties.HelpText="Rounded-square lens centred on the mouse cursor — moves with the cursor automatically"
+                         GroupName="TrackMode"
+                         VerticalContentAlignment="Center" Margin="0,1,0,1"
+                         ToolTip="Rounded-square lens centred on the mouse cursor — moves as you move"
+                         Checked="TrackMode_Changed"/>
+            <StackPanel x:Name="TrackSizePanel" Orientation="Horizontal"
+                        Margin="0,4,0,0" Visibility="Collapsed">
+              <TextBlock Text="Size:" VerticalAlignment="Center" Margin="0,0,6,0"
+                         Foreground="{DynamicResource BrushText}"/>
+              <Slider x:Name="TrackSizeSlider" Minimum="100" Maximum="600"
+                      Value="300" Width="110" VerticalAlignment="Center"
+                      SmallChange="10" LargeChange="50"
+                      AutomationProperties.Name="Lens shape size"
+                      ValueChanged="TrackSizeSlider_ValueChanged"/>
+              <TextBlock x:Name="TrackSizeLabel" Text="300px"
+                         VerticalAlignment="Center" Margin="6,0,0,0"
+                         Foreground="{DynamicResource BrushText}" Width="38"/>
+            </StackPanel>
+          </StackPanel>
+
+          <Separator Margin="0,0,0,0"/>
+
+        </StackPanel>
+
+        <!-- Column divider -->
+        <Rectangle Grid.Column="1" Width="1"
+                   Fill="{DynamicResource BrushSurf2}"
+                   VerticalAlignment="Stretch"/>
+
+        <!-- ── RIGHT COLUMN ────────────────────────────────────────────────── -->
+        <StackPanel Grid.Column="2" Margin="0,0,0,4">
+
+          <!-- Quick Toggles -->
+          <TextBlock x:Name="HeadQuickToggles" Text="Quick Toggles" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,6,12,2"/>
+          <StackPanel Margin="12,0,12,0">
+
+            <!-- Reading Ruler -->
+            <Grid Margin="0,2,0,0">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <CheckBox x:Name="RulerCheck" Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        AutomationProperties.Name="Reading Ruler"
+                        AutomationProperties.HelpText="Show a horizontal line across the lens to aid reading"
+                        TabIndex="26"
+                        IsChecked="False" Checked="Ruler_Changed" Unchecked="Ruler_Changed"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Ruler}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Reading Ruler" VerticalAlignment="Center"/></StackPanel></CheckBox>
+              <!-- Swatch + hex label -->
+              <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+              <Button x:Name="RulerColorSwatch"
+                      Width="44" Height="44" Padding="0"
+                      Style="{StaticResource IconButton}"
+                      VerticalAlignment="Center"
+                      TabIndex="27"
+                      AutomationProperties.Name="Ruler colour — click to change"
+                      AutomationProperties.HelpText="Open colour picker for the reading ruler"
+                      ToolTip="Change ruler colour"
+                      Click="RulerColorBtn_Click">
+                <Rectangle Width="22" Height="22" RadiusX="4" RadiusY="4"
+                           Fill="#50FFDC00" IsHitTestVisible="False"/>
+              </Button>
+              <TextBlock x:Name="RulerColorLabel" Text="#FFDC00" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Center"
+                         IsHitTestVisible="False"/>
+              </StackPanel>
+            </Grid>
+            <Grid Margin="0,2,0,6">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="40"/>
+              </Grid.ColumnDefinitions>
+              <TextBlock Grid.Column="0" Text="Height:"
+                         FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushHint}"
+                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+              <Slider x:Name="RulerHeightSlider" Grid.Column="1"
+                      Minimum="8" Maximum="120" Value="28"
+                      TickFrequency="4" IsSnapToTickEnabled="True"
+                      VerticalAlignment="Center" TabIndex="28"
+                      AutomationProperties.Name="Reading ruler height"
+                      AutomationProperties.HelpText="Set the height of the reading ruler line in pixels, from 8 to 120"
+                      ValueChanged="RulerHeightSlider_ValueChanged"/>
+              <TextBlock x:Name="RulerHeightLabel" Grid.Column="2"
+                         Text="28px" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushText}"
+                         VerticalAlignment="Center" TextAlignment="Right"/>
+            </Grid>
+
+            <!-- Cursor Highlight -->
+            <Grid Margin="0,2,0,6">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <CheckBox x:Name="HighlightCheck" Grid.Column="0"
+                        VerticalContentAlignment="Center"
+                        AutomationProperties.Name="Highlight Mouse Cursor"
+                        AutomationProperties.HelpText="Draw a coloured circle around the mouse cursor inside the lens"
+                        TabIndex="29"
+                        IsChecked="False" Checked="Highlight_Changed" Unchecked="Highlight_Changed"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.CursorHighlight}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Highlight Cursor" VerticalAlignment="Center"/></StackPanel></CheckBox>
+              <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+              <Button x:Name="HighlightColorSwatch"
+                      Width="44" Height="44" Padding="0"
+                      Style="{StaticResource IconButton}"
+                      VerticalAlignment="Center"
+                      TabIndex="30"
+                      AutomationProperties.Name="Highlight colour — click to change"
+                      AutomationProperties.HelpText="Open colour picker for the cursor highlight"
+                      ToolTip="Change cursor highlight colour"
+                      Click="HighlightColorBtn_Click">
+                <Rectangle Width="22" Height="22" RadiusX="4" RadiusY="4"
+                           Fill="#FFFF5000" IsHitTestVisible="False"/>
+              </Button>
+              <TextBlock x:Name="HighlightColorLabel" Text="#FF5000" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Center"
+                         IsHitTestVisible="False"/>
+              </StackPanel>
+            </Grid>
+
+            <!-- Cursor Finder Pulse -->
+            <Grid Margin="0,2,0,4">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <Button Grid.Column="0"
+                      Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                      HorizontalAlignment="Stretch" Padding="0,6"
+                      TabIndex="31"
+                      AutomationProperties.Name="Cursor Finder"
+                      AutomationProperties.HelpText="Flash expanding rings from the cursor so you can locate it on screen. Keyboard shortcut: Control Alt P"
+                      Click="PulseBtn_Click"
+                      ToolTip="Flash expanding rings from the cursor to locate it quickly"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.CursorFinder}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Cursor Finder  (Ctrl+P)" VerticalAlignment="Center"/></StackPanel></Button>
+              <StackPanel Grid.Column="2" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+              <Button x:Name="PulseColorSwatch"
+                      Width="44" Height="44" Padding="0"
+                      Style="{StaticResource IconButton}"
+                      VerticalAlignment="Center"
+                      TabIndex="32"
+                      AutomationProperties.Name="Pulse colour — click to change"
+                      AutomationProperties.HelpText="Open colour picker for the cursor finder pulse rings"
+                      ToolTip="Change pulse colour"
+                      Click="PulseColorBtn_Click">
+                <Rectangle Width="22" Height="22" RadiusX="4" RadiusY="4"
+                           Fill="#FF64B4FF" IsHitTestVisible="False"/>
+              </Button>
+              <TextBlock x:Name="PulseColorLabel" Text="#64B4FF" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Center"
+                         IsHitTestVisible="False"/>
+              </StackPanel>
+            </Grid>
+          </StackPanel>
+
+          <Separator Margin="0,4,0,0"/>
+
+          <!-- Toggles (moved from left column) -->
+          <TextBlock Text="Options" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,6,12,2"/>
+          <CheckBox x:Name="ClickThruCheck"
+                    AutomationProperties.Name="Click-through mode"
+                    AutomationProperties.HelpText="Allow mouse clicks to pass through the lens window to applications below. Keyboard shortcut: Control Alt T"
+                    IsChecked="False" Margin="12,2,12,1"
+                    VerticalContentAlignment="Center" TabIndex="19"
+                    Checked="ClickThru_Changed" Unchecked="ClickThru_Changed"
+                    ToolTip="Mouse clicks pass through the lens to windows below"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.ClickThrough}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Click-through  (Ctrl+T)" VerticalAlignment="Center"/></StackPanel></CheckBox>
+          <CheckBox x:Name="MirrorCheck"
+                    AutomationProperties.Name="Mirror lens on second monitor"
+                    AutomationProperties.HelpText="Open a duplicate magnifier lens on a secondary monitor"
+                    IsChecked="False" Margin="12,1,12,1"
+                    VerticalContentAlignment="Center" TabIndex="20"
+                    ToolTip="Open a duplicate lens on a secondary monitor"
+                    Checked="MirrorCheck_Changed" Unchecked="MirrorCheck_Changed"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.MirrorLens}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Mirror on 2nd monitor" VerticalAlignment="Center"/></StackPanel></CheckBox>
+
+
+          <!-- Reticle -->
+          <TextBlock x:Name="HeadReticle" Text="Reticle  (Ctrl+Alt+R)" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,6,12,2"
+                     ToolTip="Ctrl+Alt+R toggles the reticle overlay on and off"/>
+          <CheckBox x:Name="ReticleCheck"
+                    AutomationProperties.Name="Show reticle in lens"
+                    IsChecked="False" Margin="12,1,12,2"
+                    VerticalContentAlignment="Center" TabIndex="33"
+                    ToolTip="Draw a reticle on the lens marking the cursor position"
+                    Checked="ReticleCheck_Changed" Unchecked="ReticleCheck_Changed"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Reticle}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Show reticle in lens" VerticalAlignment="Center"/></StackPanel></CheckBox>
+          <StackPanel x:Name="ReticleOptions" Visibility="Collapsed" Margin="16,0,12,4"
+                      KeyboardNavigation.TabNavigation="None">
+            <WrapPanel Margin="0,3,0,2">
+              <TextBlock Text="Style:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushHint}"
+                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+              <RadioButton x:Name="ReticleStyleX"      Content="X"
+                           AutomationProperties.Name="X reticle style"
+                           AutomationProperties.HelpText="Diagonal X-shaped reticle crossing at the cursor position"
+                           GroupName="ReticleStyle" Margin="0,0,10,2"
+                           VerticalContentAlignment="Center" FontSize="{DynamicResource FontSizeCaption}"
+                           Checked="ReticleStyle_Changed" ToolTip="Diagonal X reticle"/>
+              <RadioButton x:Name="ReticleStyleCross"  Content="Cross"
+                           AutomationProperties.Name="Cross reticle style"
+                           AutomationProperties.HelpText="Horizontal and vertical crosshair reticle at the cursor position"
+                           GroupName="ReticleStyle" IsChecked="True" Margin="0,0,10,2"
+                           VerticalContentAlignment="Center" FontSize="{DynamicResource FontSizeCaption}"
+                           Checked="ReticleStyle_Changed" ToolTip="Horizontal/vertical cross"/>
+              <RadioButton x:Name="ReticleStyleCircle" Content="Circle"
+                           AutomationProperties.Name="Circle reticle style"
+                           AutomationProperties.HelpText="Circle drawn around the cursor position"
+                           GroupName="ReticleStyle" Margin="0,0,0,2"
+                           VerticalContentAlignment="Center" FontSize="{DynamicResource FontSizeCaption}"
+                           Checked="ReticleStyle_Changed" ToolTip="Circle around the cursor"/>
+            </WrapPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+              <TextBlock Text="Size:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushHint}"
+                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+              <Button x:Name="ReticleSizeDownBtn" Content="&#x2212;"
+                      Style="{StaticResource IconButton}"
+                      BorderThickness="0" FontSize="15" FontWeight="Bold"
+                      Cursor="Hand" Padding="4,0" VerticalAlignment="Center"
+                      AutomationProperties.Name="Reticle smaller"
+                      ToolTip="Smaller reticle" Click="ReticleSizeDownBtn_Click"/>
+              <TextBlock x:Name="ReticleSizeLabel" Text="Large"
+                         MinWidth="42" TextAlignment="Center"
+                         FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                         Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+              <Button x:Name="ReticleSizeUpBtn" Content="+"
+                      Style="{StaticResource IconButton}"
+                      BorderThickness="0" FontSize="15" FontWeight="Bold"
+                      Cursor="Hand" Padding="4,0" VerticalAlignment="Center"
+                      AutomationProperties.Name="Reticle larger"
+                      ToolTip="Larger reticle" Click="ReticleSizeUpBtn_Click"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+              <TextBlock Text="Colour:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushHint}"
+                         VerticalAlignment="Center" Margin="0,0,8,0"/>
+              <StackPanel Orientation="Vertical" HorizontalAlignment="Center" VerticalAlignment="Center">
+              <Button x:Name="ReticleColorSwatch"
+                      Width="44" Height="44" Padding="0"
+                      Style="{StaticResource IconButton}"
+                      VerticalAlignment="Center"
+                      AutomationProperties.Name="Reticle colour — click to change"
+                      AutomationProperties.HelpText="Open colour picker for the reticle overlay"
+                      ToolTip="Click to pick reticle colour"
+                      Click="ReticleColorSwatch_Click">
+                <Rectangle Width="22" Height="22" RadiusX="3" RadiusY="3"
+                           Fill="#FF4444" IsHitTestVisible="False"/>
+              </Button>
+              <TextBlock x:Name="ReticleColorLabel" Text="#FF4444" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Center"
+                         IsHitTestVisible="False"/>
+              </StackPanel>
+            </StackPanel>
+          </StackPanel>
+
+        </StackPanel>
+      </Grid>
+      <!-- end two-column body -->
+
+      <!-- Lens Presets — full width row (Section 5 per spec) -->
+      <Border Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,1,0,0" Padding="8,6">
+      <StackPanel>
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,3"><Image Source="{StaticResource JtIcon.Template}" Style="{StaticResource JtHeaderIcon}" Width="20" Height="20"/><TextBlock x:Name="HeadLensPresets" Text="Lens Presets" VerticalAlignment="Center" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                 Foreground="{DynamicResource BrushHint}"/></StackPanel>
+      <Grid Margin="0">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="8"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button x:Name="Preset1Btn" Grid.Column="0" Content="1" Tag="0"
+                AutomationProperties.Name="Preset 1"
+                AutomationProperties.HelpText="Load preset 1. Use Save button to overwrite."
+                AutomationProperties.PositionInSet="1" AutomationProperties.SizeOfSet="5"
+                Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="10,6" MinHeight="44" MinWidth="44" Margin="2,0" TabIndex="21" Click="Preset_Click"/>
+        <Button x:Name="Preset2Btn" Grid.Column="1" Content="2" Tag="1"
+                AutomationProperties.Name="Preset 2"
+                AutomationProperties.HelpText="Load preset 2. Use Save button to overwrite."
+                AutomationProperties.PositionInSet="2" AutomationProperties.SizeOfSet="5"
+                Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="10,6" MinHeight="44" MinWidth="44" Margin="2,0" TabIndex="22" Click="Preset_Click"/>
+        <Button x:Name="Preset3Btn" Grid.Column="2" Content="3" Tag="2"
+                AutomationProperties.Name="Preset 3"
+                AutomationProperties.HelpText="Load preset 3. Use Save button to overwrite."
+                AutomationProperties.PositionInSet="3" AutomationProperties.SizeOfSet="5"
+                Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="10,6" MinHeight="44" MinWidth="44" Margin="2,0" TabIndex="23" Click="Preset_Click"/>
+        <Button x:Name="Preset4Btn" Grid.Column="3" Content="4" Tag="3"
+                AutomationProperties.Name="Preset 4"
+                AutomationProperties.HelpText="Load preset 4. Use Save button to overwrite."
+                AutomationProperties.PositionInSet="4" AutomationProperties.SizeOfSet="5"
+                Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="10,6" MinHeight="44" MinWidth="44" Margin="2,0" TabIndex="24" Click="Preset_Click"/>
+        <Button x:Name="Preset5Btn" Grid.Column="4" Content="5" Tag="4"
+                AutomationProperties.Name="Preset 5"
+                AutomationProperties.HelpText="Load preset 5. Use Save button to overwrite."
+                AutomationProperties.PositionInSet="5" AutomationProperties.SizeOfSet="5"
+                Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="10,6" MinHeight="44" MinWidth="44" Margin="2,0" TabIndex="25" Click="Preset_Click"/>
+        <!-- Explicit Save action button per spec Section 5 -->
+        <Button x:Name="PresetSaveBtn" Grid.Column="6"
+                AutomationProperties.Name="Save current settings to selected preset"
+                AutomationProperties.HelpText="Select a preset number then click Save to overwrite it with current settings"
+                Style="{StaticResource PrimaryButton}" FontSize="{DynamicResource FontSizeCaption}"
+                Padding="14,0" Margin="0,0"
+                MinWidth="56" MinHeight="44"
+                TabIndex="26" Click="PresetSaveBtn_Click"
+                ToolTip="Save current settings to the last-selected preset"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Save}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Save Preset" VerticalAlignment="Center"/></StackPanel></Button>
+      </Grid>
+      <TextBlock x:Name="PresetHelpText" Text="Click=load  ·  Then click Save to overwrite  ·  Ctrl+Alt+1-5 / Ctrl+Alt+Shift+1-5"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}"
+                 HorizontalAlignment="Center" Margin="0,3,0,0"/>
+      </StackPanel>
+      </Border>
+
+
+
+      <!-- Status toast — full width below both columns -->
+      <!-- Status toast (WCAG 2.2.1/2.2.3/4.1.3): duration from Settings (5 s / 10 s / until dismissed),
+           pauses while hovered or focused, Esc or ✕ dismisses, raised as a UIA notification. -->
+      <Border x:Name="ToastBorder"
+              Background="{DynamicResource BrushSurf}"
+              BorderBrush="{DynamicResource BrushBlue}"
+              BorderThickness="1" CornerRadius="6"
+              Margin="16,4,16,2" Padding="12,4,4,4"
+              Opacity="0" Visibility="Collapsed"
+              HorizontalAlignment="Stretch"
+              Focusable="True" KeyboardNavigation.IsTabStop="True"
+              MouseEnter="ToastBorder_HoldChanged" MouseLeave="ToastBorder_HoldChanged"
+              IsKeyboardFocusWithinChanged="ToastBorder_FocusChanged"
+              KeyDown="ToastBorder_KeyDown"
+              AutomationProperties.LiveSetting="Polite"
+              AutomationProperties.Name="Status message">
+        <DockPanel>
+          <Button DockPanel.Dock="Right" Style="{StaticResource FlatButton}"
+                  MinWidth="44" MinHeight="44" Padding="0" Margin="6,0,0,0"
+                  Click="ToastDismiss_Click"
+                  ToolTip="Dismiss (Esc)"
+                  AutomationProperties.Name="Dismiss message"><Image Source="{StaticResource JtIcon.Close}" Style="{StaticResource JtSoloIcon}"/></Button>
+          <TextBlock x:Name="ToastLabel"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeBody}"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center"
+                     TextWrapping="Wrap"/>
+        </DockPanel>
+      </Border>
+
+    </StackPanel>
+    </ScrollViewer>
+
+  </StackPanel>
+
+    <!-- ══ LENS PANEL (slide-out left overlay) ═══════════════════════════════════ -->
+    <Border x:Name="LensPanel"
+            Width="260" MinHeight="400"
+            Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushBlue}"
+            BorderThickness="0,0,1,0"
+            Visibility="Collapsed" ClipToBounds="True"
+            Panel.ZIndex="100"
+            HorizontalAlignment="Left" VerticalAlignment="Stretch">
+      <Border.RenderTransform>
+        <TranslateTransform x:Name="LensPanelTranslate" X="-260"/>
+      </Border.RenderTransform>
+      <ScrollViewer Width="260" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,0,12">
+
+          <Grid Margin="12,12,12,4">
+            <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Magnifier}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Lens Controls"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="Bold"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/></StackPanel>
+            <Button HorizontalAlignment="Right"
+                    Background="Transparent" Foreground="{DynamicResource BrushRedText}"
+                    BorderThickness="0" FontSize="13" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0"
+                    AutomationProperties.Name="Close Lens Controls"
+                    AutomationProperties.HelpText="Hide the Lens Controls panel"
+                    Click="LensPanelTabBtn_Click" Style="{StaticResource IconButton}"><Image Source="{StaticResource JtIcon.Close}" Style="{StaticResource JtSoloIcon}"/></Button>
+          </Grid>
+          <Separator/>
+
+          <!-- Opacity -->
+          <Grid Margin="12,6,12,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="36"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Opacity:"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushHint}"
+                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <Slider x:Name="LensOpacitySlider" Grid.Column="1"
+                    Minimum="0.2" Maximum="1.0" Value="1.0"
+                    IsSnapToTickEnabled="False" VerticalAlignment="Center"
+                    AutomationProperties.Name="Lens opacity"
+                    AutomationProperties.HelpText="Set how transparent the lens window is, from 20 percent to 100 percent"
+                    ValueChanged="OpacitySlider_ValueChanged"/>
+            <TextBlock x:Name="LensOpacityLabel" Grid.Column="2"
+                       Text="100%" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}"
+                       VerticalAlignment="Center" TextAlignment="Right"/>
+          </Grid>
+          <Separator/>
+
+          <!-- Snapshot -->
+          <Button x:Name="LensSnapBtn"
+                  Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                  Padding="10,8" Margin="12,4,12,4" HorizontalAlignment="Stretch"
+                  AutomationProperties.Name="Save Snapshot"
+                  AutomationProperties.HelpText="Capture current lens view to Pictures folder"
+                  Click="LensSnapBtn_Click"
+                  ToolTip="Capture lens view to Pictures\Super Magnifier LV\"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Camera}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Save Snapshot" VerticalAlignment="Center"/></StackPanel></Button>
+          <Separator/>
+
+          <!-- Dock corners -->
+          <TextBlock Text="Dock to Corner" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,2"/>
+          <Grid Margin="12,0,12,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="4"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+              <RowDefinition Height="Auto"/>
+              <RowDefinition Height="4"/>
+              <RowDefinition Height="Auto"/>
+            </Grid.RowDefinitions>
+            <Button Grid.Row="0" Grid.Column="0" Content="&#x2196;  Top-Left"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,7"
+                    AutomationProperties.Name="Dock to top left corner"
+                    Click="DockTL_Click"/>
+            <Button Grid.Row="0" Grid.Column="2" Content="&#x2197;  Top-Right"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,7"
+                    AutomationProperties.Name="Dock to top right corner"
+                    Click="DockTR_Click"/>
+            <Button Grid.Row="2" Grid.Column="0" Content="&#x2199;  Bottom-Left"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,7"
+                    AutomationProperties.Name="Dock to bottom-left corner"
+                    Click="DockBL_Click"/>
+            <Button Grid.Row="2" Grid.Column="2" Content="&#x2198;  Bottom-Right"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,7"
+                    AutomationProperties.Name="Dock to bottom-right corner"
+                    Click="DockBR_Click"/>
+          </Grid>
+          <Separator/>
+
+          <!-- Title bar size -->
+          <Grid Margin="12,4,12,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Title bar size:"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushHint}"
+                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <TextBlock x:Name="LensTitleSizeLabel" Grid.Column="1"
+                       Text="Normal" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <Button Grid.Column="2" Content="Cycle"
+                    AutomationProperties.Name="Cycle lens title bar size"
+                    AutomationProperties.HelpText="Cycle the lens title bar between hidden, compact and normal sizes"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                    Padding="8,4" Click="LensTitleSizeBtn_Click"/>
+          </Grid>
+          <CheckBox x:Name="EdgeDeadZoneCheck" Content="Edge dead zone (no screen-edge clipping)"
+                    AutomationProperties.Name="Edge dead zone"
+                    AutomationProperties.HelpText="Prevents the lens from being clipped at screen edges"
+                    Margin="12,4,12,4" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                    VerticalContentAlignment="Center" IsChecked="True"
+                    Checked="EdgeDeadZoneCheck_Changed" Unchecked="EdgeDeadZoneCheck_Changed"/>
+          <Separator/>
+
+          <!-- Border thickness -->
+          <TextBlock Text="Lens Border" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,2"/>
+          <Grid Margin="12,0,12,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="36"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Thickness:"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushHint}"
+                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <Slider x:Name="BorderThickSlider" Grid.Column="1"
+                    Minimum="1" Maximum="10" Value="2"
+                    TickFrequency="1" IsSnapToTickEnabled="True"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="Lens border thickness"
+                    AutomationProperties.HelpText="Set the thickness of the lens border in pixels, from 1 to 10"
+                    ValueChanged="BorderThickSlider_ValueChanged"/>
+            <TextBlock x:Name="BorderThickLabel" Grid.Column="2"
+                       Text="2px" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}"
+                       VerticalAlignment="Center" TextAlignment="Right"/>
+          </Grid>
+
+          <!-- Resize grip — low-vision: size + colour of the bottom drag handles -->
+          <TextBlock Text="Resize Grip (bottom handles)" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,2"
+                     ToolTip="Size and colour of the bottom resize handles, for easier grabbing"/>
+          <Grid Margin="12,0,12,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="36"/>
+              <ColumnDefinition Width="8"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Size:"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushHint}"
+                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <Slider x:Name="GripSizeSlider" Grid.Column="1"
+                    Minimum="44" Maximum="64" Value="44"
+                    TickFrequency="2" IsSnapToTickEnabled="True"
+                    VerticalAlignment="Center"
+                    AutomationProperties.Name="Resize grip size"
+                    AutomationProperties.HelpText="Set the size of the bottom resize handles in pixels, from 44 to 64"
+                    ValueChanged="GripSizeSlider_ValueChanged"/>
+            <TextBlock x:Name="GripSizeLabel" Grid.Column="2"
+                       Text="16px" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}"
+                       VerticalAlignment="Center" TextAlignment="Right"/>
+            <StackPanel Grid.Column="4" HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Vertical">
+              <Button x:Name="GripColorSwatch"
+                      Width="44" Height="44" Padding="0"
+                      Style="{StaticResource IconButton}"
+                      VerticalAlignment="Center"
+                      AutomationProperties.Name="Resize grip colour — click to change"
+                      AutomationProperties.HelpText="Open colour picker for the bottom resize handles"
+                      ToolTip="Change resize grip colour"
+                      Click="GripColorBtn_Click">
+                <Rectangle Width="22" Height="22" RadiusX="4" RadiusY="4"
+                           Fill="#8089B4FA" IsHitTestVisible="False"/>
+              </Button>
+              <TextBlock x:Name="GripColorLabel" Text="#89B4FA" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Center"
+                         IsHitTestVisible="False"/>
+            </StackPanel>
+          </Grid>
+          <Separator/>
+
+          <!-- Zoom Lock -->
+          <TextBlock Text="Zoom Lock" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,2"
+                     ToolTip="Pin minimum and maximum zoom for this session or preset"/>
+          <StackPanel Margin="12,0,12,6">
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+              <TextBlock Text="Min:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Width="28"/>
+              <Slider x:Name="ZoomLockMinSlider" Minimum="1.25" Maximum="19.75" Value="1.25"
+                      Width="120" VerticalAlignment="Center" SmallChange="0.25" LargeChange="1"
+                      AutomationProperties.Name="Minimum zoom lock"
+                      AutomationProperties.HelpText="Set the lowest zoom level users can reach"
+                      ValueChanged="ZoomLockMinSlider_Changed"
+                      ToolTip="Minimum zoom — users cannot zoom below this level"/>
+              <TextBlock x:Name="ZoomLockMinLabel" Text="1.25×" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"
+                         Margin="6,0,0,0" Width="40"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,2,0,2">
+              <TextBlock Text="Max:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Width="28"/>
+              <Slider x:Name="ZoomLockMaxSlider" Minimum="1.5" Maximum="20.0" Value="20.0"
+                      Width="120" VerticalAlignment="Center" SmallChange="0.25" LargeChange="1"
+                      AutomationProperties.Name="Maximum zoom lock"
+                      AutomationProperties.HelpText="Set the highest zoom level users can reach"
+                      ValueChanged="ZoomLockMaxSlider_Changed"
+                      ToolTip="Maximum zoom — users cannot zoom above this level"/>
+              <TextBlock x:Name="ZoomLockMaxLabel" Text="20.0×" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"
+                         Margin="6,0,0,0" Width="40"/>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+              <Image Source="{StaticResource JtIcon.Lock}" Style="{StaticResource JtInlineIcon}" x:Name="ZoomLockIcon" Visibility="Collapsed"/>
+              <TextBlock x:Name="ZoomLockLabel" Text="Unlocked" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"
+                         Margin="0,0,10,0"/>
+              <Button Content="Clear Lock" Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                      Padding="8,4" Click="ZoomLockClearBtn_Click"
+                      AutomationProperties.Name="Clear zoom lock range"
+                      AutomationProperties.HelpText="Remove zoom limits and allow full zoom range from 1.25 to 20 times"
+                      ToolTip="Remove zoom lock — allow full 1.25×–20× range"/>
+            </StackPanel>
+          </StackPanel>
+          <Separator/>
+
+          <!-- Home Zoom -->
+          <TextBlock x:Name="HeadHomeZoom" Text="Home Zoom  (Ctrl+Alt+0)" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,2"
+                     ToolTip="Press Ctrl+Alt+0 to instantly return to this zoom level"/>
+          <StackPanel Orientation="Horizontal" Margin="12,0,12,6">
+            <TextBlock Text="Current home:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <TextBlock x:Name="HomeZoomLabel" Text="2.0x" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushBlueText}" VerticalAlignment="Center"
+                       Margin="6,0,10,0" FontWeight="SemiBold"/>
+            <Button Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                    Padding="8,4" Click="SetHomeZoomBtn_Click"
+                    AutomationProperties.Name="Set home zoom to current zoom level"
+                    AutomationProperties.HelpText="Save the current zoom level as the home zoom target for Control Alt 0"
+                    ToolTip="Save current zoom as home zoom (Ctrl+Alt+0 target)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Home}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Set to Current" VerticalAlignment="Center"/></StackPanel></Button>
+          </StackPanel>
+          <Separator/>
+
+          <!-- Frame rate -->
+          <Grid Margin="12,4,12,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="Auto"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Update rate:"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushHint}"
+                       VerticalAlignment="Center" Margin="0,0,8,0"/>
+            <ComboBox x:Name="FpsCombo" Grid.Column="1"
+                      AutomationProperties.Name="Magnifier update rate"
+                      AutomationProperties.HelpText="How many times per second the magnified view refreshes"
+                      FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                      SelectionChanged="FpsCombo_SelectionChanged">
+              <ComboBoxItem Content="10 fps  (calm)" Tag="10"/>
+              <ComboBoxItem Content="15 fps" Tag="15"/>
+              <ComboBoxItem Content="30 fps" Tag="30"/>
+              <ComboBoxItem Content="60 fps  (smooth)" Tag="60" IsSelected="True"/>
+            </ComboBox>
+          </Grid>
+          <Separator/>
+
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+
+    <!-- ══ MAIN PANEL (two-column) ══════════════════════════════════════════════ -->
+
+    <!-- ══ SETTINGS PANEL (slide-out right overlay) ══════════════════════════════ -->
+    <Border x:Name="SlidePanel"
+            Width="260"
+            Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushBlue}"
+            BorderThickness="1,0,0,0"
+            Visibility="Collapsed" ClipToBounds="True"
+            Panel.ZIndex="100"
+            HorizontalAlignment="Right" VerticalAlignment="Stretch">
+      <Border.RenderTransform>
+        <TranslateTransform x:Name="SlidePanelTranslate" X="260"/>
+      </Border.RenderTransform>
+      <ScrollViewer Width="260" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+        <StackPanel Margin="0,0,0,12">
+
+          <Grid Margin="12,12,12,4">
+            <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="Settings"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="13" FontWeight="Bold"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/></StackPanel>
+            <Button HorizontalAlignment="Right"
+                    Background="Transparent" Foreground="{DynamicResource BrushRedText}"
+                    BorderThickness="0" FontSize="13" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" MinWidth="44" MinHeight="44"
+                    AutomationProperties.Name="Close Settings"
+                    AutomationProperties.HelpText="Hide the Settings panel"
+                    Click="PanelTabBtn_Click" Style="{StaticResource IconButton}"><Image Source="{StaticResource JtIcon.Close}" Style="{StaticResource JtSoloIcon}"/></Button>
+          </Grid>
+          <Separator/>
+
+          <TextBlock x:Name="HeadColourFilter" Text="Colour Filter" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,4"/>
+          <WrapPanel Margin="12,0,12,4">
+            <RadioButton x:Name="ColorNormal"       Content="Normal"       GroupName="Color" AutomationProperties.Name="Normal colour"        IsChecked="True" Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"/>
+            <RadioButton x:Name="ColorInvert"       Content="Invert"       GroupName="Color" AutomationProperties.Name="Inverted colour"                        Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"/>
+            <RadioButton x:Name="ColorGrayscale"    Content="Grayscale"    GroupName="Color" AutomationProperties.Name="Grayscale colour filter"               Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"/>
+            <RadioButton x:Name="ColorHighContrast" Content="High Contrast"  GroupName="Color" AutomationProperties.Name="High Contrast colour filter"           Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"/>
+            <RadioButton x:Name="ColorDeutan"       Content="Deuteranopia" GroupName="Color" AutomationProperties.Name="Deuteranopia colour filter"            Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"/>
+            <RadioButton x:Name="ColorProtan"       Content="Protanopia"   GroupName="Color" AutomationProperties.Name="Protanopia colour filter"              Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"/>
+            <RadioButton x:Name="ColorTritan"       Content="Tritanopia"   GroupName="Color" AutomationProperties.Name="Tritanopia colour filter"              Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"/>
+            <RadioButton x:Name="ColorWarmAmber"    Content="Warm Amber" GroupName="Color" AutomationProperties.Name="Warm amber colour filter"     Margin="0,2,8,2" VerticalContentAlignment="Center" Checked="Color_Checked"
+                         ToolTip="Reduces blue light — easier on photosensitive eyes"/>
+            <RadioButton x:Name="ColorCoolBlue"     Content="Cool Blue"  GroupName="Color" AutomationProperties.Name="Cool blue colour filter"      Margin="0,2,0,2" VerticalContentAlignment="Center" Checked="Color_Checked"
+                         ToolTip="Boosts blue channel — helps some contrast-sensitivity conditions"/>
+          </WrapPanel>
+          <StackPanel Margin="12,0,12,6" Orientation="Horizontal">
+            <TextBlock Text="Tint:" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center" Width="36"/>
+            <Slider x:Name="TintSlider" Minimum="0.1" Maximum="1.0" Value="0.5"
+                    Width="140" VerticalAlignment="Center"
+                    AutomationProperties.Name="Colour tint intensity"
+                    AutomationProperties.HelpText="Strength of the Warm Amber or Cool Blue colour tint, from 10 to 100 percent"
+                    ValueChanged="TintSlider_Changed"
+                    ToolTip="Tint intensity — applies to Warm Amber and Cool Blue modes"/>
+            <TextBlock x:Name="TintLabel" Text="50%" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"
+                       Margin="6,0,0,0" Width="32"/>
+          </StackPanel>
+          <Separator/>
+
+          <!-- Focus Ring -->
+          <TextBlock x:Name="HeadFocusRing" Text="Focus Ring" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,2"/>
+          <Grid Margin="12,0,12,8">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="8"/>
+              <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Grid.Column="0" Text="Keyboard focus ring colour:"
+                       FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+            <Button Grid.Column="2" x:Name="FocusRingColorBtn"
+                    Width="44" Height="44" Padding="2"
+                    Style="{StaticResource FlatButton}"
+                    AutomationProperties.Name="Choose focus ring colour"
+                    AutomationProperties.HelpText="Opens a colour picker for the keyboard focus highlight ring"
+                    ToolTip="Choose the colour of the keyboard focus ring"
+                    Click="FocusRingColorBtn_Click">
+              <Rectangle x:Name="FocusRingColorSwatch"
+                         Width="28" Height="16" RadiusX="3" RadiusY="3"
+                         Fill="#89B4FA"/>
+            </Button>
+          </Grid>
+
+          <Button
+                  AutomationProperties.Name="App auto-presets"
+                  AutomationProperties.HelpText="Configure automatic preset switching based on the active application"
+                  Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}"
+                  Padding="10,8" Margin="12,4,12,2" HorizontalAlignment="Stretch"
+                  Click="AppPresetsBtn_Click"
+                  ToolTip="Auto-load a preset when a specific application becomes active"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Rules}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="App Auto-Presets…" VerticalAlignment="Center"/></StackPanel></Button>
+          <Separator/>
+
+          <!-- Settings File -->
+          <TextBlock x:Name="HeadSettingsFile" Text="Settings File" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource HudFontBase}"
+                     Foreground="{DynamicResource BrushHint}" Margin="12,4,12,2"/>
+          <Grid Margin="12,0,12,2">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="6"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    AutomationProperties.Name="Export settings"
+                    AutomationProperties.HelpText="Save current settings to a file for backup or transfer"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,7"
+                    Click="ExportSettingsBtn_Click"
+                    ToolTip="Save settings to a file for backup or transfer"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Export" VerticalAlignment="Center"/></StackPanel></Button>
+            <Button Grid.Column="2"
+                    AutomationProperties.Name="Import settings"
+                    AutomationProperties.HelpText="Load settings from a previously exported file"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,7"
+                    Click="ImportSettingsBtn_Click"
+                    ToolTip="Load settings from a previously exported file"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Import}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Import" VerticalAlignment="Center"/></StackPanel></Button>
+          </Grid>
+          <Grid Margin="12,0,12,6">
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="*"/>
+              <ColumnDefinition Width="6"/>
+              <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="0"
+                    AutomationProperties.Name="Export presets only"
+                    AutomationProperties.HelpText="Save only the 5 lens presets to a file for sharing"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,6"
+                    Click="ExportPresetsBtn_Click"
+                    ToolTip="Export only the 5 lens presets — does not affect other settings"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Export Presets" VerticalAlignment="Center"/></StackPanel></Button>
+            <Button Grid.Column="2"
+                    AutomationProperties.Name="Import presets only"
+                    AutomationProperties.HelpText="Load lens presets from a file without changing other settings"
+                    Style="{StaticResource FlatButton}" FontSize="{DynamicResource FontSizeCaption}" Padding="6,6"
+                    Click="ImportPresetsBtn_Click"
+                    ToolTip="Import lens presets without overwriting any other settings"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Import}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Import Presets" VerticalAlignment="Center"/></StackPanel></Button>
+          </Grid>
+
+        </StackPanel>
+      </ScrollViewer>
+    </Border>
+
+  <!-- Suite-canonical grip: 44×44, keyboard-resizable (Arrow / Shift+Arrow), focus ring (WCAG §4 Phase 3) -->
+  <ctl:AccessibleResizeGrip Grid.RowSpan="99" Grid.ColumnSpan="99"/>
+
+  </Grid>
+</Window>

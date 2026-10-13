@@ -1,0 +1,46 @@
+<Window x:Class="NoteStation.FatalErrorDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        Title="NoteStation needs to close"
+        Width="460" SizeToContent="Height"
+        MinWidth="380"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterScreen"
+        Topmost="True"
+        Background="{DynamicResource BrushBg}"
+        AutomationProperties.Name="NoteStation needs to close"
+        AutomationProperties.HelpText="A serious error occurred. NoteStation stopped saving to protect your data and will close.">
+
+  <StackPanel Margin="28,24,28,24">
+    <TextBlock Text="NoteStation needs to close"
+               Style="{StaticResource DialogTitle}"
+               TextWrapping="Wrap" Margin="0,0,0,12"/>
+
+    <DockPanel Margin="0,0,0,12">
+      <Image DockPanel.Dock="Left" Source="{StaticResource JtIcon.Close}" Style="{StaticResource JtInlineIcon}"
+             VerticalAlignment="Top" Margin="0,3,8,0" AutomationProperties.Name="Error"/>
+      <TextBlock Foreground="{DynamicResource BrushText}" FontSize="{DynamicResource FontSizeBody}" TextWrapping="Wrap"
+                 Text="Something went wrong and NoteStation stopped saving to protect your data. Everything saved before this point is safe."/>
+    </DockPanel>
+
+    <TextBlock Text="Details" Style="{StaticResource SectionHeader}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
+      <StackPanel Margin="0,0,0,16">
+        <TextBox x:Name="TxtError" IsReadOnly="True" TextWrapping="Wrap" MinHeight="44" MaxHeight="160"
+                 VerticalScrollBarVisibility="Auto"
+                 AutomationProperties.Name="Error message"/>
+        <TextBlock x:Name="TxtLogPath" Margin="0,6,0,0" TextWrapping="Wrap"
+                   Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"/>
+      </StackPanel>
+
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button x:Name="BtnClose" Content="Close NoteStation" MinWidth="160" Height="44" Padding="16,0"
+              IsDefault="True" IsCancel="True"
+              Click="BtnClose_Click"
+              Style="{StaticResource PrimaryButton}"
+              AutomationProperties.Name="Close NoteStation"/>
+    </StackPanel>
+
+    <ctl:AccessibleResizeGrip Margin="0,0,-24,-20"/>
+  </StackPanel>
+</Window>

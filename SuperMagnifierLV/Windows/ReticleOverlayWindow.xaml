@@ -1,0 +1,14 @@
+<Window x:Class="SuperMagnifier.ReticleOverlayWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="ReticleOverlay"
+        WindowStyle="None"
+        AllowsTransparency="True"
+        Background="Transparent"
+        ShowInTaskbar="False"
+        Focusable="False"
+        IsHitTestVisible="False"
+        ShowActivated="False"
+        Topmost="True">
+    <Canvas x:Name="DrawCanvas" Background="Transparent"/>
+</Window>

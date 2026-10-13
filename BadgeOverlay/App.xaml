@@ -1,0 +1,207 @@
+<Application x:Class="BadgeOverlay.App"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:local="clr-namespace:BadgeOverlay"
+             StartupUri="MainWindow.xaml"
+             ShutdownMode="OnExplicitShutdown">
+  <Application.Resources>
+    <ResourceDictionary>
+      <ResourceDictionary.MergedDictionaries>
+
+        <!-- Theme palette — swapped at runtime by App.SetTheme() (must be index 0) -->
+        <ResourceDictionary x:Name="ThemeDict" Source="Themes/Dark.xaml"/>
+
+        <!-- Style modules -->
+        <ResourceDictionary Source="Themes/_Indicators.xaml"/>
+        <ResourceDictionary Source="Themes/_Buttons.xaml"/>
+        <ResourceDictionary Source="Themes/_Inputs.xaml"/>
+
+        <!-- Fixed-color JT icon set (theme-independent). App.SetTheme only swaps index 0. -->
+        <ResourceDictionary Source="Theming/ColorIcons.xaml"/>
+
+      </ResourceDictionary.MergedDictionaries>
+
+      <!-- Fixed-color JT icons (Theming/ColorIcons.xaml). Never recolored per theme;
+           always paired with a text label or AutomationProperties.Name. Disabled = faded. -->
+      <local:JtIconConverter x:Key="JtIconConverter"/>
+
+      <!-- Overlay palette (badge + Info Overlay) — defaults = Dark style; replaced at runtime by
+           Core/OverlayPalette.Apply (Badge style setting, MatchTheme, Windows High Contrast). -->
+      <SolidColorBrush x:Key="OverlayBg"     Color="#E61E1E2E"/>
+      <SolidColorBrush x:Key="OverlayBar"    Color="#2A2A3E"/>
+      <SolidColorBrush x:Key="OverlayText"   Color="#FFFFFF"/>
+      <SolidColorBrush x:Key="OverlayMuted"  Color="#C9CEDF"/>
+      <SolidColorBrush x:Key="OverlayPill"   Color="#33FFFFFF"/>
+      <SolidColorBrush x:Key="OverlayFocus"  Color="#FFD700"/>
+      <SolidColorBrush x:Key="OverlayWarn"   Color="#FFD080"/>
+      <SolidColorBrush x:Key="OverlayBorder" Color="#8A90AA"/>
+      <Style x:Key="JtBtnIcon" TargetType="Image">
+        <Setter Property="Width"             Value="18"/>
+        <Setter Property="Height"            Value="18"/>
+        <Setter Property="Stretch"           Value="Uniform"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Margin"            Value="0,0,7,0"/>
+        <Setter Property="SnapsToDevicePixels" Value="True"/>
+        <Style.Triggers>
+          <Trigger Property="IsEnabled" Value="False">
+            <Setter Property="Opacity" Value="0.4"/>
+          </Trigger>
+        </Style.Triggers>
+      </Style>
+      <Style x:Key="JtSoloIcon" TargetType="Image" BasedOn="{StaticResource JtBtnIcon}">
+        <Setter Property="Width"  Value="20"/>
+        <Setter Property="Height" Value="20"/>
+        <Setter Property="Margin" Value="0"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+      </Style>
+      <Style x:Key="JtInlineIcon" TargetType="Image" BasedOn="{StaticResource JtBtnIcon}">
+        <Setter Property="Width"  Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Margin" Value="0,0,6,0"/>
+      </Style>
+      <Style x:Key="JtMenuIcon" TargetType="Image" BasedOn="{StaticResource JtBtnIcon}">
+        <Setter Property="Width"  Value="16"/>
+        <Setter Property="Height" Value="16"/>
+        <Setter Property="Margin" Value="0"/>
+      </Style>
+      <Style x:Key="JtHeaderIcon" TargetType="Image" BasedOn="{StaticResource JtBtnIcon}">
+        <Setter Property="Width"  Value="24"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="Margin" Value="0,0,10,0"/>
+      </Style>
+
+      <!-- Low-Vision: app-wide font family + size anchors (swappable at runtime) -->
+      <FontFamily x:Key="AppFontFamily">Segoe UI</FontFamily>
+      <sys:Double x:Key="UiTitleBase">17</sys:Double>
+      <sys:Double x:Key="UiButtonBase">12</sys:Double>
+      <sys:Double x:Key="UiBodyBase">12</sys:Double>
+      <sys:Double x:Key="BadgeFontBase">11</sys:Double>
+
+      <!-- WCAG 2.2 AAA type ramp (1.4.8, low-vision goal): 12px floor for app chrome.
+           Always DynamicResource; code uses Controls.TypeRamp. BadgeFontBase (user-chosen
+           badge size, 8..72) is intentionally outside the ramp. -->
+      <sys:Double x:Key="FontSizeCaption">12</sys:Double>
+      <sys:Double x:Key="FontSizeBody">14</sys:Double>
+      <sys:Double x:Key="FontSizeTitle">18</sys:Double>
+
+      <!-- Implicit ContextMenu/MenuItem style — previously fully unstyled
+           (OS-default light popup chrome behind every dark/neon theme).
+           Ported from the suite-wide fix already applied in TimerStudio /
+           SuperMagnifierLV / ReticleOverlay. Covers plain items, separators,
+           and submenu headers. -->
+      <Style TargetType="ContextMenu">
+        <Setter Property="Background"      Value="{DynamicResource BrushSurf}"/>
+        <Setter Property="BorderBrush"     Value="{DynamicResource BrushSurf2}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="Foreground"      Value="{DynamicResource BrushText}"/>
+        <Setter Property="FontFamily"      Value="{DynamicResource AppFontFamily}"/>
+        <Setter Property="FontSize"        Value="12"/>
+        <Setter Property="Padding"         Value="2"/>
+        <Setter Property="HasDropShadow"   Value="False"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="ContextMenu">
+              <Border Background="{TemplateBinding Background}"
+                      BorderBrush="{TemplateBinding BorderBrush}"
+                      BorderThickness="{TemplateBinding BorderThickness}"
+                      CornerRadius="4"
+                      Padding="{TemplateBinding Padding}"
+                      SnapsToDevicePixels="True">
+                <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                  <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                </ScrollViewer>
+              </Border>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+      <Style TargetType="Separator" x:Key="{x:Static MenuItem.SeparatorStyleKey}">
+        <Setter Property="Background" Value="{DynamicResource BrushSurf2}"/>
+        <Setter Property="Margin"     Value="6,4"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="Separator">
+              <Border Height="1" Background="{TemplateBinding Background}"/>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+      <Style TargetType="MenuItem">
+        <Setter Property="Background"       Value="Transparent"/>
+        <Setter Property="Foreground"       Value="{DynamicResource BrushText}"/>
+        <Setter Property="FontFamily"       Value="{DynamicResource AppFontFamily}"/>
+        <Setter Property="FontSize"         Value="12"/>
+        <Setter Property="Padding"          Value="8,6"/>
+        <Setter Property="MinHeight"        Value="44"/>
+        <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+        <Setter Property="Template">
+          <Setter.Value>
+            <ControlTemplate TargetType="MenuItem">
+              <Grid x:Name="Root" Background="{TemplateBinding Background}"
+                    SnapsToDevicePixels="True">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto" MinWidth="20"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto" MinWidth="14"/>
+                </Grid.ColumnDefinitions>
+                <!-- Fixed-color JT icon (MenuItem.Icon, JtMenuIcon 16px); collapsed when none -->
+                <ContentPresenter x:Name="Icon" Grid.Column="0" ContentSource="Icon"
+                                  MaxWidth="16" MaxHeight="16"
+                                  Margin="4,0" VerticalAlignment="Center"/>
+                <ContentPresenter Grid.Column="1" ContentSource="Header"
+                                  RecognizesAccessKey="True"
+                                  VerticalAlignment="Center"
+                                  Margin="{TemplateBinding Padding}"
+                                  TextElement.Foreground="{TemplateBinding Foreground}"/>
+                <TextBlock Grid.Column="2" Text="{TemplateBinding InputGestureText}"
+                           Foreground="{DynamicResource BrushHint}"
+                           Margin="12,0,8,0" VerticalAlignment="Center"/>
+                <TextBlock x:Name="Arrow" Grid.Column="3" Text="&#9656;" FontSize="{DynamicResource FontSizeCaption}"
+                           Margin="0,0,8,0" VerticalAlignment="Center"
+                           Foreground="{DynamicResource BrushHint}"
+                           Visibility="Collapsed"/>
+                <Border x:Name="FocusRing"
+                        BorderBrush="{DynamicResource FocusRingBrush}"
+                        BorderThickness="2" Margin="1" Opacity="0"
+                        IsHitTestVisible="False"/>
+                <Popup x:Name="PART_Popup" AllowsTransparency="True" Focusable="False"
+                       Placement="Right" HorizontalOffset="-4" VerticalOffset="-2"
+                       IsOpen="{Binding IsSubmenuOpen, RelativeSource={RelativeSource TemplatedParent}}">
+                  <Border Background="{DynamicResource BrushSurf}"
+                          BorderBrush="{DynamicResource BrushSurf2}"
+                          BorderThickness="1" CornerRadius="4" Padding="2">
+                    <ScrollViewer CanContentScroll="True" VerticalScrollBarVisibility="Auto">
+                      <ItemsPresenter KeyboardNavigation.DirectionalNavigation="Cycle"/>
+                    </ScrollViewer>
+                  </Border>
+                </Popup>
+              </Grid>
+              <ControlTemplate.Triggers>
+                <Trigger Property="Icon" Value="{x:Null}">
+                  <Setter TargetName="Icon" Property="Visibility" Value="Collapsed"/>
+                </Trigger>
+                <Trigger Property="Role" Value="SubmenuHeader">
+                  <Setter TargetName="Arrow" Property="Visibility" Value="Visible"/>
+                </Trigger>
+                <Trigger Property="IsHighlighted" Value="True">
+                  <Setter TargetName="Root" Property="Background" Value="{DynamicResource BrushSurf2}"/>
+                </Trigger>
+                <Trigger Property="IsKeyboardFocused" Value="True">
+                  <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+                </Trigger>
+                <Trigger Property="IsEnabled" Value="False">
+                  <Setter Property="Foreground" Value="{DynamicResource BrushDisabled}"/>
+                </Trigger>
+              </ControlTemplate.Triggers>
+            </ControlTemplate>
+          </Setter.Value>
+        </Setter>
+      </Style>
+
+    </ResourceDictionary>
+  </Application.Resources>
+</Application>

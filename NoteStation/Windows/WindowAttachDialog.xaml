@@ -1,0 +1,80 @@
+<Window x:Class="NoteStation.Windows.WindowAttachDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        xmlns:automation="http://schemas.microsoft.com/netfx/2007/xaml/presentation"
+        Title="Attach Note to Window"
+        Width="460" SizeToContent="Height" MaxHeight="520"
+        WindowStyle="None" AllowsTransparency="True"
+        Background="{DynamicResource BrushBg}"
+        WindowStartupLocation="CenterOwner" ResizeMode="CanResize" MinWidth="380" MinHeight="200"
+        ShowInTaskbar="False"
+        automation:AutomationProperties.Name="Attach Note to Window dialog">
+
+    <Border BorderBrush="{DynamicResource BrushBlue}" BorderThickness="1" CornerRadius="4">
+      <Grid>
+        <StackPanel Margin="16">
+
+            <!-- Title bar -->
+            <Grid Margin="0,0,0,12">
+                <TextBlock Text="Attach Note to Window" Style="{StaticResource DialogTitle}" FontSize="15"
+                           VerticalAlignment="Center"/>
+                <Button x:Name="BtnClose" Content="✕" HorizontalAlignment="Right"
+                        Style="{StaticResource FlatButton}" Padding="0"
+                        Background="Transparent"
+                        Click="BtnClose_Click"
+                        AutomationProperties.Name="Close dialog"
+                        ToolTip="Close"/>
+            </Grid>
+
+            <!-- Instructions -->
+            <TextBlock Text="Pick a running window or type a wildcard pattern (e.g. *Notepad*):"
+                       FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                       TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+            <!-- Custom pattern input -->
+            <TextBox x:Name="TxtPattern" FontSize="13"
+                     Padding="8,0" VerticalContentAlignment="Center"
+                     AutomationProperties.Name="Window title pattern"
+                     Margin="0,0,0,8"
+                     TextChanged="TxtPattern_TextChanged"/>
+
+            <!-- Running windows list -->
+            <TextBlock Text="Running windows:" Style="{StaticResource SectionHeader}" Margin="0,0,0,4"/>
+            <ListBox x:Name="LstWindows" Height="200"
+                     ScrollViewer.VerticalScrollBarVisibility="Auto"
+                     AutomationProperties.Name="Running windows"
+                     SelectionChanged="LstWindows_SelectionChanged">
+            </ListBox>
+
+            <!-- Clear / None button -->
+            <Button x:Name="BtnClearAttach" Content="Remove attachment (show always)"
+                    Margin="0,8,0,0" HorizontalAlignment="Left"
+                    Style="{StaticResource FlatButton}"
+                    Click="BtnClearAttach_Click"
+                    AutomationProperties.Name="Remove window attachment"/>
+
+            <!-- OK / Cancel -->
+            <Grid Margin="0,12,32,0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="8"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <Button x:Name="BtnCancel" Grid.Column="0" Content="Cancel"
+                        Style="{StaticResource FlatButton}"
+                        Click="BtnCancel_Click"
+                        AutomationProperties.Name="Cancel"/>
+                <Button x:Name="BtnOk" Grid.Column="2" Content="Attach"
+                        Style="{StaticResource PrimaryButton}"
+                        Click="BtnOk_Click"
+                        AutomationProperties.Name="Attach note to window"/>
+            </Grid>
+
+        </StackPanel>
+
+        <!-- Resize grip — suite-canonical AccessibleResizeGrip (WCAG 2.1.3/2.5.5); Ctrl+Alt+Arrow also resizes. -->
+        <ctl:AccessibleResizeGrip/>
+      </Grid>
+    </Border>
+</Window>

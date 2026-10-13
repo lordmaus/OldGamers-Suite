@@ -1,0 +1,156 @@
+<Window x:Class="TimerStudio.HotkeysDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:TimerStudio.Controls"
+        Title="Hotkeys — Timer Studio"
+        Width="560" Height="620"
+        MinWidth="420" MinHeight="480"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        KeyDown="Window_KeyDown"
+        AutomationProperties.Name="Timer Studio Hotkeys">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- ── Header banner — BrushText on BrushSurf: 21:1 both themes ── -->
+    <Border Grid.Row="0"
+            Background="{DynamicResource BrushSurf}"
+            BorderBrush="{DynamicResource BrushBlue}"
+            BorderThickness="0,0,0,3"
+            Padding="20,14,20,14">
+      <StackPanel>
+        <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Style="{StaticResource DialogTitle}" Text="Keyboard Shortcuts" VerticalAlignment="Center"
+                   FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+                   Foreground="{DynamicResource BrushText}"/></StackPanel>
+        <TextBlock Text="Click a shortcut button to capture a new key combination. Press Escape to unbind."
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,4,0,0" TextWrapping="Wrap"/>
+      </StackPanel>
+    </Border>
+
+    <!-- ── Status bar / capture hint ── -->
+    <Border Grid.Row="1"
+            Background="{DynamicResource BrushSurf}"
+            BorderBrush="{DynamicResource BrushSurf2}"
+            BorderThickness="0,0,0,1"
+            Padding="20,8">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="LblCaptureStatus"
+                   Grid.Column="0"
+                   Text="Click any shortcut button on the right to begin capturing."
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}"
+                   VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+          <TextBlock Text="Enable shortcuts"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="0,0,8,0"/>
+          <CheckBox x:Name="ChkEnabled"
+                    VerticalAlignment="Center"
+                    MinWidth="44" MinHeight="44"
+                    AutomationProperties.Name="Enable keyboard shortcuts"
+                    Checked="ChkEnabled_Changed"
+                    Unchecked="ChkEnabled_Changed"/>
+        </StackPanel>
+      </Grid>
+    </Border>
+
+    <!-- ── Remappable shortcut rows ── -->
+    <ScrollViewer Grid.Row="2"
+                  VerticalScrollBarVisibility="Auto"
+                  Padding="20,8,20,8">
+      <StackPanel x:Name="ShortcutPanel"/>
+    </ScrollViewer>
+
+    <!-- ── Fixed shortcuts footer ── -->
+    <Border Grid.Row="3"
+            Background="{DynamicResource BrushSurf}"
+            BorderBrush="{DynamicResource BrushSurf2}"
+            BorderThickness="0,1,0,0"
+            Padding="20,10">
+      <StackPanel>
+        <TextBlock Style="{StaticResource SectionHeader}" Text="Fixed shortcuts  (always active, not remappable)"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,6"/>
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="*"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,2">
+              <Run Text="Escape" Foreground="{DynamicResource BrushBlueText}"/>
+              <Run Text="  Dismiss alert / cancel edit"/>
+            </TextBlock>
+            <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,2">
+              <Run Text="Enter" Foreground="{DynamicResource BrushBlueText}"/>
+              <Run Text="  Commit name edit"/>
+            </TextBlock>
+          </StackPanel>
+          <StackPanel Grid.Column="1">
+            <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,2">
+              <Run Text="Ctrl+N" Foreground="{DynamicResource BrushBlueText}"/>
+              <Run Text="  Add timer (default)"/>
+            </TextBlock>
+            <TextBlock FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,2">
+              <Run Text="Drag" Foreground="{DynamicResource BrushBlueText}"/>
+              <Run Text="  Reorder timer cards"/>
+            </TextBlock>
+          </StackPanel>
+        </Grid>
+      </StackPanel>
+    </Border>
+
+    <!-- ── Buttons ── -->
+    <Border Grid.Row="4"
+            Background="{DynamicResource BrushBar}"
+            BorderBrush="{DynamicResource BrushSurf2}"
+            BorderThickness="0,1,0,0"
+            Padding="20,10,52,10">
+      <Grid>
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="*"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="8"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <Button Grid.Column="0"
+                Style="{StaticResource FlatButton}"
+                Padding="14,8" MinHeight="44"
+                AutomationProperties.Name="Reset all hotkeys to defaults"
+                Click="BtnResetAll_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Undo}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Reset All to Defaults" VerticalAlignment="Center"/></StackPanel></Button>
+        <Button Grid.Column="2"
+                Content="Cancel"
+                Style="{StaticResource FlatButton}"
+                Padding="20,8" MinHeight="44"
+                IsCancel="True"
+                AutomationProperties.Name="Cancel hotkey changes"
+                Click="BtnCancel_Click"/>
+        <Button Grid.Column="4"
+                Content="Apply"
+                Style="{StaticResource PrimaryButton}"
+                Padding="24,8" MinHeight="44"
+                AutomationProperties.Name="Apply hotkey changes"
+                Click="BtnApply_Click"/>
+      </Grid>
+    </Border>
+
+  <!-- WCAG 2.2 AAA: shared 44x44 keyboard + mouse resize grip (Controls/AccessibleResizeGrip.cs) -->
+  <ctl:AccessibleResizeGrip/>
+  </Grid>
+</Window>

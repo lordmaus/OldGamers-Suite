@@ -1,0 +1,154 @@
+<Window x:Class="SuperMagnifier.AppPresetDialog"
+        ResizeMode="CanResize"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:SuperMagnifier.Controls"
+        Title="App-Based Auto Presets" Width="480" Height="400"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}" ShowInTaskbar="False">
+  <Grid Margin="16">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <StackPanel Orientation="Horizontal" Margin="0,0,0,4" Grid.Row="0"><Image Source="{StaticResource JtIcon.Rules}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Text="App-Based Auto Presets" VerticalAlignment="Center" FontFamily="Segoe UI"
+               FontSize="14" FontWeight="Bold" Foreground="{DynamicResource BrushBlueText}"/></StackPanel>
+    <TextBlock Grid.Row="1" TextWrapping="Wrap" FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,8"
+               Text="When one of these apps becomes the foreground window, the linked preset loads automatically. Enter the exe name without .exe (e.g. chrome, notepad, acrobat)."/>
+
+    <Border Grid.Row="2" BorderBrush="{DynamicResource BrushMuted}"
+            BorderThickness="1" Margin="0,0,0,8">
+      <ListView x:Name="RulesList" Background="{DynamicResource BrushBar}"
+                BorderThickness="0" SelectionMode="Single"
+                AutomationProperties.Name="App preset rules"
+                AutomationProperties.HelpText="Applications and the preset that loads when each becomes the active window">
+        <!-- L-4: was fully unstyled — GridView cell TextBlocks default to
+             black Foreground, unreadable against BrushBar on dark themes.
+             Also themes selection/hover, which otherwise falls back to
+             system Highlight colors (same contrast failure). -->
+        <ListView.ItemContainerStyle>
+          <Style TargetType="ListViewItem">
+            <Setter Property="Foreground" Value="{DynamicResource BrushText}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Template">
+              <Setter.Value>
+                <ControlTemplate TargetType="ListViewItem">
+                  <Grid>
+                    <Border x:Name="Bd"
+                            Background="{TemplateBinding Background}"
+                            SnapsToDevicePixels="True">
+                      <GridViewRowPresenter Columns="{TemplateBinding GridView.ColumnCollection}"
+                                            Content="{TemplateBinding Content}"/>
+                    </Border>
+                    <Border x:Name="FocusRing"
+                            BorderBrush="{DynamicResource FocusRingBrush}"
+                            BorderThickness="2" Margin="-1" Opacity="0"/>
+                  </Grid>
+                  <ControlTemplate.Triggers>
+                    <Trigger Property="IsMouseOver" Value="True">
+                      <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushSurf2}"/>
+                    </Trigger>
+                    <Trigger Property="IsSelected" Value="True">
+                      <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushSurf2}"/>
+                    </Trigger>
+                    <MultiTrigger>
+                      <MultiTrigger.Conditions>
+                        <Condition Property="IsSelected"  Value="True"/>
+                        <Condition Property="IsMouseOver" Value="True"/>
+                      </MultiTrigger.Conditions>
+                      <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushSurf2}"/>
+                    </MultiTrigger>
+                    <Trigger Property="IsKeyboardFocused" Value="True">
+                      <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+                    </Trigger>
+                  </ControlTemplate.Triggers>
+                </ControlTemplate>
+              </Setter.Value>
+            </Setter>
+          </Style>
+        </ListView.ItemContainerStyle>
+        <ListView.View>
+          <GridView>
+            <GridViewColumn Header="Application (exe name)" Width="220"
+                            DisplayMemberBinding="{Binding ExeName}"/>
+            <GridViewColumn Header="Preset Slot" Width="100"
+                            DisplayMemberBinding="{Binding SlotDisplay}"/>
+          </GridView>
+        </ListView.View>
+      </ListView>
+    </Border>
+
+    <!-- Add row -->
+    <Grid Grid.Row="3" Margin="0,0,0,12">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="8"/>
+        <ColumnDefinition Width="110"/>
+        <ColumnDefinition Width="8"/>
+        <ColumnDefinition Width="Auto"/>
+        <ColumnDefinition Width="8"/>
+        <ColumnDefinition Width="Auto"/>
+      </Grid.ColumnDefinitions>
+      <TextBox x:Name="ExeBox" Grid.Column="0"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Background="{DynamicResource BrushBar}"
+               Foreground="{DynamicResource BrushText}"
+               BorderBrush="{DynamicResource BrushBlue}" Padding="6,4"
+               AutomationProperties.Name="Executable name"
+               AutomationProperties.HelpText="Enter exe name without .exe (e.g. chrome, notepad, acrobat)"
+               ToolTip="Enter exe name without .exe (e.g. chrome, notepad, acrobat)"/>
+      <ComboBox x:Name="SlotCombo" Grid.Column="2" MinHeight="44"
+                AutomationProperties.Name="Preset slot for this application"
+                FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                Background="{DynamicResource BrushBar}"
+                Foreground="{DynamicResource BrushText}">
+        <ComboBoxItem Content="Preset 1" Tag="0" IsSelected="True"/>
+        <ComboBoxItem Content="Preset 2" Tag="1"/>
+        <ComboBoxItem Content="Preset 3" Tag="2"/>
+        <ComboBoxItem Content="Preset 4" Tag="3"/>
+        <ComboBoxItem Content="Preset 5" Tag="4"/>
+      </ComboBox>
+      <Button Grid.Column="4"
+              Style="{StaticResource PrimaryButton}" Padding="12,4"
+              Click="AddBtn_Click"
+                    AutomationProperties.Name="Add rule"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.NewTask}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Add Rule" VerticalAlignment="Center"/></StackPanel></Button>
+      <Button Grid.Column="6"
+              Style="{StaticResource FlatButton}" Padding="12,4"
+              Click="RemoveBtn_Click"
+                    AutomationProperties.Name="Remove selected rule"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Delete}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Remove" VerticalAlignment="Center"/></StackPanel></Button>
+    </Grid>
+
+    <StackPanel Grid.Row="4" Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button Style="{StaticResource PrimaryButton}"
+              Padding="24,7" IsDefault="True"
+              AutomationProperties.Name="Save app preset rules"
+              Click="SaveBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Save}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Save" VerticalAlignment="Center"/></StackPanel></Button>
+      <Button Content="Cancel" Style="{StaticResource FlatButton}"
+              Padding="16,7" Margin="8,0,0,0" IsCancel="True"
+              AutomationProperties.Name="Cancel and close"
+              Click="CancelBtn_Click"/>
+    </StackPanel>
+
+  <!-- Triangular resize handle -->
+  <Path Grid.RowSpan="99" Grid.ColumnSpan="99"
+        HorizontalAlignment="Right" VerticalAlignment="Bottom"
+        Margin="0,0,2,2" IsHitTestVisible="False"
+        Fill="{DynamicResource BrushMuted}" Opacity="0.4">
+    <Path.Data>
+      <PathGeometry>
+        <PathFigure StartPoint="0,16" IsClosed="true">
+          <LineSegment Point="16,16"/>
+          <LineSegment Point="16,0"/>
+        </PathFigure>
+      </PathGeometry>
+    </Path.Data>
+  </Path>
+    <ctl:AccessibleResizeGrip Grid.RowSpan="99" Grid.ColumnSpan="99"/>
+  </Grid>
+</Window>

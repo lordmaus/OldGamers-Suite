@@ -1,0 +1,34 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- GitHub Light — https://github.com/primer/primitives
+       Accent colours darkened vs GitHub web values to meet WCAG AAA on #FFFFFF. -->
+  <SolidColorBrush x:Key="BrushBg"           Color="#FFFFFF"/>
+  <SolidColorBrush x:Key="BrushSurf"         Color="#F6F8FA"/>
+  <SolidColorBrush x:Key="BrushSurf2"        Color="#EAEEF2"/>
+  <SolidColorBrush x:Key="BrushText"         Color="#1F2328"/>
+  <SolidColorBrush x:Key="BrushMuted"        Color="#495058"/>
+  <SolidColorBrush x:Key="BrushHint"         Color="#50555D"/>
+  <SolidColorBrush x:Key="BrushBlue"         Color="#0550AE"/>
+  <SolidColorBrush x:Key="BrushRed"          Color="#A40E26"/>
+  <SolidColorBrush x:Key="BrushGreen"        Color="#116329"/>
+  <SolidColorBrush x:Key="BrushAmber"        Color="#7D4E00"/>
+  <SolidColorBrush x:Key="BrushOrange"       Color="#7D4E00"/>
+  <SolidColorBrush x:Key="BrushYellow"       Color="#7D4E00"/>
+  <SolidColorBrush x:Key="BrushPurple"       Color="#5A32A3"/>
+  <SolidColorBrush x:Key="BrushPink"         Color="#9A0050"/>
+  <SolidColorBrush x:Key="BrushTeal"         Color="#0694A2"/>
+  <SolidColorBrush x:Key="BrushBar"          Color="#F6F8FA"/>
+  <!-- BrushDisabled exempt per WCAG — inactive UI -->
+  <SolidColorBrush x:Key="BrushDisabled"     Color="#6E7781"/>
+  <!-- Focus ring: #0550AE — 9.8:1 on #FFFFFF (AAA) -->
+  <SolidColorBrush x:Key="FocusRingBrush"    Color="#0550AE"/>
+  <!-- CheckBox glyph on BrushBlue fill — white on dark accent -->
+  <SolidColorBrush x:Key="BrushBgForChecked" Color="#FFFFFF"/>
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#6B737D"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#A40E26"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#0550AE"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#116229"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#784B00"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#FFFFFF"/>
+</ResourceDictionary>

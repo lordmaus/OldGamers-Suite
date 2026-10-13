@@ -1,0 +1,532 @@
+<Window x:Class="TimerStudio.CalendarSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:TimerStudio.Controls"
+        Title="Timer Studio — Calendar &amp; Email Settings"
+        Width="520" Height="740"
+        MinWidth="400" MinHeight="420" MaxHeight="1200"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        AutomationProperties.Name="Calendar and Email Settings">
+
+  <Grid Margin="20,14,20,14">
+    <Grid.RowDefinitions>
+      <RowDefinition Height="Auto"/>
+      <RowDefinition Height="10"/>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="12"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <!-- Header -->
+    <TextBlock Grid.Row="0"
+               Text="📅  Calendar &amp; Email Settings"
+               FontFamily="Segoe UI" FontSize="16" FontWeight="Bold"
+               Foreground="{DynamicResource BrushText}"
+               AutomationProperties.HeadingLevel="Level1"/>
+
+    <ScrollViewer Grid.Row="2" VerticalScrollBarVisibility="Auto">
+      <StackPanel>
+
+        <!-- ══ SECTION: DEFAULT CALENDAR ══════════════════════════════════════ -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="DEFAULT CALENDAR"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="The default calendar auto-loads in the Import picker and is used for auto-pull."
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+        <Border x:Name="PnlNoOutlookDefault"
+                Background="{DynamicResource BrushSurf}"
+                BorderBrush="{DynamicResource BrushSurf2}"
+                BorderThickness="1" CornerRadius="4"
+                Padding="10,8" Margin="0,0,0,8" Visibility="Collapsed">
+          <TextBlock Text="Outlook is not installed — Outlook calendar features are unavailable."
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     TextWrapping="Wrap"/>
+        </Border>
+
+        <Grid x:Name="PnlDefaultCalendar" Visibility="Collapsed" Margin="0,0,0,16">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <ComboBox x:Name="CboDefaultCalendar"
+                    Grid.Column="0"
+                    FontSize="{DynamicResource FontSizeCaption}"
+                    ToolTip="Choose the default Outlook calendar"
+                    AutomationProperties.Name="Default calendar"
+                    SelectionChanged="CboDefaultCalendar_SelectionChanged"/>
+          <Button x:Name="BtnRefreshCalendars"
+                  Grid.Column="2"
+                  Content="↺ Refresh"
+                  Style="{StaticResource FlatButton}"
+                  FontSize="{DynamicResource FontSizeCaption}" Padding="10,6" MinHeight="44" MinWidth="44"
+                  ToolTip="Re-scan Outlook for calendar folders"
+                  AutomationProperties.Name="Refresh Outlook calendar list"
+                  Click="BtnRefreshCalendars_Click"/>
+        </Grid>
+
+        <Separator Margin="0,0,0,12"/>
+
+        <!-- ══ SECTION: CALENDAR VISIBILITY ═══════════════════════════════════ -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="CALENDAR VISIBILITY"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="Unchecked calendars are hidden from the auto-pull and the Import picker."
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+        <Border x:Name="PnlCalVisibility"
+                Background="{DynamicResource BrushSurf}"
+                BorderBrush="{DynamicResource BrushSurf2}"
+                BorderThickness="1" CornerRadius="4"
+                Padding="6,4" Margin="0,0,0,8" Visibility="Collapsed"
+                MaxHeight="260">
+          <ScrollViewer VerticalScrollBarVisibility="Auto">
+            <StackPanel x:Name="PnlCalVisList"/>
+          </ScrollViewer>
+        </Border>
+
+        <TextBlock x:Name="LblCalLoading"
+                   Text="Scanning Outlook calendars…"
+                   FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                   Foreground="{DynamicResource BrushMuted}"
+                   TextWrapping="Wrap"
+                   Margin="0,0,0,6" Visibility="Collapsed"/>
+
+        <!-- Shown only when elevation mismatch is detected and the AppCompat flag can be cleared -->
+        <Button x:Name="BtnFixElevation"
+                Content="🔧 Remove 'Run as administrator' flag and restart"
+                Style="{StaticResource FlatButton}"
+                Foreground="{DynamicResource BrushAmberText}"
+                FontSize="{DynamicResource FontSizeCaption}" Padding="10,6" MinHeight="44" MinWidth="44"
+                HorizontalAlignment="Left"
+                Margin="0,0,0,8" Visibility="Collapsed"
+                Click="BtnFixElevation_Click"
+                ToolTip="Clears the Windows compatibility flag that forces TimerStudio to run as Administrator, then restarts the app"
+                AutomationProperties.Name="Remove Run as administrator flag and restart"/>
+
+        <Separator Margin="0,0,0,12"/>
+
+        <!-- ══ SECTION: AUTO-PULL ══════════════════════════════════════════════ -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="AUTO-PULL FROM CALENDAR"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="Automatically creates timer cards for upcoming Outlook events. Skips events already imported. Look-ahead window and keyword filters apply."
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Enable auto-pull"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Polls all visible calendars on the interval below"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkAutoPull"
+                    Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                    MinHeight="44" MinWidth="44"
+                    ToolTip="Enable automatic calendar polling"
+                    AutomationProperties.Name="Enable auto-pull from calendar"
+                    Checked="ChkAutoPull_Changed"
+                    Unchecked="ChkAutoPull_Changed"/>
+        </Grid>
+
+        <Grid x:Name="PnlPollInterval" Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="90"/>
+            <ColumnDefinition Width="44"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0"
+                     Text="Poll interval"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center"/>
+          <Slider Grid.Column="2" x:Name="SldPollInterval"
+                  Minimum="5" Maximum="120" TickFrequency="5" IsSnapToTickEnabled="True"
+                  VerticalAlignment="Center"
+                  ToolTip="How often to check for new calendar events. Use left/right arrow keys to adjust."
+                  AutomationProperties.Name="Calendar poll interval slider"
+                  AutomationProperties.HelpText="Adjust in 5-minute steps. Range: 5 to 120 minutes."
+                  ValueChanged="SldPollInterval_Changed"/>
+          <TextBlock Grid.Column="3" x:Name="LblPollInterval"
+                     Text="15 min" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="6,0,0,0"/>
+        </Grid>
+
+        <Grid Margin="0,0,0,4">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock x:Name="LblLastPulled"
+                     Grid.Column="0"
+                     Text="Last pulled: never"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     VerticalAlignment="Center"/>
+          <Button x:Name="BtnPullNow"
+                  Grid.Column="1"
+                  Content="▶ Pull Now"
+                  Style="{StaticResource PrimaryButton}"
+                  Padding="12,6" FontSize="{DynamicResource FontSizeCaption}" MinHeight="44" MinWidth="44"
+                  ToolTip="Pull calendar events immediately"
+                  AutomationProperties.Name="Pull calendar events now"
+                  Click="BtnPullNow_Click"/>
+        </Grid>
+
+        <Separator Margin="0,12,0,12"/>
+
+        <!-- ══ SECTION: IMPORT FILTERS ════════════════════════════════════════ -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="IMPORT FILTERS"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="Applies to both auto-pull and the manual Import picker."
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+        <!-- Look-ahead window -->
+        <Grid Margin="0,0,0,10">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="72"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Look-ahead window"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Skip events that start further out than this"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <TextBox x:Name="TxtLookahead"
+                   Grid.Column="2"
+                   FontSize="{DynamicResource FontSizeCaption}" TextAlignment="Right" MinHeight="0"
+                   Text="30"
+                   ToolTip="Only import events starting within this many days from now (1–365)."
+                   AutomationProperties.Name="Calendar look-ahead days"
+                   AutomationProperties.HelpText="Enter a number from 1 to 365. Events beyond this window are skipped during auto-pull."
+                   LostFocus="TxtLookahead_LostFocus"/>
+          <TextBlock Grid.Column="3"
+                     Text=" days"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="4,0,0,0"/>
+        </Grid>
+
+        <!-- Exclude keywords -->
+        <StackPanel Margin="0,0,0,10">
+          <TextBlock Text="Exclude events containing these words"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,4"/>
+          <TextBox x:Name="TxtExcludeKeywords"
+                   FontSize="{DynamicResource FontSizeCaption}" MinHeight="0"
+                   ToolTip="Comma-separated keywords (not case-sensitive). Any event whose title contains one of these words is skipped."
+                   AutomationProperties.Name="Exclude keywords"
+                   AutomationProperties.HelpText="Comma-separated words. Events with any of these words in the title are not imported."
+                   LostFocus="TxtExcludeKeywords_LostFocus"/>
+          <TextBlock Text="Comma-separated — e.g.  Cancelled, Hold, OOO"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                     TextWrapping="Wrap" Margin="0,3,0,0"/>
+        </StackPanel>
+
+        <!-- Calendar type filters -->
+        <Grid Margin="0,0,0,6">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Skip birthday calendars"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Excludes Birthdays calendars from auto-pull and import"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkHideBirthdays"
+                    Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                    MinHeight="44" MinWidth="44"
+                    ToolTip="Skip any calendar whose name contains 'Birthday'"
+                    AutomationProperties.Name="Skip birthday calendars"
+                    Checked="ChkCalTypeFilter_Changed"
+                    Unchecked="ChkCalTypeFilter_Changed"/>
+        </Grid>
+
+        <Grid Margin="0,0,0,4">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Skip holiday calendars"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Excludes US Holidays and similar calendars"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkHideHolidays"
+                    Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                    MinHeight="44" MinWidth="44"
+                    ToolTip="Skip any calendar whose name contains 'Holiday' or 'Holidays'"
+                    AutomationProperties.Name="Skip holiday calendars"
+                    Checked="ChkCalTypeFilter_Changed"
+                    Unchecked="ChkCalTypeFilter_Changed"/>
+        </Grid>
+
+        <Separator Margin="0,12,0,12"/>
+
+        <!-- ══ SECTION: CALENDAR EVENT DEFAULTS ══════════════════════════════════ -->
+        <TextBlock Style="{StaticResource SectionHeader}" Text="CALENDAR EVENT DEFAULTS"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushHint}" Margin="0,0,0,4"/>
+        <TextBlock Text="Applied to every timer card created from a calendar event (auto-pull or import). Per-card settings override these."
+                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                   TextWrapping="Wrap" Margin="0,0,0,10"/>
+
+        <!-- Popup position -->
+        <StackPanel Margin="0,0,0,10">
+          <TextBlock Text="Popup position"
+                     FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
+          <!-- 3×3 grid — 44×44 px per button (WCAG 2.5.5) -->
+          <Grid Width="138" HorizontalAlignment="Left">
+            <Grid.RowDefinitions>
+              <RowDefinition Height="44"/>
+              <RowDefinition Height="44"/>
+              <RowDefinition Height="44"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+              <ColumnDefinition Width="44"/>
+              <ColumnDefinition Width="44"/>
+              <ColumnDefinition Width="44"/>
+            </Grid.ColumnDefinitions>
+            <Button x:Name="BtnCalEvtPosTopLeft"   Grid.Row="0" Grid.Column="0" Content="↖" Tag="0" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Top left"    AutomationProperties.Name="Default popup position: Top left"/>
+            <Button x:Name="BtnCalEvtPosTopCenter" Grid.Row="0" Grid.Column="1" Content="↑" Tag="1" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Top center"  AutomationProperties.Name="Default popup position: Top center"/>
+            <Button x:Name="BtnCalEvtPosTopRight"  Grid.Row="0" Grid.Column="2" Content="↗" Tag="2" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Top right"   AutomationProperties.Name="Default popup position: Top right"/>
+            <Button x:Name="BtnCalEvtPosMidLeft"   Grid.Row="1" Grid.Column="0" Content="←" Tag="3" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Middle left" AutomationProperties.Name="Default popup position: Middle left"/>
+            <Button x:Name="BtnCalEvtPosCenter"    Grid.Row="1" Grid.Column="1" Content="·" Tag="4" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Center"      AutomationProperties.Name="Default popup position: Center"/>
+            <Button x:Name="BtnCalEvtPosMidRight"  Grid.Row="1" Grid.Column="2" Content="→" Tag="5" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Middle right" AutomationProperties.Name="Default popup position: Middle right"/>
+            <Button x:Name="BtnCalEvtPosBotLeft"   Grid.Row="2" Grid.Column="0" Content="↙" Tag="6" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Bottom left"  AutomationProperties.Name="Default popup position: Bottom left"/>
+            <Button x:Name="BtnCalEvtPosBotCenter" Grid.Row="2" Grid.Column="1" Content="↓" Tag="7" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Bottom center" AutomationProperties.Name="Default popup position: Bottom center"/>
+            <Button x:Name="BtnCalEvtPosBotRight"  Grid.Row="2" Grid.Column="2" Content="↘" Tag="8" Style="{StaticResource FlatButton}" FontSize="14" Padding="0" MinHeight="44" MinWidth="44" Click="BtnCalEvtPos_Click" ToolTip="Bottom right (default)" AutomationProperties.Name="Default popup position: Bottom right (default)"/>
+          </Grid>
+        </StackPanel>
+
+        <!-- Alert duration -->
+        <Grid Margin="0,0,0,8">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Alert duration"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Auto-dismiss after this many seconds (0 = manual)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <TextBox x:Name="TxtCalEvtFlashSeconds"
+                   Grid.Column="2"
+                   FontSize="{DynamicResource FontSizeCaption}" TextAlignment="Right" MinHeight="0"
+                   ToolTip="Seconds before the alert auto-dismisses. 0 = must dismiss manually."
+                   AutomationProperties.Name="Calendar event default alert duration in seconds"
+                   LostFocus="TxtCalEvtFlashSeconds_LostFocus"/>
+          <TextBlock Grid.Column="3"
+                     Text=" sec" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="2,0,0,0"/>
+        </Grid>
+
+        <!-- Alert repeat limit -->
+        <Grid Margin="0,0,0,8">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Alert repeat limit"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Max repeats after first alert (0 = unlimited)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <TextBox x:Name="TxtCalEvtAlertRepeatLimit"
+                   Grid.Column="2"
+                   FontSize="{DynamicResource FontSizeCaption}" TextAlignment="Right" MinHeight="0"
+                   ToolTip="Maximum number of times the alert sound repeats. 0 = no limit."
+                   AutomationProperties.Name="Calendar event default alert repeat limit"
+                   LostFocus="TxtCalEvtAlertRepeatLimit_LostFocus"/>
+          <TextBlock Grid.Column="3"
+                     Text=" times" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="2,0,0,0"/>
+        </Grid>
+
+        <!-- Escalate to fullscreen -->
+        <Grid Margin="0,0,0,8">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="8"/>
+            <ColumnDefinition Width="60"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Escalate to fullscreen after"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Switches to fullscreen flash if not dismissed (0 = off)"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <TextBox x:Name="TxtCalEvtEscalateAfterSeconds"
+                   Grid.Column="2"
+                   FontSize="{DynamicResource FontSizeCaption}" TextAlignment="Right" MinHeight="0"
+                   ToolTip="Seconds after the first alert before escalating to a fullscreen flash. 0 = never escalate."
+                   AutomationProperties.Name="Calendar event default escalate to fullscreen after seconds"
+                   LostFocus="TxtCalEvtEscalateAfterSeconds_LostFocus"/>
+          <TextBlock Grid.Column="3"
+                     Text=" sec" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center" Margin="2,0,0,0"/>
+        </Grid>
+
+        <!-- Hide from pill -->
+        <Grid Margin="0,0,0,8">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Hide from pill strip"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Calendar event timers excluded from the compact pill overlay"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkCalEvtExcludeFromPill"
+                    Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                    MinHeight="44" MinWidth="44"
+                    ToolTip="When checked, calendar event timers are hidden from the pill strip by default"
+                    AutomationProperties.Name="Calendar event default hide from pill strip"
+                    Checked="ChkCalEvt_Changed" Unchecked="ChkCalEvt_Changed"/>
+        </Grid>
+
+        <!-- Early reminder -->
+        <Grid Margin="0,0,0,4">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Enable early reminder"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Show a reminder popup before the event starts"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkCalEvtReminderEnabled"
+                    Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                    MinHeight="44" MinWidth="44"
+                    ToolTip="When checked, calendar event timers will show an early reminder by default"
+                    AutomationProperties.Name="Calendar event default enable early reminder"
+                    Checked="ChkCalEvt_Changed" Unchecked="ChkCalEvt_Changed"/>
+        </Grid>
+
+        <Border x:Name="PnlCalEvtReminderDetails"
+                Margin="0,0,0,8" Padding="10,8,10,6"
+                Background="{DynamicResource BrushSurf}"
+                BorderBrush="{DynamicResource BrushSurf2}"
+                BorderThickness="1" CornerRadius="4">
+          <StackPanel>
+
+            <!-- Lead time -->
+            <Grid Margin="0,0,0,6">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel Grid.Column="0">
+                <TextBlock Text="Start reminding before event"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+              </StackPanel>
+              <TextBox x:Name="TxtCalEvtReminderLeadMinutes"
+                       Grid.Column="2"
+                       FontSize="{DynamicResource FontSizeCaption}" TextAlignment="Right" MinHeight="0"
+                       ToolTip="How many minutes before the event start time to show the first reminder."
+                       AutomationProperties.Name="Calendar event default reminder lead minutes"
+                       LostFocus="TxtCalEvtReminderLeadMinutes_LostFocus"/>
+              <TextBlock Grid.Column="3"
+                         Text=" min" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                         VerticalAlignment="Center" Margin="2,0,0,0"/>
+            </Grid>
+
+            <!-- Repeat interval -->
+            <Grid Margin="0,0,0,2">
+              <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="8"/>
+                <ColumnDefinition Width="60"/>
+                <ColumnDefinition Width="Auto"/>
+              </Grid.ColumnDefinitions>
+              <StackPanel Grid.Column="0">
+                <TextBlock Text="Repeat reminder every"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+                <TextBlock Text="0 = show once only"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+              </StackPanel>
+              <TextBox x:Name="TxtCalEvtReminderIntervalMinutes"
+                       Grid.Column="2"
+                       FontSize="{DynamicResource FontSizeCaption}" TextAlignment="Right" MinHeight="0"
+                       ToolTip="Repeat the reminder popup this many minutes apart. 0 = show once only."
+                       AutomationProperties.Name="Calendar event default reminder repeat interval minutes"
+                       LostFocus="TxtCalEvtReminderIntervalMinutes_LostFocus"/>
+              <TextBlock Grid.Column="3"
+                         Text=" min" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}"
+                         VerticalAlignment="Center" Margin="2,0,0,0"/>
+            </Grid>
+
+          </StackPanel>
+        </Border>
+
+        <!-- Send email on reminder -->
+        <Grid Margin="0,0,0,12">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <StackPanel Grid.Column="0">
+            <TextBlock Text="Send email on reminders"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" Margin="0,0,0,2"/>
+            <TextBlock Text="Requires email alerts to be configured below"
+                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"/>
+          </StackPanel>
+          <CheckBox x:Name="ChkCalEvtSendEmailOnReminder"
+                    Grid.Column="1" VerticalAlignment="Center" Margin="8,0,0,0"
+                    MinHeight="44" MinWidth="44"
+                    ToolTip="When checked, calendar event timers send an email for each reminder by default"
+                    AutomationProperties.Name="Calendar event default send email on reminders"
+                    Checked="ChkCalEvt_Changed" Unchecked="ChkCalEvt_Changed"/>
+        </Grid>
+
+        <Separator Margin="0,0,0,12"/>
+
+        <!-- ══ SECTION: EMAIL ALERTS — TS-10: shared control (Controls/EmailSettingsPanel.xaml) ══ -->
+        <ctl:EmailSettingsPanel x:Name="EmailPanel"/>
+
+      </StackPanel>
+    </ScrollViewer>
+
+    <!-- Footer -->
+    <Button Grid.Row="4"
+            Content="Done"
+            Style="{StaticResource PrimaryButton}"
+            HorizontalAlignment="Right" Margin="0,0,24,0"
+            Padding="24,8" MinHeight="44" IsDefault="True" IsCancel="True"
+            AutomationProperties.Name="Close calendar settings"
+            Click="BtnDone_Click"/>
+
+  <!-- WCAG 2.2 AAA: shared 44x44 keyboard + mouse resize grip (Controls/AccessibleResizeGrip.cs) -->
+  <ctl:AccessibleResizeGrip Margin="0,0,-20,-14"/>
+  </Grid>
+</Window>

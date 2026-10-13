@@ -1,0 +1,303 @@
+<Window x:Class="BadgeOverlay.AboutWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:BadgeOverlay.Controls"
+        Title="About Badge Overlay"
+        AutomationProperties.Name="About Badge Overlay"
+        AutomationProperties.HelpText="About information, version, links, and donation options for Badge Overlay"
+        Width="540" Height="640"
+        MinWidth="500" MinHeight="560"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        Foreground="{DynamicResource BrushText}"
+        FontFamily="Segoe UI"
+        ResizeMode="CanResize"
+        ShowInTaskbar="False">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Margin="28,24,28,24">
+
+                <!-- App icon + name -->
+                <TextBlock Text="◉ Badge Overlay" AutomationProperties.HeadingLevel="Level1"
+                           FontFamily="Segoe UI" FontSize="22" FontWeight="Bold"
+                           Foreground="{DynamicResource BrushBlueText}"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Accessibility Badge Tool for Low Vision"
+                           FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                           Foreground="{DynamicResource BrushMuted}"
+                           HorizontalAlignment="Center" Margin="0,2,0,0"/>
+
+                <Separator Margin="0,14,0,14"/>
+
+                <!-- Consolidated info grid — single shared ColumnDefinition so label column aligns -->
+                <Grid>
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="120"/>
+                    <ColumnDefinition Width="*"/>
+                  </Grid.ColumnDefinitions>
+                  <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>  <!-- 0: Version -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- 2: Created by -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- 4: Platform -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- 6: Settings file -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- 8: Website -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- 10: GitHub -->
+                    <RowDefinition Height="6"/>
+                    <RowDefinition Height="Auto"/>  <!-- 12: Reset -->
+                  </Grid.RowDefinitions>
+
+                  <TextBlock Grid.Row="0" Grid.Column="0" Text="Version" FontWeight="SemiBold"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                  <TextBlock Grid.Row="0" Grid.Column="1" x:Name="VersionLabel"
+                             FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+
+                  <TextBlock Grid.Row="2" Grid.Column="0" Text="Created by" FontWeight="SemiBold"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                  <TextBlock Grid.Row="2" Grid.Column="1" Text="Matthew Pittman"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+
+                  <TextBlock Grid.Row="4" Grid.Column="0" Text="Platform" FontWeight="SemiBold"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                  <TextBlock Grid.Row="4" Grid.Column="1" Text="Windows · WPF · .NET 10"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+
+                  <TextBlock Grid.Row="6" Grid.Column="0" Text="Settings file" FontWeight="SemiBold"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                  <StackPanel Grid.Row="6" Grid.Column="1">
+                    <TextBlock x:Name="LblSettingsPath" Text=""
+                               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                               Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"/>
+                    <StackPanel Orientation="Horizontal" Margin="0,4,0,0">
+                      <Button Style="{StaticResource FlatButton}"
+                              Padding="8,3" MinHeight="44" MinWidth="44" Margin="0,0,6,0" FontSize="{DynamicResource FontSizeCaption}"
+                              AutomationProperties.Name="Copy settings path"
+                              Click="BtnCopyPath_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Copy path" VerticalAlignment="Center"/></StackPanel></Button>
+                      <Button Style="{StaticResource FlatButton}"
+                              Padding="8,3" MinHeight="44" MinWidth="44" Margin="0,0,6,0" FontSize="{DynamicResource FontSizeCaption}"
+                              AutomationProperties.Name="Export settings"
+                              ToolTip="Save the entire settings file to a location of your choice"
+                              Click="BtnExportSettings_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Export" VerticalAlignment="Center"/></StackPanel></Button>
+                      <Button Style="{StaticResource FlatButton}"
+                              Padding="8,3" MinHeight="44" MinWidth="44" FontSize="{DynamicResource FontSizeCaption}"
+                              AutomationProperties.Name="Import settings"
+                              ToolTip="Load settings from a previously-exported file"
+                              Click="BtnImportSettings_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Import}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Import" VerticalAlignment="Center"/></StackPanel></Button>
+                    </StackPanel>
+                  </StackPanel>
+
+                  <TextBlock Grid.Row="8" Grid.Column="0" Text="Website" FontWeight="SemiBold"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                  <Button Grid.Row="8" Grid.Column="1"
+                          HorizontalAlignment="Left" Style="{StaticResource FlatButton}"
+                          FontSize="{DynamicResource FontSizeCaption}" Padding="8,0" MinHeight="44"
+                          ToolTip="https://oldgamerssoftware.com/"
+                          AutomationProperties.Name="Open Old Gamers Software website"
+                          AutomationProperties.HelpText="Opens the Old Gamers Software website in your default browser"
+                          Click="BtnWebsite_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Web}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="oldgamerssoftware.com" VerticalAlignment="Center"/></StackPanel></Button>
+
+                  <TextBlock Grid.Row="10" Grid.Column="0" Text="GitHub" FontWeight="SemiBold"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+                  <StackPanel Grid.Row="10" Grid.Column="1" Orientation="Horizontal">
+                    <Button
+                            HorizontalAlignment="Left" Style="{StaticResource FlatButton}"
+                            FontSize="{DynamicResource FontSizeCaption}" Padding="8,0" MinHeight="44" Margin="0,0,8,0"
+                            ToolTip="https://github.com/lordmaus/Badge-Overlay"
+                            AutomationProperties.Name="View Badge Overlay on GitHub"
+                            AutomationProperties.HelpText="Opens the Badge Overlay source code repository on GitHub in your default browser"
+                            Click="BtnGitHub_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Link}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="GitHub" VerticalAlignment="Center"/></StackPanel></Button>
+                    <Button
+                            Style="{StaticResource FlatButton}"
+                            FontSize="{DynamicResource FontSizeCaption}" Padding="8,0" MinHeight="44"
+                            ToolTip="Open THIRD-PARTY-NOTICES.txt — licences for colour palettes and libraries"
+                            AutomationProperties.Name="Open third-party notices"
+                            AutomationProperties.HelpText="Opens the THIRD-PARTY-NOTICES.txt file listing the open-source colour palettes and libraries used by Badge Overlay."
+                            Click="BtnThirdPartyNotices_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Third-Party Notices" VerticalAlignment="Center"/></StackPanel></Button>
+                  </StackPanel>
+
+                  <TextBlock Grid.Row="12" Grid.Column="0" Text="Reset" FontWeight="SemiBold"
+                             FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushHint}" VerticalAlignment="Top" Margin="0,2,0,0"/>
+                  <StackPanel Grid.Row="12" Grid.Column="1">
+                    <TextBlock Text="Restore all settings to factory defaults."
+                               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                               TextWrapping="Wrap" Margin="0,0,0,4"/>
+                    <Button Style="{StaticResource FlatButton}"
+                            Padding="8,3" MinHeight="44" MinWidth="44" HorizontalAlignment="Left" FontSize="{DynamicResource FontSizeCaption}"
+                            AutomationProperties.Name="Reset All Settings to Defaults"
+                            ToolTip="Backs up current settings and restores factory defaults. Restart required."
+                            Click="BtnResetAll_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Undo}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Reset All Settings" VerticalAlignment="Center"/></StackPanel></Button>
+                  </StackPanel>
+                </Grid>
+
+                <Separator Margin="0,14,0,14"/>
+
+                <!-- Updates -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Updates" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1"
+                            Style="{StaticResource FlatButton}"
+                            Padding="14,8" MinHeight="44" HorizontalAlignment="Left"
+                            AutomationProperties.Name="Check for updates on GitHub"
+                            AutomationProperties.HelpText="Opens the GitHub releases page to check for a newer version"
+                            Click="BtnCheckUpdates_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Refresh}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Check for Updates" VerticalAlignment="Center"/></StackPanel></Button>
+                </Grid>
+
+                <!-- Help -->
+                <Grid Margin="0,0,0,10">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Help" FontWeight="SemiBold" VerticalAlignment="Top" Margin="0,8,0,0"/>
+                    <StackPanel Grid.Column="1" Orientation="Vertical">
+                        <Button
+                                Style="{StaticResource FlatButton}"
+                                Padding="14,8" MinHeight="44" HorizontalAlignment="Left"
+                                Margin="0,0,0,6"
+                                AutomationProperties.Name="Open README help file"
+                                AutomationProperties.HelpText="Opens README.md in your default text editor"
+                                Click="BtnOpenReadme_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open README" VerticalAlignment="Center"/></StackPanel></Button>
+                        <Button
+                                Style="{StaticResource FlatButton}"
+                                Padding="14,8" MinHeight="44" HorizontalAlignment="Left"
+                                Margin="0,0,0,6"
+                                AutomationProperties.Name="Open keyboard shortcuts cheat-sheet"
+                                Click="BtnCheatSheet_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Keyboard shortcuts (F1)" VerticalAlignment="Center"/></StackPanel></Button>
+                        <Button
+                                Style="{StaticResource FlatButton}"
+                                Padding="14,8" MinHeight="44" HorizontalAlignment="Left"
+                                Margin="0,0,0,6"
+                                AutomationProperties.Name="Re-open the first-run welcome tour"
+                                Click="BtnReplayWelcome_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.GettingStarted}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Show welcome tour again" VerticalAlignment="Center"/></StackPanel></Button>
+                        <Button
+                                Style="{StaticResource FlatButton}"
+                                Padding="14,8" MinHeight="44" HorizontalAlignment="Left"
+                                AutomationProperties.Name="Run an accessibility audit on the foreground window and save an HTML report"
+                                AutomationProperties.HelpText="Walks the UIA tree of the currently-foreground window, checks WCAG 1.3.1 / 2.1.1 / 4.1.2 structural criteria, and saves a self-contained HTML report. No data leaves the machine."
+                                ToolTip="Walks the UIA tree of whatever window is foregrounded when you click, checks structural WCAG criteria (1.3.1, 2.1.1, 4.1.2), and saves a self-contained HTML report you can share with auditors. No data leaves your machine."
+                                Click="BtnAudit_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Audit}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Run accessibility audit on foreground window" VerticalAlignment="Center"/></StackPanel></Button>
+                    </StackPanel>
+                </Grid>
+
+                <Separator Margin="0,10,0,14"/>
+
+                <!-- Description -->
+                <TextBlock TextWrapping="Wrap" FontSize="12" TextAlignment="Center"
+                           Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,14"
+                           Text="Badge Overlay shows colour-coded badge tooltips for recognised UI controls — designed for low-vision and accessibility users."/>
+
+                <Separator Margin="0,0,0,14"/>
+
+                <!-- Feedback -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="120"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock Text="Feedback" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                    <Button Grid.Column="1"
+                            Style="{StaticResource FlatButton}"
+                            Padding="14,8" MinHeight="44" HorizontalAlignment="Left"
+                            AutomationProperties.Name="Report a problem"
+                            AutomationProperties.HelpText="Opens your browser to the issue tracker"
+                            Click="BtnReportProblem_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Bug}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Report a problem" VerticalAlignment="Center"/></StackPanel></Button>
+                </Grid>
+
+                <Separator Margin="0,0,0,14"/>
+
+                <!-- Donate -->
+                <TextBlock Text="☕  Donate / Buy Me a Coffee" AutomationProperties.HeadingLevel="Level2"
+                           FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushBlueText}"
+                           HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                <TextBlock Text="If Badge Overlay helps you, consider a small donation!"
+                           FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                           HorizontalAlignment="Center" Margin="0,0,0,12"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,14">
+                    <Button Content="💙  Venmo" Style="{StaticResource FlatButton}"
+                            Padding="20,9" MinHeight="44" Margin="0,0,12,0"
+                            ToolTip="Donate via Venmo: @Matthew-Pittman-80"
+                            AutomationProperties.Name="Donate via Venmo"
+                            AutomationProperties.HelpText="Opens the Venmo donation page in your browser"
+                            Click="BtnVenmo_Click"/>
+                    <Button Content="💚  Cash App" Style="{StaticResource FlatButton}"
+                            Padding="20,9" MinHeight="44"
+                            ToolTip="Donate via Cash App: $MatthewPittman80"
+                            AutomationProperties.Name="Donate via Cash App"
+                            AutomationProperties.HelpText="Opens the Cash App donation page in your browser"
+                            Click="BtnCashApp_Click"/>
+                </StackPanel>
+
+                <Separator Margin="0,0,0,14"/>
+
+                <!-- Privacy -->
+                <Border Background="{DynamicResource BrushSurf}"
+                        BorderBrush="{DynamicResource BrushBlueText}"
+                        BorderThickness="0,0,0,2"
+                        CornerRadius="6"
+                        Padding="12,10"
+                        Margin="0,0,0,14">
+                    <StackPanel>
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+                            <Image Source="{StaticResource JtIcon.Lock}" Style="{StaticResource JtInlineIcon}"/>
+                            <TextBlock Text="Privacy — what this app does NOT do" AutomationProperties.HeadingLevel="Level2"
+                                       FontWeight="SemiBold" FontSize="13"
+                                       Foreground="{DynamicResource BrushText}"
+                                       VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <TextBlock TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushMuted}"
+                                   Margin="0,0,0,6"
+                                   Text="Badge Overlay never:  collects, stores, or transmits usage data  ·  requires an account  ·  makes network calls (no telemetry, no analytics, no update pings)  ·  reads microphone or camera  ·  reads clipboard contents  ·  stores files outside %APPDATA%\BadgeOverlay unless portable mode is on."/>
+                        <TextBlock TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushMuted}"
+                                   Text="The only outbound network activity occurs when YOU click a link in this dialog (website, GitHub, Venmo, Cash App). That opens your default browser — Badge Overlay itself makes no HTTP calls."/>
+                        <TextBlock TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}"
+                                   Foreground="{DynamicResource BrushMuted}">
+                            <Run FontWeight="SemiBold">GDPR legal basis:</Run>
+                            <Run>Processing is based on your consent. You may delete all stored data at any time by removing the AppData\BadgeOverlay folder.</Run>
+                        </TextBlock>
+                    </StackPanel>
+                </Border>
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Footer -->
+        <Border Grid.Row="1" Background="{DynamicResource BrushBar}" Padding="16,10,52,10">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                <Button
+                        Style="{StaticResource FlatButton}"
+                        Padding="16,8" MinHeight="44" Margin="0,0,8,0"
+                        AutomationProperties.Name="View crash log"
+                        AutomationProperties.HelpText="Open the diagnostic log in a viewer window"
+                        Click="BtnViewCrashLog_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.EventLog}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="View crash log" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Content="Close" Style="{StaticResource PrimaryButton}"
+                        Padding="40,8" MinHeight="44"
+                        IsCancel="True" IsDefault="True"
+                        AutomationProperties.Name="Close About dialog"
+                        AutomationProperties.HelpText="Close this dialog. Keyboard shortcut: Escape or Enter"
+                        Click="BtnClose_Click"/>
+            </StackPanel>
+        </Border>
+
+        <!-- WCAG 2.2 AAA grip: 44px, focusable, arrow-key resize, 2px focus ring (suite-canonical) -->
+        <ctl:AccessibleResizeGrip/>
+    </Grid>
+</Window>

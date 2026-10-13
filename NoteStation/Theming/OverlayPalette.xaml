@@ -1,0 +1,29 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Fixed-dark palette for the overlay windows (ClipOverlay / TaskOverlay / QuickCapture), which paint
+       their own #CC1A1B2E chrome regardless of the app theme. Merged into each overlay's Window.Resources
+       so shared styles (OvBtn, OverlayFilterChip, implicit Slider/TextBox, AccessibleResizeGrip) resolve
+       their DynamicResource brushes here instead of the app theme — a light app theme can no longer put
+       dark-grey glyphs on the dark overlay. Same key contract as Themes/*.xaml; verified with
+       BadgeOverlay/Tools/check_theme_contrast.py (0 failures, 2026-09-25). -->
+  <SolidColorBrush x:Key="BrushBg"        Color="#11111B"/>
+  <SolidColorBrush x:Key="BrushSurf"      Color="#1A1B2E"/>
+  <SolidColorBrush x:Key="BrushSurf2"     Color="#1E1E30"/>
+  <SolidColorBrush x:Key="BrushBar"       Color="#11111B"/>
+  <SolidColorBrush x:Key="BrushText"      Color="#CDD6F4"/>
+  <SolidColorBrush x:Key="BrushMuted"     Color="#BAC2DE"/>
+  <SolidColorBrush x:Key="BrushHint"      Color="#BAC2DE"/>
+  <SolidColorBrush x:Key="BrushDivider"   Color="#7F849C"/>
+  <SolidColorBrush x:Key="BrushBlue"      Color="#89B4FA"/>
+  <SolidColorBrush x:Key="BrushRed"       Color="#F38BA8"/>
+  <SolidColorBrush x:Key="BrushGreen"     Color="#A6E3A1"/>
+  <SolidColorBrush x:Key="BrushAmber"     Color="#F9E2AF"/>
+  <SolidColorBrush x:Key="BrushRedText"   Color="#F38BA8"/>
+  <SolidColorBrush x:Key="BrushBlueText"  Color="#89B4FA"/>
+  <SolidColorBrush x:Key="BrushGreenText" Color="#A6E3A1"/>
+  <SolidColorBrush x:Key="BrushAmberText" Color="#F9E2AF"/>
+  <SolidColorBrush x:Key="BrushOnAccent"  Color="#11111B"/>
+  <SolidColorBrush x:Key="BrushDisabled"  Color="#7F849C"/>
+  <SolidColorBrush x:Key="BrushBgForChecked" Color="#11111B"/>
+  <SolidColorBrush x:Key="FocusRingBrush" Color="#F9E2AF"/>
+</ResourceDictionary>

@@ -1,0 +1,254 @@
+<Window x:Class="SuperMagnifier.AboutDialog"
+        ResizeMode="CanResize"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:SuperMagnifier.Controls"
+        Title="About Super Magnifier LV"
+        AutomationProperties.Name="About Super Magnifier LV"
+        AutomationProperties.HelpText="About information, version, links, and donation options for Super Magnifier LV"
+        Width="540" Height="640" MinWidth="500" MinHeight="560"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+  <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+  <StackPanel Margin="28,24,28,24">
+
+    <!-- Logo / Title -->
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center"><Image Source="{StaticResource JtIcon.Magnifier}" Style="{StaticResource JtHeaderIcon}" Width="32" Height="32"/><TextBlock Text="Super Magnifier LV" VerticalAlignment="Center"
+               FontFamily="Segoe UI" FontSize="22" FontWeight="Bold"
+               Foreground="{DynamicResource BrushBlueText}"/></StackPanel>
+    <TextBlock Text="Screen Magnifier for Low Vision"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Foreground="{DynamicResource BrushMuted}"
+               HorizontalAlignment="Center" Margin="0,2,0,0"/>
+
+    <Separator Margin="0,14,0,14"/>
+
+    <!-- Info grid -->
+    <Grid>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="120"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+      <Grid.RowDefinitions>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="6"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="6"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="6"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="6"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="6"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="6"/>
+        <RowDefinition Height="Auto"/>
+        <RowDefinition Height="6"/>
+        <RowDefinition Height="Auto"/>
+      </Grid.RowDefinitions>
+
+      <TextBlock Grid.Row="0" Grid.Column="0" Text="Version"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}"/>
+      <!-- Design-time placeholder — runtime value set from assembly in AboutDialog.xaml.cs -->
+      <TextBlock Grid.Row="0" Grid.Column="1" x:Name="VersionLabel"
+                 Text="(version)"
+                 FontFamily="Segoe UI Mono" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushText}"/>
+
+      <TextBlock Grid.Row="2" Grid.Column="0" Text="Created by"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}"/>
+      <TextBlock Grid.Row="2" Grid.Column="1" Text="Matthew Pittman"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushText}"/>
+
+      <TextBlock Grid.Row="4" Grid.Column="0" Text="Platform"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}"/>
+      <TextBlock Grid.Row="4" Grid.Column="1" Text="Windows · WPF · .NET 10"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushText}"/>
+
+      <TextBlock Grid.Row="6" Grid.Column="0" Text="Settings file"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}"/>
+      <StackPanel Grid.Row="6" Grid.Column="1" Orientation="Vertical">
+        <TextBlock x:Name="SettingsPathLabel"
+                   FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}"
+                   TextWrapping="Wrap"/>
+        <Button
+                HorizontalAlignment="Left"
+                Style="{StaticResource FlatButton}"
+                FontSize="{DynamicResource FontSizeCaption}" Padding="6,3" Margin="0,4,0,0"
+                MinHeight="44"
+                ToolTip="Copy settings file path to clipboard"
+                AutomationProperties.Name="Copy settings file path to clipboard"
+                AutomationProperties.HelpText="Copies the path to the settings file to the clipboard"
+                Click="CopySettingsPathBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Copy path" VerticalAlignment="Center"/></StackPanel></Button>
+        <!-- SM-05: crash.log lives next to settings.json -->
+        <Button
+                HorizontalAlignment="Left"
+                Style="{StaticResource FlatButton}"
+                Padding="6,3" Margin="0,4,0,0"
+                MinHeight="44"
+                ToolTip="Open the folder that contains crash.log"
+                AutomationProperties.Name="Open crash log folder"
+                AutomationProperties.HelpText="Opens File Explorer at crash.log, which records errors (no screen content)"
+                Click="OpenCrashLogBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open crash log folder" VerticalAlignment="Center"/></StackPanel></Button>
+      </StackPanel>
+
+      <TextBlock Grid.Row="8" Grid.Column="0" Text="Website"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+      <Button    Grid.Row="8" Grid.Column="1"
+                 HorizontalAlignment="Left"
+                 Style="{StaticResource FlatButton}"
+                 FontSize="{DynamicResource FontSizeCaption}" Padding="8,4"
+                 MinHeight="44"
+                 ToolTip="https://oldgamerssoftware.com/"
+                 AutomationProperties.Name="Open Old Gamers Software website"
+                 AutomationProperties.HelpText="Opens oldgamerssoftware.com in your default browser"
+                 Click="WebsiteBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Web}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="oldgamerssoftware.com" VerticalAlignment="Center"/></StackPanel></Button>
+
+      <TextBlock Grid.Row="10" Grid.Column="0" Text="GitHub"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+      <Button    Grid.Row="10" Grid.Column="1"
+                 HorizontalAlignment="Left"
+                 Style="{StaticResource FlatButton}"
+                 FontSize="{DynamicResource FontSizeCaption}" Padding="8,4"
+                 MinHeight="44"
+                 ToolTip="https://github.com/lordmaus/SuperMagnifierLV"
+                 AutomationProperties.Name="View Super Magnifier LV on GitHub"
+                 AutomationProperties.HelpText="Opens the SuperMagnifierLV GitHub repository in your browser"
+                 Click="GitHubBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Link}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="GitHub" VerticalAlignment="Center"/></StackPanel></Button>
+
+      <TextBlock Grid.Row="12" Grid.Column="0" Text="Updates"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+      <Button    Grid.Row="12" Grid.Column="1"
+                 HorizontalAlignment="Left"
+                 Style="{StaticResource FlatButton}"
+                 FontSize="{DynamicResource FontSizeCaption}" Padding="8,4"
+                 MinHeight="44"
+                 ToolTip="Opens the GitHub releases page in your browser"
+                 AutomationProperties.Name="Check for updates on GitHub"
+                 AutomationProperties.HelpText="Opens the GitHub releases page to check for a newer version"
+                 Click="CheckUpdatesBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Refresh}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Check for Updates" VerticalAlignment="Center"/></StackPanel></Button>
+
+      <TextBlock Grid.Row="14" Grid.Column="0" Text="Help"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+      <Button    Grid.Row="14" Grid.Column="1"
+                 HorizontalAlignment="Left"
+                 Style="{StaticResource FlatButton}"
+                 FontSize="{DynamicResource FontSizeCaption}" Padding="8,4"
+                 MinHeight="44"
+                 ToolTip="Opens README.md in your default text editor"
+                 AutomationProperties.Name="Open README help file"
+                 AutomationProperties.HelpText="Opens README.md in your default text editor"
+                 Click="ReadmeBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open README" VerticalAlignment="Center"/></StackPanel></Button>
+
+    </Grid>
+
+    <Separator Margin="0,14,0,14"/>
+
+    <!-- Description -->
+    <TextBlock FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Foreground="{DynamicResource BrushText}"
+               TextWrapping="Wrap" TextAlignment="Center"
+               Text="Super Magnifier LV uses the Windows Magnification API to provide smooth, real-time screen magnification designed for users with low vision."/>
+
+    <Separator Margin="0,14,0,14"/>
+
+    <!-- Donate -->
+    <TextBlock Text="☕  Donate / Buy Me a Coffee"
+               FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+               Foreground="{DynamicResource BrushBlueText}"
+               HorizontalAlignment="Center" Margin="0,0,0,8"/>
+    <TextBlock Text="If Super Magnifier LV helps you, consider a small donation!"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Foreground="{DynamicResource BrushMuted}"
+               HorizontalAlignment="Center" Margin="0,0,0,12"/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+      <Button x:Name="VenmoBtn"
+              Content="💙  Venmo"
+              Style="{StaticResource FlatButton}"
+              FontSize="12" Padding="20,9" Margin="0,0,12,0"
+              MinHeight="44"
+              ToolTip="Donate via Venmo: @Matthew-Pittman-80"
+              AutomationProperties.Name="Donate via Venmo"
+              AutomationProperties.HelpText="Opens the Venmo donation page in your browser"
+              Click="VenmoBtn_Click"/>
+      <Button x:Name="CashAppBtn"
+              Content="💚  Cash App"
+              Style="{StaticResource FlatButton}"
+              FontSize="12" Padding="20,9"
+              MinHeight="44"
+              ToolTip="Donate via Cash App: $MatthewPittman80"
+              AutomationProperties.Name="Donate via Cash App"
+              AutomationProperties.HelpText="Opens the Cash App donation page in your browser"
+              Click="CashAppBtn_Click"/>
+    </StackPanel>
+
+    <Separator Margin="0,14,0,14"/>
+
+    <!-- Privacy -->
+    <Border Background="{DynamicResource BrushSurf}"
+            BorderBrush="{DynamicResource BrushBlue}"
+            BorderThickness="0,0,0,2"
+            CornerRadius="6"
+            Padding="12,10"
+            Margin="0,0,0,14">
+      <StackPanel>
+        <StackPanel Orientation="Horizontal" Margin="0,0,0,6">
+          <TextBlock Text="&#x1F512;" FontSize="14" Margin="0,0,6,0" VerticalAlignment="Center"/>
+          <TextBlock Text="Privacy — what this app does NOT do"
+                     FontWeight="SemiBold" FontSize="13"
+                     Foreground="{DynamicResource BrushText}"
+                     VerticalAlignment="Center"/>
+        </StackPanel>
+        <TextBlock TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,6"
+                   Text="Super Magnifier LV never: collects, stores, or transmits usage data · requires an account · makes network calls (no telemetry, no analytics, no update pings) · stores files outside %APPDATA%\SuperMagnifierLV."
+                   AutomationProperties.Name="Privacy statement"/>
+        <TextBlock TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}"
+                   Text="The only outbound network activity occurs when YOU click a link in this dialog (website, GitHub, Venmo, Cash App). That opens your default browser — Super Magnifier LV itself makes no HTTP calls."/>
+        <TextBlock TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}"
+                   Foreground="{DynamicResource BrushMuted}">
+          <Run FontWeight="SemiBold">GDPR legal basis:</Run>
+          <Run>Processing is based on your consent. You may delete all stored data at any time by removing the AppData\SuperMagnifierLV folder.</Run>
+        </TextBlock>
+      </StackPanel>
+    </Border>
+
+  </StackPanel>
+  </ScrollViewer>
+
+  <!-- Sticky footer bar -->
+  <Border Grid.Row="1" Background="{DynamicResource BrushBar}" Padding="16,10">
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+      <Button Content="Close" Style="{StaticResource PrimaryButton}"
+              Padding="40,8" MinHeight="44"
+              IsCancel="True" IsDefault="True"
+              AutomationProperties.Name="Close About dialog"
+              AutomationProperties.HelpText="Close this dialog. Keyboard shortcut: Escape or Enter"
+              Click="CloseBtn_Click"/>
+    </StackPanel>
+  </Border>
+
+  <!-- Suite-canonical AccessibleResizeGrip (44×44, keyboard, focus ring) — replaces the 20px Canvas grip. -->
+  <ctl:AccessibleResizeGrip Grid.RowSpan="99" Grid.ColumnSpan="99"/>
+  </Grid>
+</Window>

@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<assembly manifestVersion="1.0" xmlns="urn:schemas-microsoft-com:asm.v1">
+  <assemblyIdentity version="1.0.0.0" name="SuperMagnifier.app"/>
+  <trustInfo xmlns="urn:schemas-microsoft-com:asm.v2">
+    <security>
+      <requestedPrivileges xmlns="urn:schemas-microsoft-com:asm.v3">
+        <!--
+          uiAccess="false" — safe default for unsigned/development builds.
+
+          To enable magnification of UAC prompts and the secure desktop, set this
+          to uiAccess="true" BUT the exe MUST then be:
+            1. Signed with a trusted Authenticode certificate
+            2. Installed to a trusted location (%ProgramFiles%, %SystemRoot%, etc.)
+          Without both conditions Windows returns E_ACCESSDENIED ("A referral was
+          returned from the server") and the app will not launch at all.
+          See: https://learn.microsoft.com/en-us/windows/win32/winauto/uiauto-securityoverview
+        -->
+        <requestedExecutionLevel level="asInvoker" uiAccess="false"/>
+      </requestedPrivileges>
+    </security>
+  </trustInfo>
+  <compatibility xmlns="urn:schemas-microsoft-com:compatibility.v1">
+    <application>
+      <!-- Windows 10 and 11 -->
+      <supportedOS Id="{8e0f7a12-bfb3-4fe8-b9a5-48fd50a15a9a}"/>
+    </application>
+  </compatibility>
+  <application xmlns="urn:schemas-microsoft-com:asm.v3">
+    <windowsSettings>
+      <!-- Per-monitor DPI v2 for sharp rendering on HiDPI displays -->
+      <dpiAwareness xmlns="http://schemas.microsoft.com/SMI/2016/WindowsSettings">PerMonitorV2</dpiAwareness>
+      <dpiAware xmlns="http://schemas.microsoft.com/SMI/2005/WindowsSettings">true/PM</dpiAware>
+    </windowsSettings>
+  </application>
+</assembly>

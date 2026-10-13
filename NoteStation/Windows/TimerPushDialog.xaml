@@ -1,0 +1,95 @@
+<Window x:Class="NoteStation.TimerPushDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        Title="Push to Timer Studio"
+        Width="420" Height="300" MinWidth="380" MinHeight="270"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        AutomationProperties.Name="Push task to Timer Studio as calendar event">
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <StackPanel Margin="24,20,24,8">
+
+      <!-- Task name -->
+      <TextBlock x:Name="LblTaskTitle"
+                 FontFamily="Segoe UI" FontSize="13" FontWeight="SemiBold"
+                 Foreground="{DynamicResource BrushText}"
+                 TextTrimming="CharacterEllipsis"
+                 Margin="0,0,0,4"/>
+
+      <TextBlock Text="Push this task to Timer Studio as a calendar event. Set the target date and time:"
+                 FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}"
+                 TextWrapping="Wrap"
+                 Margin="0,0,0,16"/>
+
+      <!-- Date row -->
+      <Grid Margin="0,0,0,12">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="100"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Date:" FontFamily="Segoe UI" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <DatePicker x:Name="PushDatePicker"
+                    Grid.Column="1" MinHeight="44"
+                    ToolTip="Target date for the calendar event"
+                    AutomationProperties.Name="Target event date"/>
+      </Grid>
+
+      <!-- Time row -->
+      <Grid Margin="0,0,0,4">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="100"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+          <ColumnDefinition Width="Auto"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Time:" FontFamily="Segoe UI" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboHour"
+                  Grid.Column="1" Width="70" MinHeight="44"
+                  ToolTip="Hour (24-hour)"
+                  AutomationProperties.Name="Event hour"/>
+        <TextBlock Text=":" Grid.Column="2"
+                   FontSize="16" FontWeight="Bold"
+                   Foreground="{DynamicResource BrushText}"
+                   VerticalAlignment="Center" Margin="6,0"/>
+        <ComboBox x:Name="CboMinute"
+                  Grid.Column="3" Width="70" MinHeight="44"
+                  ToolTip="Minute"
+                  AutomationProperties.Name="Event minute"/>
+      </Grid>
+
+    </StackPanel>
+
+    <!-- Footer -->
+    <Border Grid.Row="1" Background="{DynamicResource BrushBar}" Padding="16,10,52,10">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+        <Button Content="Cancel"
+                Style="{StaticResource FlatButton}"
+                Padding="20,8" MinHeight="44" Margin="0,0,10,0"
+                IsCancel="True"
+                Click="BtnCancel_Click"
+                AutomationProperties.Name="Cancel"/>
+        <Button x:Name="BtnPush"
+                Style="{StaticResource PrimaryButton}"
+                Padding="20,8" MinHeight="44"
+                IsDefault="True"
+                Click="BtnPush_Click"
+                AutomationProperties.Name="Push calendar event to Timer Studio"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Calendar}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Push as Calendar Event" VerticalAlignment="Center"/></StackPanel></Button>
+      </StackPanel>
+    </Border>
+
+    <!-- Resize grip — suite-canonical AccessibleResizeGrip (mouse + keyboard, focus ring, UIA Thumb). -->
+    <ctl:AccessibleResizeGrip/>
+  </Grid>
+</Window>

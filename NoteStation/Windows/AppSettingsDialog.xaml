@@ -1,0 +1,536 @@
+<Window x:Class="NoteStation.AppSettingsDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        Title="Settings — NoteStation"
+        Width="700" Height="680" MinWidth="640" MinHeight="500"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        AutomationProperties.Name="NoteStation Settings">
+
+  <Window.Resources>
+    <!-- Left-rail nav item: FlatButton, left-aligned content, no background
+         when idle so it reads as a list, not a row of buttons. Same focus
+         ring + 44px floor as every other button in the app. -->
+    <Style x:Key="SettingsNavItem" BasedOn="{StaticResource FlatButton}" TargetType="Button">
+      <Setter Property="HorizontalAlignment" Value="Stretch"/>
+      <Setter Property="HorizontalContentAlignment" Value="Left"/>
+      <Setter Property="Background" Value="Transparent"/>
+      <Setter Property="FontWeight" Value="SemiBold"/>
+      <Setter Property="Padding" Value="16,0"/>
+      <Setter Property="Template">
+        <Setter.Value>
+          <ControlTemplate TargetType="Button">
+            <Grid>
+              <Border x:Name="FocusRing"
+                      BorderBrush="{DynamicResource FocusRingBrush}"
+                      BorderThickness="2" CornerRadius="6"
+                      Margin="-2" Opacity="0"/>
+              <Border x:Name="Bd" Background="{TemplateBinding Background}"
+                      CornerRadius="4" Padding="{TemplateBinding Padding}">
+                <ContentPresenter HorizontalAlignment="Left" VerticalAlignment="Center"
+                                  RecognizesAccessKey="True"/>
+              </Border>
+            </Grid>
+            <ControlTemplate.Triggers>
+              <Trigger Property="IsMouseOver" Value="True">
+                <Setter TargetName="Bd" Property="Background" Value="{DynamicResource BrushSurf}"/>
+              </Trigger>
+              <Trigger Property="IsKeyboardFocused" Value="True">
+                <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+              </Trigger>
+              <Trigger Property="IsFocused" Value="True">
+                <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+              </Trigger>
+            </ControlTemplate.Triggers>
+          </ControlTemplate>
+        </Setter.Value>
+      </Setter>
+    </Style>
+  </Window.Resources>
+
+  <Grid>
+    <Grid.RowDefinitions>
+      <RowDefinition Height="*"/>
+      <RowDefinition Height="Auto"/>
+    </Grid.RowDefinitions>
+
+    <Grid Grid.Row="0">
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="150"/>
+        <ColumnDefinition Width="*"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- Left nav rail — jumps the content ScrollViewer to each section via
+           BringIntoView(), rather than showing/hiding panels: keeps every
+           control's x:Name and the existing Save/Cancel/validation code
+           untouched, at the cost of still being "one long scroll" underneath
+           the rail. Windows-Settings-style single-section-visible would need
+           per-section Visibility plumbing this session couldn't visually
+           verify — this is the lower-risk version of the same fix. -->
+      <Border Grid.Column="0"
+              Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,1,0">
+        <StackPanel Margin="0,16,0,0">
+          <TextBlock Text="Settings"
+                     FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic"
+                     FontSize="19" FontWeight="Normal"
+                     Foreground="{DynamicResource BrushText}" Margin="16,0,16,16"/>
+          <Button Content="Clipboard"        Style="{StaticResource SettingsNavItem}" Tag="SecClipboard"        Click="NavSection_Click" AutomationProperties.Name="Jump to Clipboard settings"/>
+          <Button Content="Mouse Buttons"    Style="{StaticResource SettingsNavItem}" Tag="SecMouse"            Click="NavSection_Click" AutomationProperties.Name="Jump to Mouse Button Assignments settings"/>
+          <Button Content="Tasks"            Style="{StaticResource SettingsNavItem}" Tag="SecTasks"            Click="NavSection_Click" AutomationProperties.Name="Jump to Tasks settings"/>
+          <Button Content="Timer Studio"     Style="{StaticResource SettingsNavItem}" Tag="SecTimerStudio"      Click="NavSection_Click" AutomationProperties.Name="Jump to Timer Studio Integration settings"/>
+          <Button Content="Display"          Style="{StaticResource SettingsNavItem}" Tag="SecDisplay"          Click="NavSection_Click" AutomationProperties.Name="Jump to Display settings"/>
+          <Button Content="Data"             Style="{StaticResource SettingsNavItem}" Tag="SecData"             Click="NavSection_Click" AutomationProperties.Name="Jump to Data settings"/>
+          <Button Content="Recently Deleted" Style="{StaticResource SettingsNavItem}" Tag="SecRecentlyDeleted"  Click="NavSection_Click" AutomationProperties.Name="Jump to Recently Deleted settings"/>
+          <Button Content="Startup &amp; Tray" Style="{StaticResource SettingsNavItem}" Tag="SecStartupTray"    Click="NavSection_Click" AutomationProperties.Name="Jump to Startup and Tray settings"/>
+          <Button Content="Security"         Style="{StaticResource SettingsNavItem}" Tag="SecSecurity"         Click="NavSection_Click" AutomationProperties.Name="Jump to Security settings"/>
+        </StackPanel>
+      </Border>
+
+    <ScrollViewer Grid.Column="1" VerticalScrollBarVisibility="Auto">
+    <StackPanel Margin="20,16,20,8">
+
+      <!-- ═══ Clipboard ══════════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecClipboard" Text="Clipboard" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <CheckBox x:Name="ChkAutoCapture"
+                Content="Automatically capture clipboard changes"
+                Margin="0,0,0,8"
+                ToolTip="When checked, any text copied to the clipboard is saved automatically"
+                AutomationProperties.Name="Automatically capture clipboard changes"/>
+
+      <CheckBox x:Name="ChkDedupe"
+                Content="Skip duplicate consecutive entries"
+                Margin="0,0,0,8"
+                ToolTip="Don't add an item if it matches the most recent clipboard entry"
+                AutomationProperties.Name="Skip duplicate consecutive clipboard entries"/>
+
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+        <TextBlock Text="Max history entries:"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}"
+                   VerticalAlignment="Center" Width="180"/>
+        <TextBox x:Name="TxtMaxHistory"
+                 Width="80" MinHeight="44"
+                 VerticalContentAlignment="Center"
+                 ToolTip="Number of clipboard entries to keep (10–500)"
+                 AutomationProperties.Name="Maximum clipboard history entries"/>
+      </StackPanel>
+
+      <!-- Privacy (NS-03) -->
+      <TextBlock Text="Privacy" Style="{StaticResource SectionHeader}"
+                 Foreground="{DynamicResource BrushText}" Margin="0,0,0,6"/>
+      <DockPanel Margin="0,0,0,8">
+        <Image DockPanel.Dock="Left" Source="{StaticResource JtIcon.Password}" Style="{StaticResource JtInlineIcon}"
+               VerticalAlignment="Top" Margin="0,2,8,0" AutomationProperties.Name="Password"/>
+        <TextBlock TextWrapping="Wrap" Foreground="{DynamicResource BrushText}" FontSize="13"
+                   Text="Skips items that password managers mark as private (always on)."/>
+      </DockPanel>
+      <CheckBox x:Name="ChkEncryptClips"
+                Content="Encrypt clipboard history on this PC"
+                Margin="0,0,0,4"
+                ToolTip="Only your Windows account can read saved clips and screenshots"
+                AutomationProperties.Name="Encrypt clipboard history on this PC"
+                AutomationProperties.HelpText="Only your Windows account can read saved clips and screenshots. Existing history is converted next time NoteStation starts."/>
+      <TextBlock TextWrapping="Wrap" Margin="28,0,0,6"
+                 Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                 Text="Only your Windows account can read saved clips and screenshots. Existing history is converted next time NoteStation starts."/>
+      <TextBlock TextWrapping="Wrap" Margin="0,0,0,16"
+                 Foreground="{DynamicResource BrushAmberText}" FontSize="{DynamicResource FontSizeCaption}"
+                 Text="&#x26A0; Backups (.nsbak) are not encrypted — store them somewhere safe."/>
+
+      <!-- ═══ Mouse Buttons ═════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecMouse" Text="Mouse Button Assignments" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <TextBlock Text="Assign clipboard navigation to mouse side buttons or Ctrl+Alt+Scroll:"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"
+                 Margin="0,0,0,10"/>
+
+      <Grid Margin="0,0,0,6">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="180"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Previous clipboard item:"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}"
+                   VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboPrevClip" Grid.Column="1"
+                  ToolTip="Mouse action to cycle to the previous clipboard item"
+                  AutomationProperties.Name="Previous clipboard item mouse assignment"/>
+      </Grid>
+
+      <Grid Margin="0,0,0,6">
+        <Grid.ColumnDefinitions>
+          <ColumnDefinition Width="180"/>
+          <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock Text="Next clipboard item:"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}"
+                   VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboNextClip" Grid.Column="1"
+                  ToolTip="Mouse action to cycle to the next clipboard item"
+                  AutomationProperties.Name="Next clipboard item mouse assignment"/>
+      </Grid>
+
+      <CheckBox x:Name="ChkMouseScroll"
+                Content="Enable Ctrl+Alt+Scroll to cycle clipboard"
+                Margin="0,4,0,4"
+                ToolTip="When checked, holding Ctrl+Alt and scrolling the mouse wheel cycles through clipboard history"
+                AutomationProperties.Name="Enable scroll wheel clipboard cycling"/>
+
+      <CheckBox x:Name="ChkScrollMod"
+                Content="Require Ctrl+Alt modifier for scroll cycling"
+                Margin="20,0,0,16"
+                ToolTip="When checked, the scroll wheel only cycles clipboard when Ctrl+Alt is held (prevents conflicts)"
+                AutomationProperties.Name="Require modifier keys for scroll cycling"/>
+
+      <!-- ═══ Tasks ════════════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecTasks" Text="Tasks" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <CheckBox x:Name="ChkShowCompleted"
+                Content="Show completed tasks"
+                Margin="0,0,0,8"
+                ToolTip="When checked, completed tasks remain visible with strikethrough"
+                AutomationProperties.Name="Show completed tasks"/>
+
+      <!-- ═══ TimerStudio Integration ══════════════════════════════════════ -->
+      <TextBlock x:Name="SecTimerStudio" Text="Timer Studio Integration" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <TextBlock Text="When pushing a task to Timer Studio, NoteStation writes to the timers.json file. Specify its path (typically %AppData%\TimerStudio\timers.json):"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"
+                 Margin="0,0,0,8"/>
+
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+        <TextBox x:Name="TxtTimerPath"
+                 Width="320" MinHeight="44"
+                 VerticalContentAlignment="Center"
+                 ToolTip="Full path to timers.json in Timer Studio's AppData folder"
+                 AutomationProperties.Name="Timer Studio timers file path"/>
+        <Button Content="Browse"
+                Style="{StaticResource FlatButton}"
+                FontSize="12" Padding="10,6" MinHeight="44" Margin="6,0,0,0"
+                Click="BtnBrowseTimerPath_Click"
+                AutomationProperties.Name="Browse for Timer Studio timers file"/>
+      </StackPanel>
+
+      <!-- ═══ Display ════════════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecDisplay" Text="Display" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <TextBlock Text="Content font sizes (applies to list items in each panel):"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                 Foreground="{DynamicResource BrushMuted}" TextWrapping="Wrap"
+                 Margin="0,0,0,10"/>
+
+      <!-- App-wide font family (Low-Vision: OpenDyslexic / Atkinson Hyperlegible / Verdana) -->
+      <Grid Margin="0,0,0,10">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="App font family:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"
+                   ToolTip="Font family used app-wide. Pick OpenDyslexic, Atkinson Hyperlegible, or Verdana for improved low-vision readability."/>
+        <ComboBox x:Name="CboAppFontFamily" Grid.Column="1" MinHeight="44"
+                  ToolTip="App-wide font family (low-vision support)"
+                  AutomationProperties.Name="App font family"
+                  AutomationProperties.HelpText="Choose a font family. OpenDyslexic and Atkinson Hyperlegible are designed for low-vision and dyslexia."/>
+      </Grid>
+
+      <Grid Margin="0,0,0,6">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="Clips font size:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboClipFont" Grid.Column="1" MinHeight="44"
+                  ToolTip="Font size for clipboard list items"
+                  AutomationProperties.Name="Clips font size"/>
+      </Grid>
+
+      <Grid Margin="0,0,0,6">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="Notes font size:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboNoteFont" Grid.Column="1" MinHeight="44"
+                  ToolTip="Font size for notes list items"
+                  AutomationProperties.Name="Notes font size"/>
+      </Grid>
+
+      <Grid Margin="0,0,0,6">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="Tasks font size:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboTaskFont" Grid.Column="1" MinHeight="44"
+                  ToolTip="Font size for task list items"
+                  AutomationProperties.Name="Tasks font size"/>
+      </Grid>
+
+      <Grid Margin="0,0,0,6">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="Folders font size:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboFolderFont" Grid.Column="1" MinHeight="44"
+                  ToolTip="Font size for folder tree panel items"
+                  AutomationProperties.Name="Folders font size"/>
+      </Grid>
+
+      <Grid Margin="0,0,0,16">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="180"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="Category bar width:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"
+                   ToolTip="Width of the left-edge color stripe shown on categorized folders (0 = off)"/>
+        <ComboBox x:Name="CboAccentBarWidth" Grid.Column="1" MinHeight="44"
+                  ToolTip="Width of the category accent bar on folder rows (0 = hidden)"
+                  AutomationProperties.Name="Category accent bar width"/>
+      </Grid>
+
+      <!-- ═══ Data ═══════════════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecData" Text="Data" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <TextBlock Text="Back up all clipboard history, notes, and tasks to a single .nsbak file, or restore from a previous backup."
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                 Foreground="{DynamicResource BrushMuted}"
+                 TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+        <Button x:Name="BtnExportBackup"
+                Style="{StaticResource FlatButton}"
+                MinHeight="44" Padding="16,6" Margin="0,0,8,0"
+                Click="BtnExportBackup_Click"
+                ToolTip="Save all data to a .nsbak file"
+                AutomationProperties.Name="Export NoteStation backup">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/>
+            <TextBlock Text="Export Backup…" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+        <Button x:Name="BtnImportBackup"
+                Style="{StaticResource FlatButton}"
+                MinHeight="44" Padding="16,6"
+                Click="BtnImportBackup_Click"
+                ToolTip="Restore data from a .nsbak file (replaces current data)"
+                AutomationProperties.Name="Import NoteStation backup">
+          <StackPanel Orientation="Horizontal">
+            <Image Source="{StaticResource JtIcon.Import}" Style="{StaticResource JtBtnIcon}"/>
+            <TextBlock Text="Import Backup…" VerticalAlignment="Center"/>
+          </StackPanel>
+        </Button>
+      </StackPanel>
+
+      <TextBlock Text="Import clipboard clips and folder structure from a ClipClip Saved Clips directory. Adds to existing clips — does not replace them."
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                 Foreground="{DynamicResource BrushMuted}"
+                 TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+      <Button x:Name="BtnImportClipClip"
+              Style="{StaticResource FlatButton}"
+              HorizontalAlignment="Left"
+              MinHeight="44" Padding="16,6" Margin="0,0,0,16"
+              Click="BtnImportClipClip_Click"
+              ToolTip="Import clips and folders from a ClipClip Saved Clips directory"
+              AutomationProperties.Name="Import clips from ClipClip">
+        <StackPanel Orientation="Horizontal">
+          <Image Source="{StaticResource JtIcon.Import}" Style="{StaticResource JtBtnIcon}"/>
+          <TextBlock Text="Import from ClipClip…" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Button>
+
+      <TextBlock Text="Delete all clipboard history, notes, and tasks stored on this device. This cannot be undone."
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                 Foreground="{DynamicResource BrushMuted}"
+                 TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+      <Button x:Name="BtnClearAllData"
+              Style="{StaticResource DangerButton}"
+              HorizontalAlignment="Left"
+              MinHeight="44" Padding="16,6"
+              Margin="0,0,0,16"
+              Click="BtnClearAllData_Click"
+              ToolTip="Permanently delete all clipboard history, notes, and tasks"
+              AutomationProperties.Name="Clear all NoteStation data">
+        <StackPanel Orientation="Horizontal">
+          <Image Source="{StaticResource JtIcon.Delete}" Style="{StaticResource JtBtnIcon}"/>
+          <TextBlock Text="Clear All Data…" VerticalAlignment="Center"/>
+        </StackPanel>
+      </Button>
+
+      <!-- ═══ Recently Deleted ════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecRecentlyDeleted" Text="Recently Deleted" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <TextBlock Text="Items moved to Recently Deleted are kept for the selected number of days before being permanently removed. Set to 0 to keep them forever until you empty the trash manually."
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                 Foreground="{DynamicResource BrushMuted}"
+                 TextWrapping="Wrap" Margin="0,0,0,8"/>
+
+      <Grid Margin="0,0,0,16">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="Auto-purge after:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboDeletedRetentionDays" Grid.Column="1" MinHeight="44"
+                  ToolTip="How long to keep soft-deleted items before permanent removal"
+                  AutomationProperties.Name="Auto-purge Recently Deleted after"/>
+      </Grid>
+
+      <!-- WCAG 2.2.3 No Timing: the Undo prompt's lifetime is user-set, incl. "Until dismissed";
+           it always pauses while hovered or focused. -->
+      <Grid Margin="0,0,0,16">
+        <Grid.ColumnDefinitions><ColumnDefinition Width="220"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+        <TextBlock Text="Show Undo prompt for:" FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                   Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"/>
+        <ComboBox x:Name="CboUndoToastSeconds" Grid.Column="1" MinHeight="44"
+                  MinWidth="180" MaxWidth="180" HorizontalAlignment="Left"
+                  ToolTip="How long the Undo prompt stays after deleting a task or note text (pauses while hovered or focused)"
+                  AutomationProperties.Name="Show Undo prompt for"/>
+      </Grid>
+
+      <!-- ═══ Startup / Tray ════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecStartupTray" Text="Startup &amp; Tray" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <CheckBox x:Name="ChkStartWithWindows"
+                Content="Start with Windows"
+                Margin="0,0,0,6"
+                AutomationProperties.Name="Launch NoteStation automatically when Windows starts"/>
+
+      <CheckBox x:Name="ChkStartMinimized"
+                Content="Start minimized"
+                Margin="0,0,0,6"
+                AutomationProperties.Name="Start NoteStation minimized"/>
+
+      <CheckBox x:Name="ChkMinToTray"
+                Content="Minimize to system tray"
+                Margin="0,0,0,6"
+                AutomationProperties.Name="Minimize to system tray"/>
+
+      <TextBlock Text="When the ✕ close button is clicked:"
+                 FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                 Foreground="{DynamicResource BrushText}"
+                 Margin="0,2,0,4"/>
+      <ComboBox x:Name="CmbCloseAction"
+                Margin="0,0,0,6" MinHeight="44"
+                AutomationProperties.Name="Close button action">
+        <ComboBoxItem Content="Exit the application"/>
+        <ComboBoxItem Content="Minimize to taskbar"/>
+        <ComboBoxItem Content="Minimize to system tray"/>
+      </ComboBox>
+
+      <CheckBox x:Name="ChkClipOverlayStartup"
+                Content="Show clipboard overlay on startup"
+                Margin="0,0,0,6"
+                AutomationProperties.Name="Show clipboard overlay on startup"/>
+
+      <CheckBox x:Name="ChkTaskOverlayStartup"
+                Content="Show task overlay on startup"
+                Margin="0,0,0,6"
+                AutomationProperties.Name="Show task overlay on startup"/>
+
+      <CheckBox x:Name="ChkNotesSidebarStartup"
+                Content="Show notes sidebar on startup"
+                Margin="0,0,0,6"
+                AutomationProperties.Name="Show notes sidebar on startup"/>
+
+      <StackPanel Orientation="Horizontal" Margin="0,0,0,16">
+        <TextBlock Text="Notes sidebar edge:" VerticalAlignment="Center" Margin="0,0,8,0"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                   Foreground="{DynamicResource BrushText}"/>
+        <ComboBox x:Name="CmbNotesSidebarEdge" Width="100" Margin="0,0,16,0"
+                  AutomationProperties.Name="Notes sidebar edge">
+          <ComboBoxItem Content="Right"/>
+          <ComboBoxItem Content="Left"/>
+        </ComboBox>
+        <TextBlock Text="Position:" VerticalAlignment="Center" Margin="0,0,8,0"
+                   FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                   Foreground="{DynamicResource BrushText}"/>
+        <ComboBox x:Name="CmbNotesSidebarPosition" Width="100"
+                  AutomationProperties.Name="Notes sidebar vertical position">
+          <ComboBoxItem Content="Top"/>
+          <ComboBoxItem Content="Middle"/>
+          <ComboBoxItem Content="Bottom"/>
+        </ComboBox>
+      </StackPanel>
+
+      <!-- ═══ Security ════════════════════════════════════════════════════ -->
+      <TextBlock x:Name="SecSecurity" Text="Security" FontFamily="{DynamicResource DisplayFontFamily}" FontStyle="Italic" FontSize="21" FontWeight="Normal"
+                 Foreground="{DynamicResource BrushText}" Margin="0,28,0,10"
+                 AutomationProperties.HeadingLevel="Level2"/>
+
+      <!-- Security: Master Passphrase -->
+      <GroupBox Margin="0,8,0,0">
+        <GroupBox.Header>
+          <StackPanel Orientation="Horizontal">
+            <Image Source="{StaticResource JtIcon.Lock}" Style="{StaticResource JtInlineIcon}" Margin="0,0,6,0"/>
+            <TextBlock Text="Security" VerticalAlignment="Center"/>
+          </StackPanel>
+        </GroupBox.Header>
+        <Grid Margin="4,8,4,4">
+          <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+          </Grid.RowDefinitions>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <TextBlock Grid.Row="0" Grid.ColumnSpan="2"
+                     Text="Master passphrase shows any hidden note and lets you reset forgotten PINs. Hide note is a privacy screen, not encryption."
+                     TextWrapping="Wrap" FontSize="{DynamicResource FontSizeCaption}" Margin="0,0,0,8"/>
+
+          <TextBlock Grid.Row="1" Grid.ColumnSpan="2" Text="New master passphrase:" FontSize="12" Margin="0,0,0,4"/>
+          <PasswordBox x:Name="MasterPassBox1" Grid.Row="2" Grid.Column="0"
+                       MaxLength="128" Margin="0,0,6,6"
+                       AutomationProperties.Name="New master passphrase"/>
+          <Button x:Name="BtnSetMaster" Grid.Row="2" Grid.Column="1"
+                  Content="Set" MinHeight="44" MinWidth="56"
+                  Click="BtnSetMaster_Click"
+                  AutomationProperties.Name="Set master passphrase"/>
+
+          <TextBlock x:Name="MasterPassStatus" Grid.Row="3" Grid.ColumnSpan="2"
+                     Text="" FontSize="{DynamicResource FontSizeCaption}" Foreground="Gray" Margin="0,2,0,0"/>
+        </Grid>
+      </GroupBox>
+
+    </StackPanel>
+    </ScrollViewer>
+    </Grid>
+
+    <!-- Footer -->
+    <Border Grid.Row="1" Background="{DynamicResource BrushBar}" Padding="16,10">
+      <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+        <Button Content="Save"
+                Style="{StaticResource PrimaryButton}"
+                Padding="30,8" MinHeight="44" Margin="0,0,12,0"
+                Click="BtnSave_Click"
+                AutomationProperties.Name="Save settings"/>
+        <Button Content="Cancel"
+                Style="{StaticResource FlatButton}"
+                Padding="30,8" MinHeight="44"
+                IsCancel="True"
+                Click="BtnCancel_Click"
+                AutomationProperties.Name="Cancel without saving"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Resize grip — suite-canonical AccessibleResizeGrip (mouse + keyboard, focus ring, UIA Thumb). -->
+    <ctl:AccessibleResizeGrip/>
+  </Grid>
+</Window>

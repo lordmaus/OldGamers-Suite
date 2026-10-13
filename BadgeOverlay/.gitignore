@@ -1,0 +1,47 @@
+# ── Build output ──────────────────────────────────────────────────────────────
+bin/
+obj/
+
+# ── Versioned build artifacts (keep folder structure, ignore binaries) ─────────
+Builds/*/BadgeOverlay.exe
+Builds/*/BadgeOverlay_Setup.exe
+
+# ── Build script temporaries ───────────────────────────────────────────────────
+_build_log.txt
+_build_done.txt
+
+# ── Root installer output (build.bat moves it into Builds\<ver>\) ──────────────
+/BadgeOverlay_Setup.exe
+publish/
+
+# ── Python bytecode from Tools/check_theme_contrast.py ─────────────────────────
+__pycache__/
+*.pyc
+_build_done.txt
+
+# ── Visual Studio / Rider ─────────────────────────────────────────────────────
+.vs/
+*.user
+*.suo
+*.userprefs
+*.userosscache
+*.sln.docstates
+.idea/
+*.DotSettings.user
+
+# ── NuGet ─────────────────────────────────────────────────────────────────────
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# ── OS noise ──────────────────────────────────────────────────────────────────
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# ── Code signing — never commit key material ──────────────────────────────────
+*.pfx
+*.p12
+*.snk

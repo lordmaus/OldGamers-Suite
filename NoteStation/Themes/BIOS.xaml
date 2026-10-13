@@ -1,0 +1,33 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- BIOS — classic blue BIOS setup screen -->
+  <SolidColorBrush x:Key="BrushBg"           Color="#001080"/>
+  <SolidColorBrush x:Key="BrushSurf"         Color="#00128A"/>
+  <SolidColorBrush x:Key="BrushSurf2"        Color="#001799"/>
+  <SolidColorBrush x:Key="BrushText"         Color="#BDBDBD"/>
+  <SolidColorBrush x:Key="BrushMuted"        Color="#BDBDBD"/>
+  <SolidColorBrush x:Key="BrushHint"         Color="#B5B5B5"/>
+  <SolidColorBrush x:Key="BrushBlue"         Color="#55FFFF"/>
+  <SolidColorBrush x:Key="BrushRed"          Color="#FF5E5E"/>
+  <SolidColorBrush x:Key="BrushGreen"        Color="#55FF55"/>
+  <SolidColorBrush x:Key="BrushAmber"        Color="#FFFF55"/>
+  <SolidColorBrush x:Key="BrushOrange"       Color="#FF8833"/>
+  <SolidColorBrush x:Key="BrushYellow"       Color="#FFFF55"/>
+  <SolidColorBrush x:Key="BrushPurple"       Color="#FF55FF"/>
+  <SolidColorBrush x:Key="BrushPink"         Color="#FF55AA"/>
+  <SolidColorBrush x:Key="BrushTeal"         Color="#55FFFF"/>
+  <SolidColorBrush x:Key="BrushBar"          Color="#000F60"/>
+  <!-- BrushDisabled exempt per WCAG — inactive UI -->
+  <SolidColorBrush x:Key="BrushDisabled"     Color="#003366"/>
+  <!-- Focus ring — 7:1+ contrast on BrushBg -->
+  <SolidColorBrush x:Key="FocusRingBrush"    Color="#FFFF55"/>
+  <!-- CheckBox glyph on BrushBlue fill -->
+  <SolidColorBrush x:Key="BrushBgForChecked" Color="#000000"/>
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#727272"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#FF9898"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#55FFFF"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#55FF55"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#FFFF55"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#000000"/>
+</ResourceDictionary>

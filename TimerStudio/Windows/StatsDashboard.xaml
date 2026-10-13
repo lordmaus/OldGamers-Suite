@@ -1,0 +1,85 @@
+<Window x:Class="TimerStudio.StatsDashboard"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Statistics — Timer Studio"
+        Width="680" Height="520"
+        MinWidth="480" MinHeight="320"
+        WindowStartupLocation="CenterOwner"
+        ResizeMode="CanResizeWithGrip">
+  <DockPanel Background="{DynamicResource BrushBg}">
+
+    <!-- Header -->
+    <Border DockPanel.Dock="Top"
+            Background="{DynamicResource BrushSurf}"
+            Padding="20,14,20,14">
+      <DockPanel>
+        <StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Dashboard}" Style="{StaticResource JtHeaderIcon}"/><TextBlock Style="{StaticResource DialogTitle}" Text="Alert History &amp; Stats"
+                   FontSize="16" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushText}"
+                   VerticalAlignment="Center"/></StackPanel>
+        <StackPanel DockPanel.Dock="Right" Orientation="Horizontal"
+                    HorizontalAlignment="Right">
+          <ComboBox x:Name="CboPeriod"
+                    Width="120" MinHeight="44"
+                    SelectionChanged="CboPeriod_Changed"
+                    AutomationProperties.Name="Time period filter">
+            <ComboBoxItem>Today</ComboBoxItem>
+            <ComboBoxItem>Last 7 days</ComboBoxItem>
+            <ComboBoxItem IsSelected="True">Last 30 days</ComboBoxItem>
+            <ComboBoxItem>All time</ComboBoxItem>
+          </ComboBox>
+          <Button x:Name="BtnRefresh"
+                  Margin="8,0,0,0" Padding="12,6" MinHeight="44"
+                  Click="BtnRefresh_Click"
+                  AutomationProperties.Name="Refresh statistics"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Refresh}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Refresh" VerticalAlignment="Center"/></StackPanel></Button>
+          <Button x:Name="BtnClear"
+                  Margin="6,0,0,0" Padding="12,6" MinHeight="44"
+                  Foreground="{DynamicResource BrushRedText}"
+                  Click="BtnClear_Click"
+                  AutomationProperties.Name="Clear alert history"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.ClearAll}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Clear history" VerticalAlignment="Center"/></StackPanel></Button>
+        </StackPanel>
+      </DockPanel>
+    </Border>
+
+    <!-- Summary row -->
+    <Border DockPanel.Dock="Top"
+            Background="{DynamicResource BrushSurf2}"
+            Padding="20,10">
+      <StackPanel Orientation="Horizontal">
+        <TextBlock x:Name="LblTotalFires"
+                   Text="0 alerts"
+                   FontSize="13" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushText}"/>
+        <TextBlock Text=" · "
+                   Foreground="{DynamicResource BrushMuted}" FontSize="13"/>
+        <TextBlock x:Name="LblUniqueTimers"
+                   Text="0 timers"
+                   FontSize="13"
+                   Foreground="{DynamicResource BrushMuted}"/>
+        <TextBlock Text=" · "
+                   Foreground="{DynamicResource BrushMuted}" FontSize="13"/>
+        <TextBlock x:Name="LblPeriodLabel"
+                   Text=""
+                   FontSize="13"
+                   Foreground="{DynamicResource BrushMuted}"/>
+      </StackPanel>
+    </Border>
+
+    <!-- Chart area -->
+    <ScrollViewer DockPanel.Dock="Bottom"
+                  VerticalScrollBarVisibility="Auto"
+                  Padding="20,14">
+      <StackPanel>
+        <TextBlock Text="Alerts per timer"
+                   FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,0,0,10"/>
+        <StackPanel x:Name="PnlBars"/>
+
+        <TextBlock Text="Alerts per day"
+                   FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                   Margin="0,20,0,10"/>
+        <StackPanel x:Name="PnlDayBars"/>
+      </StackPanel>
+    </ScrollViewer>
+  </DockPanel>
+</Window>

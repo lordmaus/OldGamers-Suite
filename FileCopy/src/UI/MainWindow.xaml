@@ -1,0 +1,1077 @@
+<Window x:Class="FileCopy.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:FileCopy.Controls"
+        xmlns:local="clr-namespace:FileCopy"
+        Title="File Copy Studio"
+        Width="1100" Height="820"
+        MinWidth="900" MinHeight="680"
+        Background="{DynamicResource BrushBg}"
+        Closing="Window_Closing">
+
+  <Window.Resources>
+    <local:EnumStringConverter x:Key="EnumStringConverter"/>
+    <local:ZeroToUnlimitedConverter x:Key="ZeroToUnlimited"/>
+    <local:InverseBoolToVisibilityConverter x:Key="InvBoolVis"/>
+    <local:InverseBoolConverter x:Key="InvBool"/>
+    <BooleanToVisibilityConverter x:Key="BoolToVisibility"/>
+    <ContextMenu x:Key="FileRowContextMenu"
+                 Background="{DynamicResource BrushSurf}"
+                 Foreground="{DynamicResource BrushText}"
+                 BorderBrush="{DynamicResource BrushSurf2}"
+                 BorderThickness="1">
+      <MenuItem Header="Force _Copy"      Click="CtxForceCopy_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.CopyTask}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="Force _Overwrite" Click="CtxForceOverwrite_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Overwrite}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="_Skip"            Click="CtxSkip_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Skip}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="Force _Rename"    Click="CtxForceRename_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Rename}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="_Retry failed"  Click="CtxRetryFailed_Click"
+                ToolTip="Re-copy failed items in selection (or all failures if none selected)">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Refresh}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <Separator/>
+      <MenuItem Header="Compute _CRC32"         Click="CtxComputeCrc_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Checksum}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="Compare src ↔ dst"      Click="CtxCompare_Click"
+                ToolTip="Side-by-side comparison of source and destination file metadata">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Compare}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <Separator/>
+      <MenuItem Header="Open source folder"          Click="CtxOpenSourceFolder_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Open}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="Open destination folder"     Click="CtxOpenDestFolder_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Open}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="Reveal destination file"     Click="CtxRevealDestFile_Click"
+                ToolTip="Select this file in Explorer (only works for Done/Verified items)">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Open}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="Copy source path"            Click="CtxCopySourcePath_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <MenuItem Header="Copy destination path"       Click="CtxCopyDestPath_Click">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+      <Separator/>
+      <MenuItem Header="Discard .fctemp partial" Click="CtxDiscardTemp_Click"
+                ToolTip="Delete any partial transfer for this file">
+        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Delete}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+      </MenuItem>
+    </ContextMenu>
+  </Window.Resources>
+
+  <Window.InputBindings>
+    <KeyBinding Modifiers="Ctrl"        Key="S"   Command="{Binding ScanCommand,           RelativeSource={RelativeSource AncestorType=Window}}"/>
+    <KeyBinding                         Key="F5"  Command="{Binding StartCommand,          RelativeSource={RelativeSource AncestorType=Window}}"/>
+    <KeyBinding                         Key="Esc" Command="{Binding CancelCommand,         RelativeSource={RelativeSource AncestorType=Window}}"/>
+    <KeyBinding Modifiers="Ctrl"        Key="P"   Command="{Binding PauseCommand,          RelativeSource={RelativeSource AncestorType=Window}}"/>
+    <KeyBinding Modifiers="Ctrl"        Key="D"   Command="{Binding DryRunCommand,         RelativeSource={RelativeSource AncestorType=Window}}"/>
+
+    <KeyBinding Modifiers="Ctrl"        Key="D1"  Command="{Binding LoadPresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="1"/>
+    <KeyBinding Modifiers="Ctrl"        Key="D2"  Command="{Binding LoadPresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="2"/>
+    <KeyBinding Modifiers="Ctrl"        Key="D3"  Command="{Binding LoadPresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="3"/>
+    <KeyBinding Modifiers="Ctrl"        Key="D4"  Command="{Binding LoadPresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="4"/>
+    <KeyBinding Modifiers="Ctrl"        Key="D5"  Command="{Binding LoadPresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="5"/>
+
+    <KeyBinding Modifiers="Ctrl+Shift"  Key="D1"  Command="{Binding SavePresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="1"/>
+    <KeyBinding Modifiers="Ctrl+Shift"  Key="D2"  Command="{Binding SavePresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="2"/>
+    <KeyBinding Modifiers="Ctrl+Shift"  Key="D3"  Command="{Binding SavePresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="3"/>
+    <KeyBinding Modifiers="Ctrl+Shift"  Key="D4"  Command="{Binding SavePresetCommand,     RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="4"/>
+    <KeyBinding Modifiers="Ctrl+Shift"  Key="D5"  Command="{Binding SavePresetCommand, RelativeSource={RelativeSource AncestorType=Window}}" CommandParameter="5"/>
+    <KeyBinding Key="F1" Command="{Binding ShortcutsCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+    <KeyBinding Modifiers="Ctrl" Key="J" Command="{Binding SchedulerCommand, RelativeSource={RelativeSource AncestorType=Window}}"/>
+  </Window.InputBindings>
+
+  <!-- Outer grid is NOT scaled — resize handle lives here so it's always at the true window corner -->
+  <Grid>
+
+  <Grid KeyboardNavigation.TabNavigation="Continue">
+    <Grid.LayoutTransform>
+      <ScaleTransform x:Name="UiScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
+    </Grid.LayoutTransform>
+
+    <DockPanel>
+
+      <!-- ── Section 1: Identity / Scale ── -->
+      <Border DockPanel.Dock="Top" KeyboardNavigation.TabIndex="1" Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1"
+              Padding="14,0" MinHeight="52">
+        <Grid VerticalAlignment="Center">
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+          <TextBlock Grid.Column="0" Text="File Copy Studio"
+                     FontFamily="{DynamicResource AppFontFamily}" FontSize="17" FontWeight="Bold"
+                     Foreground="{DynamicResource BrushText}" VerticalAlignment="Center"
+                     AutomationProperties.HeadingLevel="Level1"/>
+          <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+            <Button x:Name="BtnHotkeys"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44"
+                    FontSize="12" Margin="0,0,4,0"
+                    AutomationProperties.Name="Hotkeys"
+                    AutomationProperties.AccessKey="H"
+                    AutomationProperties.HelpText="View keyboard shortcuts"
+                    ToolTip="View keyboard shortcuts (F1)"
+                    Click="BtnHotkeys_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Hotkeys" VerticalAlignment="Center"/></StackPanel></Button>
+            <Button x:Name="BtnSettings"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44"
+                    FontSize="12" Margin="0,0,4,0"
+                    AutomationProperties.Name="Settings"
+                    AutomationProperties.AccessKey="S"
+                    AutomationProperties.HelpText="Open application settings"
+                    ToolTip="Open settings"
+                    Click="BtnSettings_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Settings" VerticalAlignment="Center"/></StackPanel></Button>
+            <Button x:Name="BtnTheme"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44"
+                    FontSize="12" Margin="0,0,4,0"
+                    Content="◑ Theme"
+                    AutomationProperties.Name="Theme"
+                    AutomationProperties.AccessKey="T"
+                    AutomationProperties.HelpText="Open theme selector"
+                    ToolTip="Select colour theme"
+                    Click="BtnTheme_Click"/>
+            <Button x:Name="BtnAboutId"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44"
+                    FontSize="12" Margin="0,0,10,0"
+                    AutomationProperties.Name="About"
+                    AutomationProperties.AccessKey="A"
+                    AutomationProperties.HelpText="About File Copy Studio"
+                    ToolTip="About File Copy Studio"
+                    Click="BtnAbout_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.About}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="About" VerticalAlignment="Center"/></StackPanel></Button>
+            <!-- Divider -->
+            <Rectangle Width="1" Height="24"
+                       Fill="{DynamicResource BrushSurf2}"
+                       VerticalAlignment="Center"
+                       Margin="0,0,10,0"/>
+            <Button Content="{Binding UiScaleLabel}"
+                    Style="{StaticResource FlatButton}"
+                    Padding="10,6" MinHeight="44" MinWidth="44"
+                    FontSize="12"
+                    AutomationProperties.Name="Cycle UI size"
+                    AutomationProperties.AccessKey="U"
+                    AutomationProperties.HelpText="Cycles UI size: Compact, Standard, Medium, Large, Xtra Large"
+                    Click="BtnUiScale_Click" ToolTip="Cycle UI size"/>
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- ── Section 2: Nav Row — retired; Scan/Swap moved into the run-controls row below,
+           Compute CRC/Verify Only/Load Job/Save Job moved into Section 4 Options. ── -->
+
+      <!-- ── Section 5 (Bottom): Presets 1-5 + Save ── -->
+      <Border DockPanel.Dock="Bottom" KeyboardNavigation.TabIndex="4" Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,1,0,0"
+              Padding="8,6">
+        <DockPanel>
+          <Button DockPanel.Dock="Right"
+                  Style="{StaticResource PrimaryButton}" Margin="8,0,0,0" Padding="14,0" MinHeight="44"
+                  AutomationProperties.Name="Save current settings to preset slot"
+                  Click="BtnSavePreset_Click" ToolTip="Save current settings to a preset slot  (Ctrl+Shift+1..5)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Save}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Save Preset" VerticalAlignment="Center"/></StackPanel></Button>
+          <ItemsControl ItemsSource="{Binding Presets}">
+            <ItemsControl.ItemsPanel>
+              <ItemsPanelTemplate>
+                <UniformGrid Rows="1"/>
+              </ItemsPanelTemplate>
+            </ItemsControl.ItemsPanel>
+            <ItemsControl.ItemTemplate>
+              <DataTemplate>
+                <Button Content="{Binding Display}" Tag="{Binding Slot}"
+                        Style="{StaticResource FlatButton}"
+                        Margin="2,0" MinHeight="44" MinWidth="44"
+                        Click="BtnPreset_Click"
+                        AllowDrop="True"
+                        PreviewMouseLeftButtonDown="PresetBtn_MouseDown"
+                        PreviewMouseMove="PresetBtn_MouseMove"
+                        Drop="PresetBtn_Drop"
+                        DragOver="PresetBtn_DragOver"
+                        DragEnter="PresetBtn_DragEnter"
+                        DragLeave="PresetBtn_DragLeave"
+                        AutomationProperties.Name="{Binding Tooltip}"
+                        AutomationProperties.HelpText="{Binding StatusDescription}"
+                        AutomationProperties.PositionInSet="{Binding Slot}"
+                        AutomationProperties.SizeOfSet="5"
+                        ToolTip="{Binding Tooltip}">
+                  <!-- M3 fix: SC 2.5.7 — single-pointer (right-click) alternative to drag-reorder -->
+                  <Button.ContextMenu>
+                    <ContextMenu>
+                      <MenuItem Header="Move _left"  Tag="{Binding Slot}" Click="PresetMoveLeft_Click"
+                                AutomationProperties.Name="Move preset left">
+                        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Back}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+                      </MenuItem>
+                      <MenuItem Header="Move _right" Tag="{Binding Slot}" Click="PresetMoveRight_Click"
+                                AutomationProperties.Name="Move preset right">
+                        <MenuItem.Icon><Image Source="{StaticResource JtIcon.Forward}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon>
+                      </MenuItem>
+                    </ContextMenu>
+                  </Button.ContextMenu>
+                </Button>
+              </DataTemplate>
+            </ItemsControl.ItemTemplate>
+          </ItemsControl>
+        </DockPanel>
+      </Border>
+
+      <!-- ── Body ── -->
+      <ScrollViewer KeyboardNavigation.TabIndex="3" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="10,8,10,8">
+        <StackPanel>
+
+          <!-- ── Section 3: Toggle / Preview (paths + run controls + progress) ── -->
+          <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+            <StackPanel>
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/><RowDefinition Height="6"/>
+                  <RowDefinition Height="Auto"/><RowDefinition Height="6"/>
+                  <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- Parent source directory — counts as the source on its own when nothing
+                     below is checked. Read-only text: changes go through Browse/drag/Recent so
+                     the inline picker below can reload without re-scanning on every keystroke. -->
+                <TextBlock Grid.Row="0" Grid.Column="0" Text="Parent"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <Grid Grid.Row="0" Grid.Column="1">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  <TextBox x:Name="TxtSourceParent" Grid.Column="0" IsReadOnly="True"
+                           AutomationProperties.Name="Parent source directory"
+                           Text="{Binding Prefs.SourceParent, Mode=OneWay}"
+                           AllowDrop="True" PreviewDragOver="Path_DragOver" Drop="TxtSourceParent_Drop"
+                           ToolTip="{Binding Prefs.SourceParent, StringFormat='{}{0}', FallbackValue='Parent source directory — drag a folder here or use Browse / Recent', TargetNullValue='Parent source directory — drag a folder here or use Browse / Recent'}"
+                           ToolTipService.ShowDuration="30000"/>
+                  <Button  Grid.Column="1" Style="{StaticResource FlatButton}"
+                           Padding="8,0" MinHeight="44" MinWidth="44"
+                           AutomationProperties.Name="Recent source parent directories"
+                           ToolTip="Recent source parent directories"
+                           Click="BtnSourceHistory_Click"><Image Source="{StaticResource JtIcon.Recent}" Style="{StaticResource JtSoloIcon}"/></Button>
+                </Grid>
+                <Button    Grid.Row="0" Grid.Column="2" Style="{StaticResource FlatButton}"
+                           Padding="14,0" MinHeight="44" MinWidth="44" Margin="6,0,0,0"
+                           AutomationProperties.Name="Browse for source parent directory"
+                           ToolTip="Choose source parent directory" Click="BtnPickSourceParent_Click"><Image Source="{StaticResource JtIcon.Open}" Style="{StaticResource JtSoloIcon}"/></Button>
+
+                <!-- Inline picker: narrow the copy to specific subfolders/files under Parent.
+                     Leave everything unchecked to copy the whole parent. -->
+                <Border Grid.Row="2" Grid.Column="0" Grid.ColumnSpan="3"
+                        Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="8,6">
+                  <StackPanel>
+                    <Grid>
+                      <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto"/><ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="Auto"/><ColumnDefinition Width="70"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/><ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="Auto"/><ColumnDefinition Width="60"/>
+                        <ColumnDefinition Width="20"/>
+                        <ColumnDefinition Width="Auto"/><ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="14"/>
+                        <ColumnDefinition Width="Auto"/><ColumnDefinition Width="100"/>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                      </Grid.ColumnDefinitions>
+                      <TextBlock Grid.Column="0" Text="Size MB" VerticalAlignment="Center" Foreground="{DynamicResource BrushMuted}" Margin="0,0,4,0"/>
+                      <TextBox  Grid.Column="1" x:Name="TxtPickerSizeMin" MinHeight="44" ToolTip="Minimum total size, MB"
+                                AutomationProperties.Name="Minimum size in megabytes" TextChanged="PickerFilter_Changed"/>
+                      <TextBlock Grid.Column="2" Text="–" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                      <TextBox  Grid.Column="3" Grid.ColumnSpan="2" x:Name="TxtPickerSizeMax" MinHeight="44" ToolTip="Maximum total size, MB (blank = no limit)"
+                                AutomationProperties.Name="Maximum size in megabytes" TextChanged="PickerFilter_Changed"/>
+                      <TextBlock Grid.Column="6" Text="Files" VerticalAlignment="Center" Foreground="{DynamicResource BrushMuted}" Margin="8,0,4,0"/>
+                      <TextBox  Grid.Column="7" x:Name="TxtPickerCountMin" MinHeight="44" ToolTip="Minimum file count"
+                                AutomationProperties.Name="Minimum file count" TextChanged="PickerFilter_Changed"/>
+                      <TextBlock Grid.Column="8" Text="–" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                      <TextBox  Grid.Column="9" Grid.ColumnSpan="2" x:Name="TxtPickerCountMax" MinHeight="44" ToolTip="Maximum file count (blank = no limit)"
+                                AutomationProperties.Name="Maximum file count" TextChanged="PickerFilter_Changed"/>
+                      <TextBlock Grid.Column="12" Text="Modified" VerticalAlignment="Center" Foreground="{DynamicResource BrushMuted}" Margin="8,0,4,0"/>
+                      <DatePicker Grid.Column="13" x:Name="PickerDateFrom" MinHeight="44" ToolTip="Earliest last-modified date"
+                                  AutomationProperties.Name="Earliest modified date" SelectedDateChanged="PickerFilter_DateChanged"/>
+                      <TextBlock Grid.Column="14" Text="–" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+                      <DatePicker Grid.Column="16" x:Name="PickerDateTo" MinHeight="44" ToolTip="Latest last-modified date"
+                                  AutomationProperties.Name="Latest modified date" SelectedDateChanged="PickerFilter_DateChanged"/>
+                      <Button Grid.Column="19" Content="Clear" Style="{StaticResource FlatButton}"
+                              Padding="10,0" MinHeight="44" MinWidth="44" HorizontalAlignment="Right"
+                              AutomationProperties.Name="Clear picker filters" Click="BtnPickerClearFilters_Click"/>
+                    </Grid>
+
+                    <StackPanel Orientation="Horizontal" Margin="0,6,0,4">
+                      <Button Content="Select All"  Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44" Margin="0,0,6,0"
+                              AutomationProperties.Name="Select all visible children" Click="BtnPickerSelectAll_Click"/>
+                      <Button Content="Select None" Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44" Margin="0,0,6,0"
+                              AutomationProperties.Name="Deselect all visible children" Click="BtnPickerSelectNone_Click"/>
+                      <Button Content="Invert"      Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44" Margin="0,0,6,0"
+                              AutomationProperties.Name="Invert selection of visible children" Click="BtnPickerInvert_Click"/>
+                      <TextBlock x:Name="TxtPickerStatus" VerticalAlignment="Center" Margin="12,0,0,0"
+                                 Foreground="{DynamicResource BrushMuted}" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                                 AutomationProperties.LiveSetting="Polite" AutomationProperties.Name="Picker scan status"/>
+                    </StackPanel>
+
+                    <Border BorderBrush="{DynamicResource BrushDivider}" BorderThickness="1" CornerRadius="4">
+                      <DataGrid x:Name="GridSourcePicker" AutoGenerateColumns="False" Height="150"
+                                CanUserAddRows="False" CanUserDeleteRows="False"
+                                SelectionMode="Extended" SelectionUnit="FullRow"
+                                AutomationProperties.Name="Parent directory contents"
+                                AutomationProperties.HelpText="Check specific subfolders or files to narrow the copy. Leave all unchecked to copy everything under Parent. Highlight rows and right-click to check/uncheck the selection.">
+                        <!-- Scoped to this grid only: the global 32px DataGrid RowHeight (App.xaml)
+                             is deliberately compact for the larger GridFiles file list. This picker's
+                             checkbox is a real selection control, so it gets the app's 44px AAA floor. -->
+                        <DataGrid.RowStyle>
+                          <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                            <Setter Property="MinHeight" Value="44"/>
+                          </Style>
+                        </DataGrid.RowStyle>
+                        <DataGrid.ContextMenu>
+                          <ContextMenu>
+                            <MenuItem Header="Check selected" Click="PickerCheckSelected_Click"
+                                      AutomationProperties.Name="Check selected rows"/>
+                            <MenuItem Header="Uncheck selected" Click="PickerUncheckSelected_Click"
+                                      AutomationProperties.Name="Uncheck selected rows"/>
+                          </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                          <DataGridCheckBoxColumn Header="" Binding="{Binding IsChecked, UpdateSourceTrigger=PropertyChanged}" Width="44" IsReadOnly="False">
+                            <DataGridCheckBoxColumn.HeaderStyle>
+                              <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                                <Setter Property="AutomationProperties.Name" Value="Selected"/>
+                              </Style>
+                            </DataGridCheckBoxColumn.HeaderStyle>
+                          </DataGridCheckBoxColumn>
+                          <DataGridTemplateColumn Header="Name" Width="*" IsReadOnly="True" SortMemberPath="SortKey">
+                            <DataGridTemplateColumn.CellTemplate>
+                              <DataTemplate>
+                                <StackPanel Orientation="Horizontal" VerticalAlignment="Center"
+                                            AutomationProperties.Name="{Binding DisplayName}">
+                                  <Image Source="{Binding IconKey, Converter={StaticResource JtIconConverter}}" Style="{StaticResource JtInlineIcon}"/>
+                                  <TextBlock Text="{Binding Name}" VerticalAlignment="Center"/>
+                                </StackPanel>
+                              </DataTemplate>
+                            </DataGridTemplateColumn.CellTemplate>
+                          </DataGridTemplateColumn>
+                          <DataGridTextColumn Header="Size" Binding="{Binding SizeText}" Width="90" IsReadOnly="True"/>
+                          <DataGridTextColumn Header="Files" Binding="{Binding FileCountText}" Width="70" IsReadOnly="True"/>
+                          <DataGridTextColumn Header="Modified" Binding="{Binding Modified, StringFormat=yyyy-MM-dd}" Width="100" IsReadOnly="True"/>
+                        </DataGrid.Columns>
+                      </DataGrid>
+                    </Border>
+
+                    <TextBlock x:Name="TxtPickerSummary" Margin="0,4,0,0"
+                               Foreground="{DynamicResource BrushMuted}" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                               AutomationProperties.LiveSetting="Polite" AutomationProperties.Name="Picker selection summary"/>
+                  </StackPanel>
+                </Border>
+
+                <TextBlock Grid.Row="4" Grid.Column="0" Text="Dest"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="12" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center" Margin="0,0,8,0"/>
+                <Grid Grid.Row="4" Grid.Column="1">
+                  <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/>
+                  </Grid.ColumnDefinitions>
+                  <TextBox x:Name="TxtDest" Grid.Column="0"
+                           AutomationProperties.Name="Destination folder path"
+                           Text="{Binding Prefs.DestPath, UpdateSourceTrigger=PropertyChanged}"
+                           AllowDrop="True" PreviewDragOver="Path_DragOver" Drop="TxtDest_Drop"
+                           ToolTip="{Binding Prefs.DestPath, StringFormat='{}{0}', FallbackValue='Destination: drag a folder here or use Browse / Recent', TargetNullValue='Destination: drag a folder here or use Browse / Recent'}"
+                           ToolTipService.ShowDuration="30000"/>
+                  <Button  Grid.Column="1" Style="{StaticResource FlatButton}"
+                           Padding="8,0" MinHeight="44" MinWidth="44"
+                           AutomationProperties.Name="Recent destination folders"
+                           ToolTip="Recent destination folders"
+                           Click="BtnDestHistory_Click"><Image Source="{StaticResource JtIcon.Recent}" Style="{StaticResource JtSoloIcon}"/></Button>
+                </Grid>
+                <Button    Grid.Row="4" Grid.Column="2" Style="{StaticResource FlatButton}"
+                           Padding="14,0" MinHeight="44" MinWidth="44" Margin="6,0,0,0"
+                           AutomationProperties.Name="Browse destination" ToolTip="Choose destination folder" Click="BtnPickDest_Click"><Image Source="{StaticResource JtIcon.Open}" Style="{StaticResource JtSoloIcon}"/></Button>
+              </Grid>
+
+              <!-- Run controls -->
+              <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <Button Grid.Column="0"
+                        Style="{StaticResource FlatButton}" Padding="14,0" MinHeight="44"
+                        Margin="0,0,6,0"
+                        Command="{Binding ScanCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        AutomationProperties.Name="Scan files"
+                        ToolTip="Enumerate and plan actions  (Ctrl+S)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Scan}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Scan" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="1"
+                        Style="{StaticResource PrimaryButton}" Padding="16,0" MinHeight="44" MinWidth="140"
+                        FontSize="13" Margin="0,0,6,0"
+                        Command="{Binding StartCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        AutomationProperties.Name="Start copy operation"
+                        ToolTip="Start copy  (F5)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.QueueNow}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="START COPY" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="2"
+                        Style="{StaticResource FlatButton}" Padding="14,0" MinHeight="44"
+                        Margin="0,0,6,0"
+                        Command="{Binding PauseCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        AutomationProperties.Name="{Binding PauseLabel}"
+                        ToolTip="Pause / Resume  (Ctrl+P)"><StackPanel Orientation="Horizontal"><Image Source="{Binding PauseIcon, Converter={StaticResource JtIconConverter}}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="{Binding PauseLabel}" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="3"
+                        Style="{StaticResource DangerButton}" Padding="14,0" MinHeight="44"
+                        Margin="0,0,6,0"
+                        Command="{Binding CancelCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        AutomationProperties.Name="Cancel copy"
+                        ToolTip="Cancel  (Esc)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Terminate}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Cancel" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="4"
+                        Style="{StaticResource FlatButton}" Padding="14,0" MinHeight="44"
+                        Margin="0,0,6,0"
+                        Command="{Binding DryRunCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        AutomationProperties.Name="Dry run — preview actions without copying"
+                        ToolTip="Dry run — preview actions  (Ctrl+D)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Eye}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Dry Run" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="5"
+                        Style="{StaticResource FlatButton}" Padding="10,6" MinHeight="44"
+                        Margin="0,0,6,0"
+                        Click="BtnSchedule_Click"
+                        AutomationProperties.Name="Open scheduler — set up automated copy jobs"
+                        ToolTip="Open scheduler — set up automated copy jobs that run on a repeating schedule"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Schedule}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Schedule" VerticalAlignment="Center"/></StackPanel></Button>
+                <StackPanel Grid.Column="6" Orientation="Horizontal" VerticalAlignment="Center" Margin="14,0,0,0">
+                  <TextBlock FontFamily="{DynamicResource AppFontFamily}" FontSize="13" Foreground="{DynamicResource BrushText}"
+                             AutomationProperties.LiveSetting="Polite"
+                             AutomationProperties.Name="Status"
+                             Text="{Binding StatusText}"/>
+                  <StackPanel x:Name="ScanSkipPanel" Orientation="Horizontal" Margin="12,0,0,0" Visibility="Collapsed">
+                    <Image Source="{StaticResource JtIcon.Warning}" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                    <TextBlock x:Name="TxtScanSkipped" VerticalAlignment="Center" FontWeight="SemiBold"
+                               FontFamily="{DynamicResource AppFontFamily}" FontSize="13"
+                               Foreground="{DynamicResource BrushAmberText}"
+                               AutomationProperties.LiveSetting="Polite"/>
+                    <Button Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44" Margin="8,0,0,0"
+                            Click="BtnViewScanLog_Click"
+                            AutomationProperties.Name="View log — folders and links skipped during scan"
+                            ToolTip="Show the log lines for folders and links that were skipped">View log</Button>
+                  </StackPanel>
+                </StackPanel>
+                <StackPanel Grid.Column="7" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,6,0">
+                  <TextBlock FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                             AutomationProperties.LiveSetting="Polite"
+                             AutomationProperties.Name="Transfer speed"
+                             Text="{Binding SpeedText}"/>
+                  <TextBlock x:Name="TxtSparkline" FontFamily="Consolas" FontSize="{DynamicResource FontSizeCaption}"
+                             Foreground="{DynamicResource BrushBlueText}" Margin="8,0,0,0"
+                             VerticalAlignment="Center"
+                             AutomationProperties.Name="Speed graph"
+                             ToolTip="Throughput for the last 60 seconds"/>
+                </StackPanel>
+                <Button Grid.Column="8"
+                        Style="{StaticResource FlatButton}" Padding="10,6" MinHeight="44"
+                        IsEnabled="{Binding IsIdle}"
+                        Click="BtnSwap_Click"
+                        AutomationProperties.Name="Swap source and destination"
+                        ToolTip="Swap source ↔ destination"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Swap}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Swap" VerticalAlignment="Center"/></StackPanel></Button>
+              </Grid>
+
+              <!-- Progress bars + percent (sliders+% pattern) -->
+              <Grid Margin="0,10,0,0">
+                <Grid.RowDefinitions>
+                  <RowDefinition Height="Auto"/><RowDefinition Height="6"/>
+                  <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+                <Grid Grid.Row="0">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="60"/></Grid.ColumnDefinitions>
+                  <ProgressBar Grid.Column="0" Minimum="0" Maximum="100"
+                               Value="{Binding FileProgressPct, Mode=OneWay}"
+                               AutomationProperties.Name="Current file progress"
+                               AutomationProperties.HelpText="{Binding FileProgressHelp}"/>
+                  <TextBlock Grid.Column="1" Text="{Binding FileProgressText}"
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                             HorizontalAlignment="Right" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                </Grid>
+                <Grid Grid.Row="2">
+                  <Grid.ColumnDefinitions><ColumnDefinition Width="*"/><ColumnDefinition Width="60"/></Grid.ColumnDefinitions>
+                  <ProgressBar Grid.Column="0" Minimum="0" Maximum="100"
+                               Value="{Binding TotalProgressPct, Mode=OneWay}"
+                               AutomationProperties.Name="Total progress"
+                               AutomationProperties.HelpText="{Binding TotalProgressHelp}"/>
+                  <TextBlock Grid.Column="1" Text="{Binding TotalProgressText}"
+                             FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                             HorizontalAlignment="Right" VerticalAlignment="Center" Margin="6,0,0,0"/>
+                </Grid>
+              </Grid>
+            </StackPanel>
+          </Border>
+
+          <!-- ── Section 4: Main / Sliders + % (options) ── -->
+          <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+            <StackPanel>
+              <TextBlock Text="OPTIONS" AutomationProperties.HeadingLevel="Level2" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                         Foreground="{DynamicResource BrushMuted}" Margin="0,0,0,6"/>
+
+              <!-- Conflict mode + job/CRC tools (moved here from the retired NavRow) -->
+              <Grid>
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="260"/>
+                  <ColumnDefinition Width="14"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="On conflict" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox  Grid.Column="1"
+                           AutomationProperties.Name="Conflict resolution mode"
+                           ToolTip="What to do when a file already exists at the destination. Hover each option for details."
+                           SelectedValuePath="Tag"
+                           SelectedValue="{Binding Prefs.ConflictMode, Mode=TwoWay, Converter={StaticResource EnumStringConverter}}"
+                           SelectionChanged="CmbConflict_SelectionChanged">
+                  <ComboBoxItem                    Tag="Overwrite"
+                                ToolTip="Always replace the destination file, regardless of date or size. Use when you want the source to always win."
+                                AutomationProperties.Name="Overwrite always"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Overwrite}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Overwrite always" VerticalAlignment="Center"/></StackPanel></ComboBoxItem>
+                  <ComboBoxItem Content="↑  Overwrite if newer (skip same date)"  Tag="OverwriteIfNewer"
+                                ToolTip="Replace the destination only if the source file was modified more recently. Files with the same date are skipped — good for incremental backups where you want to avoid redundant copies."
+                                AutomationProperties.Name="Overwrite if newer, skip same date"/>
+                  <ComboBoxItem Content="↓  Overwrite if older"                   Tag="OverwriteIfOlder"
+                                ToolTip="Replace the destination only if the source is older than what is already at the destination. Useful for restoring from backup without overwriting newer changes."
+                                AutomationProperties.Name="Overwrite if older"/>
+                  <ComboBoxItem Content="≡  Skip if same date"                    Tag="SkipIfSameDate"
+                                ToolTip="Skip the file if source and destination have the same last-modified date, even if sizes differ. Faster than CRC verification but less reliable — a file can be changed without its date updating."
+                                AutomationProperties.Name="Skip if same date"/>
+                  <ComboBoxItem                              Tag="SkipAll"
+                                ToolTip="Never overwrite — if any version of the file exists at the destination, skip it entirely. Safe for copying new files into a folder that already has content."
+                                AutomationProperties.Name="Skip all, never overwrite"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Skip}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Skip all" VerticalAlignment="Center"/></StackPanel></ComboBoxItem>
+                  <ComboBoxItem                  Tag="Rename"
+                                ToolTip="Keep both files — the incoming copy is renamed by appending a number, e.g. photo.jpg becomes photo (1).jpg. Nothing at the destination is ever deleted or overwritten."
+                                AutomationProperties.Name="Rename, append number to destination"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Rename}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Rename (append (n))" VerticalAlignment="Center"/></StackPanel></ComboBoxItem>
+                </ComboBox>
+
+                <Button Grid.Column="3" Style="{StaticResource FlatButton}" Padding="10,6" MinHeight="44"
+                        Margin="0,0,6,0" Click="BtnComputeCrc_Click"
+                        AutomationProperties.Name="Compute CRC for selected files"
+                        AutomationProperties.PositionInSet="1" AutomationProperties.SizeOfSet="4"
+                        ToolTip="Compute CRC32 for selected items"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Checksum}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Compute CRC" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="4" Style="{StaticResource FlatButton}" Padding="10,6" MinHeight="44"
+                        Margin="0,0,6,0"
+                        Command="{Binding VerifyCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                        AutomationProperties.Name="Verify destination tree against source via CRC, no copy"
+                        AutomationProperties.PositionInSet="2" AutomationProperties.SizeOfSet="4"
+                        ToolTip="Verify destination tree against source via CRC (no copy)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Audit}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Verify Only" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="5" Style="{StaticResource FlatButton}" Padding="10,6" MinHeight="44"
+                        Margin="0,0,6,0" Click="BtnLoadJob_Click"
+                        AutomationProperties.Name="Load saved job file"
+                        AutomationProperties.PositionInSet="3" AutomationProperties.SizeOfSet="4"
+                        ToolTip="Load a saved .fclist job file"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Import}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Load Job" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="6" Style="{StaticResource FlatButton}" Padding="10,6" MinHeight="44"
+                        Click="BtnSaveJob_Click"
+                        AutomationProperties.Name="Save current scan as job file"
+                        AutomationProperties.PositionInSet="4" AutomationProperties.SizeOfSet="4"
+                        ToolTip="Save the current scan + options as a .fclist file"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Save Job" VerticalAlignment="Center"/></StackPanel></Button>
+              </Grid>
+              <!-- Conflict mode live preview -->
+              <TextBlock x:Name="LblConflictPreview"
+                         FontFamily="Consolas" FontSize="{DynamicResource FontSizeCaption}"
+                         Foreground="{DynamicResource BrushMuted}"
+                         Margin="0,2,0,4" TextWrapping="Wrap"
+                         AutomationProperties.LiveSetting="Polite"
+                         AutomationProperties.Name="Conflict mode example"/>
+
+              <!-- Symlink policy -->
+              <Grid Margin="0,6,0,0">
+                <Grid.ColumnDefinitions><ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/></Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Symlinks" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <ComboBox  Grid.Column="1"
+                           AutomationProperties.Name="Symlink and junction policy"
+                           ToolTip="How to handle symbolic links and junctions. Follow copies the real data; Preserve recreates the link; Skip ignores them. Hover each option for details."
+                           SelectedValuePath="Tag"
+                           SelectedValue="{Binding Prefs.SymlinkPolicy, Mode=TwoWay, Converter={StaticResource EnumStringConverter}}">
+                  <ComboBoxItem Content="→  Follow (copy target content)"  Tag="Follow"
+                                ToolTip="Treat symbolic links as regular files — read through the link and copy the actual data to the destination. The destination gets a real file, not a link. This is the safest default."
+                                AutomationProperties.Name="Follow — copy the target file content"/>
+                  <ComboBoxItem      Tag="Preserve"
+                                ToolTip="Recreate the symbolic link at the destination pointing to the same target path. Useful when copying developer workspaces or Linux-style trees where link structure must be intact. Requires elevated rights on Windows."
+                                AutomationProperties.Name="Preserve — recreate the symbolic link at destination"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Link}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Preserve (recreate link)" VerticalAlignment="Center"/></StackPanel></ComboBoxItem>
+                  <ComboBoxItem      Tag="Skip"
+                                ToolTip="Ignore all symbolic links and junctions during the scan — they will not appear in the file list and will not be copied. Use this to avoid accidentally following links out of the source tree."
+                                AutomationProperties.Name="Skip — exclude all symbolic links from the scan"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Skip}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Skip (exclude from scan)" VerticalAlignment="Center"/></StackPanel></ComboBoxItem>
+                </ComboBox>
+              </Grid>
+
+              <!-- Toggles -->
+              <WrapPanel Margin="0,8,0,0">
+                <CheckBox            Content="Include subfolders" Margin="0,0,18,0"
+                          IsChecked="{Binding Prefs.IncludeSubdirs}"
+                          AutomationProperties.Name="Include subfolders"/>
+                <CheckBox      Content="Preserve timestamps" Margin="0,0,18,0"
+                          IsChecked="{Binding Prefs.PreserveTimestamps}"
+                          AutomationProperties.Name="Preserve timestamps"/>
+                <CheckBox Content="Preserve attributes" Margin="0,0,18,0"
+                          IsChecked="{Binding Prefs.PreserveAttributes}"
+                          AutomationProperties.Name="Preserve file attributes"/>
+                <CheckBox          Content="Verify with CRC32"  Margin="0,0,18,0"
+                          IsChecked="{Binding Prefs.VerifyCrc}"
+                          IsEnabled="{Binding Prefs.DeleteSourceOnMove, Converter={StaticResource InvBool}}"
+                          ToolTipService.ShowOnDisabled="True"
+                          ToolTip="Required while Delete source (Move) is on"
+                          AutomationProperties.Name="Verify copies with CRC32"/>
+                <CheckBox          Content="Write .crc32 sidecar"  Margin="0,0,18,0"
+                          IsChecked="{Binding Prefs.WriteCrcSidecar}"
+                          AutomationProperties.Name="Write CRC32 sidecar file"
+                          AutomationProperties.HelpText="After each successfully verified copy, writes a .crc32 text file alongside the destination containing the CRC32 checksum. Compatible with SFV tools. Only active when Verify with CRC32 is also enabled."
+                          ToolTip="Write a .crc32 file alongside each verified copy"/>
+                <CheckBox       Content="Delete source (Move)" Margin="0,0,18,0"
+                          IsChecked="{Binding Prefs.DeleteSourceOnMove}"
+                          AutomationProperties.Name="Delete source after copy (Move mode)"
+                          AutomationProperties.HelpText="Move always verifies with CRC32 before deleting the source"/>
+                <CheckBox      Content="Resume interrupted (.fctemp)" Margin="0,0,18,0"
+                          IsChecked="{Binding Prefs.ResumePartial}"
+                          AutomationProperties.Name="Resume interrupted copy using .fctemp file"
+                          ToolTip="Detect partial transfers and continue from where they stopped"/>
+                <CheckBox       Content="Auto-parallel by drive"
+                          IsChecked="{Binding Prefs.AutoParallelByDrive}"
+                          AutomationProperties.Name="Auto-parallel copy by drive"
+                          ToolTip="Use multiple workers when source and destination are on different volumes"
+                          Margin="0,0,18,0"/>
+                <CheckBox       Content="Minimize to tray"
+                          IsChecked="{Binding Prefs.MinimizeToTray}"
+                          AutomationProperties.Name="Minimize to system tray"
+                          ToolTip="Minimize to system tray during copy; show balloon on completion"
+                          Margin="0,0,18,0"/>
+                <CheckBox       Content="Pause on AC unplug"
+                          IsChecked="{Binding Prefs.PauseOnBattery}"
+                          AutomationProperties.Name="Pause copy on AC power unplug"
+                          ToolTip="Automatically pause copy when power is unplugged; resume on reconnect"
+                          Margin="0,0,18,0"/>
+                <CheckBox       Content="Sound on completion"
+                          IsChecked="{Binding Prefs.PlayCompletionSound}"
+                          AutomationProperties.Name="Play sound on copy completion"
+                          ToolTip="Play a system sound when copy finishes (WCAG: non-visual feedback)"
+                          Margin="0,0,18,0"/>
+                <CheckBox       Content="Open destination on completion"
+                          IsChecked="{Binding Prefs.OpenDestOnComplete}"
+                          AutomationProperties.Name="Open destination folder on completion"
+                          ToolTip="Open the destination folder in Explorer when copy completes"/>
+              </WrapPanel>
+              <StackPanel Orientation="Horizontal" Margin="0,4,0,0"
+                          Visibility="{Binding Prefs.DeleteSourceOnMove, Converter={StaticResource BoolToVisibility}}">
+                <Image Source="{StaticResource JtIcon.Checksum}" Width="16" Height="16" Margin="0,0,6,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Move always verifies (CRC32) before deleting the source."
+                           Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                           TextWrapping="Wrap" VerticalAlignment="Center"/>
+              </StackPanel>
+
+              <!-- Filters -->
+              <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="14"/>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Include" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBox   Grid.Column="1"
+                           Text="{Binding Prefs.FileMaskInclude, UpdateSourceTrigger=PropertyChanged}"
+                           ToolTip="Semicolon-separated wildcards e.g. *.txt;*.jpg"
+                           AutomationProperties.Name="Include masks"/>
+                <TextBlock Grid.Column="3" Text="Exclude" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Margin="0,0,6,0"/>
+                <TextBox   Grid.Column="4"
+                           Text="{Binding Prefs.FileMaskExclude, UpdateSourceTrigger=PropertyChanged}"
+                           ToolTip="Semicolon-separated wildcards e.g. *.tmp;*.bak"
+                           AutomationProperties.Name="Exclude masks"/>
+              </Grid>
+
+              <!-- Buffer size with KB readout -->
+              <Grid Margin="0,10,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Buffer" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <Slider    Grid.Column="1" Minimum="64" Maximum="16384"
+                           TickFrequency="64" IsSnapToTickEnabled="True"
+                           Value="{Binding Prefs.BufferSizeKb, Mode=TwoWay}"
+                           AutomationProperties.Name="Read/write buffer size in KB"/>
+                <TextBlock Grid.Column="2"
+                           Text="{Binding Prefs.BufferSizeKb, StringFormat={}{0} KB}"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+              </Grid>
+
+              <!-- Max parallel workers -->
+              <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="80"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Parallel" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <Slider    Grid.Column="1" Minimum="1" Maximum="8"
+                           TickFrequency="1" IsSnapToTickEnabled="True"
+                           Value="{Binding Prefs.MaxParallel, Mode=TwoWay}"
+                           AutomationProperties.Name="Maximum parallel copy workers"
+                           ToolTip="Concurrent workers when source and destination are on different volumes"/>
+                <TextBlock Grid.Column="2"
+                           Text="{Binding Prefs.MaxParallel, StringFormat={}{0}×}"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+              </Grid>
+
+              <!-- Throttle slider (0 = unlimited) -->
+              <Grid Margin="0,8,0,0">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/><ColumnDefinition Width="*"/><ColumnDefinition Width="100"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Throttle" FontFamily="{DynamicResource AppFontFamily}" FontSize="12"
+                           Foreground="{DynamicResource BrushText}" VerticalAlignment="Center" Margin="0,0,10,0"/>
+                <Slider    Grid.Column="1" Minimum="0" Maximum="1000"
+                           TickFrequency="10" IsSnapToTickEnabled="True"
+                           Value="{Binding Prefs.ThrottleMbps, Mode=TwoWay}"
+                           AutomationProperties.Name="Bandwidth limit in Mbit/s (0 = unlimited)"
+                           ToolTip="Bandwidth limit (0 = unlimited)"/>
+                <TextBlock Grid.Column="2"
+                           Text="{Binding Prefs.ThrottleMbps, Converter={StaticResource ZeroToUnlimited}}"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                           HorizontalAlignment="Right" VerticalAlignment="Center"/>
+              </Grid>
+
+              <!-- Summary line -->
+              <TextBlock Margin="0,10,0,0"
+                         FontFamily="{DynamicResource AppFontFamily}" FontSize="12" Foreground="{DynamicResource BrushMuted}"
+                         Text="{Binding SummaryText}"/>
+            </StackPanel>
+          </Border>
+
+          <!-- ── File grid ── -->
+          <Border Background="{DynamicResource BrushSurf}" CornerRadius="6" Padding="10,8" Margin="0,0,0,6">
+            <StackPanel>
+              <Grid Margin="0,0,0,6">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="Auto"/>
+                  <ColumnDefinition Width="*"/>
+                  <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="FILES" AutomationProperties.HeadingLevel="Level2" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center" Margin="0,0,12,0"/>
+                <ComboBox Grid.Column="1" x:Name="CmbFilter" MinWidth="140"
+                          AutomationProperties.Name="Filter file list by action"
+                          ToolTip="Filter the visible file list. Does not change what gets copied — only what rows are shown. Use 'Errors' to review failures, 'To copy' to see pending work."
+                          SelectionChanged="CmbFilter_SelectionChanged">
+                  <ComboBoxItem Content="Show: All"      Tag="All"     IsSelected="True" AutomationProperties.Name="Show all files"/>
+                  <ComboBoxItem Content="Show: Errors"   Tag="Errors"                   AutomationProperties.Name="Show only files with errors"/>
+                  <ComboBoxItem Content="Show: To copy"  Tag="ToCopy"                   AutomationProperties.Name="Show only files planned for copy, overwrite, rename, or resume"/>
+                  <ComboBoxItem Content="Show: Skipped"  Tag="Skipped"                  AutomationProperties.Name="Show only skipped files"/>
+                  <ComboBoxItem Content="Show: Done"     Tag="Done"                     AutomationProperties.Name="Show only completed and verified files"/>
+                  <ComboBoxItem Content="Show: Resume"   Tag="Resume"                   AutomationProperties.Name="Show only files with a resumable partial transfer"/>
+                </ComboBox>
+                <!-- Live region: announces visible row count to screen readers when filter changes -->
+                <TextBlock Grid.Column="2" x:Name="LblFilterCount"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                           VerticalAlignment="Center" Margin="8,0,0,0"
+                           AutomationProperties.LiveSetting="Polite"
+                           AutomationProperties.Name="Visible file count"
+                           Text=""/>
+                <StackPanel Grid.Column="4" Orientation="Horizontal">
+                  <Button Content="✔ All" Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44"
+                          Margin="0,0,4,0" Click="BtnSelectAll_Click"
+                          AutomationProperties.Name="Select all files"/>
+                  <Button Content="✖ None" Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44"
+                          Margin="0,0,4,0" Click="BtnSelectNone_Click"
+                          AutomationProperties.Name="Select no files"/>
+                  <Button Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44"
+                          Margin="0,0,4,0" Click="BtnSkipSelected_Click"
+                          IsEnabled="{Binding IsIdle}"
+                          ToolTip="Mark selected items as Skip"
+                          AutomationProperties.Name="Mark selected files as skip"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Skip}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Skip selected" VerticalAlignment="Center"/></StackPanel></Button>
+                  <Button Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44"
+                          Margin="0,0,4,0" Click="BtnSkipAll_Click"
+                          IsEnabled="{Binding IsIdle}"
+                          ToolTip="Mark every scanned file as Skip — useful to then Force Copy only specific items"
+                          AutomationProperties.Name="Mark all scanned files as skip"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Skip}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Skip all" VerticalAlignment="Center"/></StackPanel></Button>
+                  <Button Content="⟺ Reset columns" Style="{StaticResource FlatButton}" Padding="10,0" MinHeight="44"
+                          Click="BtnResetColumns_Click"
+                          ToolTip="Reset file grid column widths to defaults (column resize requires mouse; use this to restore after resizing)"
+                          AutomationProperties.Name="Reset file grid column widths to defaults"
+                          AutomationProperties.HelpText="Restores all column widths in the file list to their original default sizes"/>
+                </StackPanel>
+              </Grid>
+
+              <!-- File grid + empty state overlay -->
+              <Grid AllowDrop="True" PreviewDragOver="GridFiles_DragOver" Drop="GridFiles_Drop">
+              <DataGrid x:Name="GridFiles" Height="260" IsReadOnly="True"
+                        KeyboardNavigation.TabNavigation="Once"
+                        AutomationProperties.Name="File list"
+                        AutomationProperties.HelpText="Navigate rows with arrow keys. Column widths can be adjusted with the mouse. Right-click a row for actions including retry, skip, and CRC compute."
+                        PreviewMouseRightButtonDown="GridFiles_PreviewMouseRightButtonDown">
+                <DataGrid.RowStyle>
+                  <Style TargetType="DataGridRow" BasedOn="{StaticResource {x:Type DataGridRow}}">
+                    <Setter Property="ContextMenu" Value="{StaticResource FileRowContextMenu}"/>
+                  </Style>
+                </DataGrid.RowStyle>
+                <DataGrid.Columns>
+                  <DataGridTemplateColumn Header="" Width="48" MinWidth="44" SortMemberPath="ActionGlyph">
+                    <DataGridTemplateColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.Name"     Value="Status icon"/>
+                        <Setter Property="AutomationProperties.HelpText" Value="Non-color status indicator; the Action column repeats it as text"/>
+                      </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <!-- SR reads StatusText so listeners hear "Overwrite", not the icon -->
+                        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center"
+                                    AutomationProperties.Name="{Binding StatusText}">
+                          <Image Source="{Binding ActionIcon, Converter={StaticResource JtIconConverter}}" Style="{StaticResource JtSoloIcon}"/>
+                          <Image Source="{StaticResource JtIcon.Link}" Width="14" Height="14" Margin="2,0,0,0" VerticalAlignment="Center"
+                                 Visibility="{Binding IsSymlink, Converter={StaticResource BoolToVisibility}}"/>
+                          <TextBlock Text="{Binding PendingGlyph}" FontSize="14" FontWeight="Bold" VerticalAlignment="Center"/>
+                        </StackPanel>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <!-- Per-row progress bar — only visible during active copy -->
+                  <DataGridTemplateColumn Header="" Width="60" CanUserSort="False">
+                    <DataGridTemplateColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.Name" Value="File transfer progress"/>
+                      </Style>
+                    </DataGridTemplateColumn.HeaderStyle>
+                    <DataGridTemplateColumn.CellTemplate>
+                      <DataTemplate>
+                        <ProgressBar Minimum="0" Maximum="100" Height="8" Margin="2"
+                                     Value="{Binding ProgressPct, Mode=OneWay}"
+                                     AutomationProperties.Name="{Binding ProgressPct, StringFormat='{}{0:0}% transferred'}">
+                          <ProgressBar.Style>
+                            <Style TargetType="ProgressBar">
+                              <Style.Triggers>
+                                <DataTrigger Binding="{Binding ProgressPct}" Value="0">
+                                  <Setter Property="Visibility" Value="Collapsed"/>
+                                </DataTrigger>
+                              </Style.Triggers>
+                            </Style>
+                          </ProgressBar.Style>
+                        </ProgressBar>
+                      </DataTemplate>
+                    </DataGridTemplateColumn.CellTemplate>
+                  </DataGridTemplateColumn>
+                  <DataGridTextColumn Header="File"     Binding="{Binding RelativePath}" Width="*">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="Relative path of the file within the source folder"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Size"     Binding="{Binding SizeText}" Width="80">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="Source file size"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Modified" Binding="{Binding SourceModified, StringFormat=yyyy-MM-dd HH:mm:ss}" Width="150">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="Source file last-modified date and time (UTC)"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Resume"   Binding="{Binding ResumeOffset}" Width="80">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="Bytes already transferred in a previous interrupted copy (0 = no partial)"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Dest exists" Binding="{Binding DestExists}" Width="90">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="Whether a file already exists at the destination path"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Dest mod" Binding="{Binding DestModified, StringFormat=yyyy-MM-dd HH:mm:ss}" Width="150">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="Destination file last-modified date and time (UTC) — empty if destination does not exist"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Src CRC" Binding="{Binding SourceCrc}" Width="90">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="CRC32 checksum of the source file (computed when Verify CRC is enabled)"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Dst CRC" Binding="{Binding DestCrc}" Width="90">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="CRC32 checksum of the destination file after copy — must match Src CRC to pass verification"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                  <DataGridTextColumn Header="Action" Binding="{Binding StatusText}" Width="110">
+                    <DataGridTextColumn.HeaderStyle>
+                      <Style TargetType="DataGridColumnHeader" BasedOn="{StaticResource {x:Type DataGridColumnHeader}}">
+                        <Setter Property="AutomationProperties.HelpText" Value="Planned or completed action for this file"/>
+                      </Style>
+                    </DataGridTextColumn.HeaderStyle>
+                  </DataGridTextColumn>
+                </DataGrid.Columns>
+              </DataGrid>
+
+              <!-- Empty-state overlay — visible only when no items scanned yet -->
+              <Border x:Name="GridEmptyState" Height="260"
+                      Background="{DynamicResource BrushSurf}"
+                      IsHitTestVisible="False"
+                      Visibility="{Binding HasNoItems, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                  <Image Source="{StaticResource JtIcon.Open}" Width="32" Height="32" HorizontalAlignment="Center" Margin="0,0,0,8"/>
+                  <TextBlock Text="Run Scan to see files"
+                             FontSize="15" FontWeight="SemiBold"
+                             Foreground="{DynamicResource BrushMuted}"
+                             HorizontalAlignment="Center"/>
+                  <TextBlock Text="Set the parent folder above, check specific items in the picker if needed, then click Scan"
+                             FontSize="12" Foreground="{DynamicResource BrushHint}"
+                             HorizontalAlignment="Center" Margin="0,4,0,0"/>
+                </StackPanel>
+              </Border>
+              </Grid><!-- end file grid + empty-state wrapper -->
+            </StackPanel>
+          </Border>
+
+          <!-- ── Error log panel (collapsible) ── -->
+          <Expander x:Name="ErrorPanel" Background="{DynamicResource BrushSurf}"
+                    BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1"
+                    Margin="0,0,0,6" Padding="0" IsExpanded="False"
+                    Visibility="{Binding HasErrors, Converter={StaticResource BoolToVisibility}}"
+                    Foreground="{DynamicResource BrushText}"
+                    AutomationProperties.Name="Error log"
+                    AutomationProperties.LiveSetting="Polite"
+                    Expanded="ErrorPanel_ExpandedChanged"
+                    Collapsed="ErrorPanel_ExpandedChanged">
+            <Expander.Header>
+              <StackPanel Orientation="Horizontal" Margin="4,0">
+                <Image Source="{StaticResource JtIcon.Warning}" Style="{StaticResource JtBtnIcon}"/>
+                <TextBlock Text="{Binding ErrorCountText}"
+                           FontFamily="{DynamicResource AppFontFamily}" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushText}"/>
+              </StackPanel>
+            </Expander.Header>
+            <StackPanel>
+              <Grid Margin="6,4">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" Text="Failed transfers" FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                           Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center"/>
+                <Button Grid.Column="1" Style="{StaticResource FlatButton}"
+                        Padding="10,0" MinHeight="44" Margin="0,0,4,0"
+                        Click="BtnCopyErrors_Click"
+                        AutomationProperties.Name="Copy errors to clipboard"
+                        ToolTip="Copy all errors to clipboard as plain text"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Copy" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="2" Style="{StaticResource FlatButton}"
+                        Padding="10,0" MinHeight="44" Margin="0,0,4,0"
+                        Click="BtnExportErrorsCsv_Click"
+                        AutomationProperties.Name="Export errors to CSV file"
+                        AutomationProperties.HelpText="Save the error list as a comma-separated values file for import into Excel or other tools"
+                        ToolTip="Export error list to a CSV file"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Export}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="CSV" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="3" Style="{StaticResource FlatButton}"
+                        Padding="10,0" MinHeight="44"
+                        Click="BtnClearErrors_Click"
+                        AutomationProperties.Name="Clear error list"
+                        ToolTip="Clear error list (does not affect files)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.ClearAll}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Clear" VerticalAlignment="Center"/></StackPanel></Button>
+              </Grid>
+              <DataGrid x:Name="GridErrors" Height="140" IsReadOnly="True" Margin="6,0,6,6"
+                        AutomationProperties.Name="Failed files"
+                        AutomationProperties.HelpText="Lists files that failed to copy. Right-click a row to retry."
+                        AutomationProperties.LiveSetting="Polite">
+                <DataGrid.Columns>
+                  <DataGridTextColumn Header="Time"  Binding="{Binding ErrorTimestampText}" Width="80"/>
+                  <DataGridTextColumn Header="File"  Binding="{Binding RelativePath}" Width="*"/>
+                  <DataGridTextColumn Header="Error" Binding="{Binding ErrorText}"    Width="2*"/>
+                  <DataGridTextColumn Header="Size"  Binding="{Binding SizeText}"     Width="80"/>
+                </DataGrid.Columns>
+              </DataGrid>
+            </StackPanel>
+          </Expander>
+
+          <!-- ── Log Viewer Panel ── -->
+          <Expander x:Name="LogPanel" Background="{DynamicResource BrushSurf}"
+                    BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1"
+                    Margin="0,0,0,6" Padding="0" IsExpanded="False"
+                    Foreground="{DynamicResource BrushText}"
+                    AutomationProperties.Name="Application log viewer"
+                    Expanded="LogPanel_ExpandedChanged"
+                    Collapsed="LogPanel_ExpandedChanged">
+            <Expander.Header>
+              <StackPanel Orientation="Horizontal" Margin="4,0">
+                <Image Source="{StaticResource JtIcon.EventLog}" Style="{StaticResource JtBtnIcon}"/>
+                <TextBlock Text="Log" FontFamily="{DynamicResource AppFontFamily}" FontWeight="SemiBold"
+                           Foreground="{DynamicResource BrushText}"/>
+              </StackPanel>
+            </Expander.Header>
+            <StackPanel>
+              <Grid Margin="6,4">
+                <Grid.ColumnDefinitions>
+                  <ColumnDefinition Width="*"/><ColumnDefinition Width="Auto"/><ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock Grid.Column="0" x:Name="LblLogStatus" Text="Last 200 lines"
+                           FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}"
+                           Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center"
+                           AutomationProperties.LiveSetting="Polite"
+                           AutomationProperties.Name="Log status"/>
+                <Button Grid.Column="1" Style="{StaticResource FlatButton}"
+                        Padding="10,0" MinHeight="44" Margin="0,0,4,0"
+                        Click="BtnRefreshLog_Click"
+                        AutomationProperties.Name="Refresh log viewer"
+                        ToolTip="Reload the log file"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Refresh}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Refresh" VerticalAlignment="Center"/></StackPanel></Button>
+                <Button Grid.Column="2" Style="{StaticResource FlatButton}"
+                        Padding="10,0" MinHeight="44"
+                        Click="BtnOpenLogFile_Click"
+                        AutomationProperties.Name="Open log file in Notepad"
+                        ToolTip="Open today's log file in Notepad"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Open}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open file" VerticalAlignment="Center"/></StackPanel></Button>
+              </Grid>
+              <TextBox x:Name="TxtLog" Height="160" IsReadOnly="True" Margin="6,0,6,6"
+                       FontFamily="Consolas" FontSize="{DynamicResource FontSizeCaption}"
+                       Foreground="{DynamicResource BrushText}"
+                       Background="{DynamicResource BrushSurf}"
+                       BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1"
+                       VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto"
+                       AcceptsReturn="True" TextWrapping="NoWrap"
+                       AutomationProperties.Name="Application log"
+                       AutomationProperties.HelpText="Read-only log output. Use Ctrl+A to select all, Ctrl+C to copy. Click Refresh to reload. Use Open File to view the full log in your text editor."/>
+            </StackPanel>
+          </Expander>
+
+          <Border Height="6"/>
+        </StackPanel>
+      </ScrollViewer>
+    </DockPanel>
+
+  </Grid><!-- end scaled grid -->
+
+  <!-- WCAG: Bottom-right drag handle — outside the scaled grid so it's always at the true corner -->
+  <!-- Focusable="True" + KeyDown provides WCAG 2.5.7 keyboard alternative for drag-resize -->
+  <ctl:AccessibleResizeGrip/>
+
+  </Grid><!-- end outer unscaled grid -->
+</Window>

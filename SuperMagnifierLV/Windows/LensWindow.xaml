@@ -1,0 +1,272 @@
+<Window x:Class="SuperMagnifier.LensWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        Title="Super Magnifier LV — Lens"
+        WindowStyle="None"
+        ResizeMode="NoResize"
+        AllowsTransparency="True"
+        ShowInTaskbar="False"
+        Topmost="True"
+        Background="Transparent"
+        Width="800" Height="600"
+        MinWidth="200" MinHeight="140"
+        KeyDown="LensWindow_KeyDown">
+
+  <Border x:Name="OuterBorder"
+          Background="{DynamicResource BrushBg}"
+          BorderBrush="{DynamicResource BrushBlue}"
+          BorderThickness="2"
+          CornerRadius="4">
+
+    <Grid x:Name="RootGrid">
+      <Grid.RowDefinitions>
+        <!-- Start at largest size (index 4 = 80px) -->
+        <RowDefinition x:Name="TitleRow" Height="80"/>
+        <RowDefinition Height="*"/>
+        <RowDefinition x:Name="ResizeRow" Height="16"/>
+      </Grid.RowDefinitions>
+      <Grid.ColumnDefinitions>
+        <ColumnDefinition Width="8"/>
+        <ColumnDefinition Width="*"/>
+        <ColumnDefinition Width="8"/>
+      </Grid.ColumnDefinitions>
+
+      <!-- ── Permanent toolbar — IS the title bar, no separate title text ──
+           No ToolTip attributes anywhere in this bar — tooltip popups are separate
+           HWNDs that get captured by the Magnification API and appear inside the lens. ── -->
+      <Border x:Name="HoverBar"
+              Grid.Row="0" Grid.Column="0" Grid.ColumnSpan="3"
+              Panel.ZIndex="20"
+              Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushBlue}"
+              BorderThickness="0,0,0,1"
+              CornerRadius="4,4,0,0"
+              Padding="4,0"
+              KeyboardNavigation.TabNavigation="Cycle"
+              MouseRightButtonDown="TitleBar_RightClick">
+
+        <Border.ContextMenu>
+          <ContextMenu>
+            <MenuItem x:Name="CtxFreeze" Header="Freeze / Resume"  Click="CtxFreeze_Click"><MenuItem.Icon><Image x:Name="CtxFreezeIcon" Source="{StaticResource JtIcon.Freeze}" Style="{StaticResource JtMenuIcon}"/></MenuItem.Icon></MenuItem>
+            <MenuItem x:Name="CtxPick"   Header="Colour Picker"        Click="CtxPick_Click"/>
+            <MenuItem x:Name="CtxSnap"   Header="Save Snapshot"        Click="CtxSnap_Click"/>
+            <MenuItem x:Name="CtxThru"   Header="Click-Through"        Click="CtxThru_Click" IsCheckable="True"/>
+            <Separator/>
+            <MenuItem Header="Close Lens" Click="CloseBtn_Click"/>
+          </ContextMenu>
+        </Border.ContextMenu>
+
+        <Grid>
+          <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="Auto"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="Auto"/>
+          </Grid.ColumnDefinitions>
+
+          <!-- Centre: inline hint label — replaces tooltips, no popup HWND created -->
+          <TextBlock x:Name="HintLabel"
+                     Grid.Column="1"
+                     Text=""
+                     FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}" FontStyle="Italic"
+                     Foreground="{DynamicResource BrushHint}"
+                     VerticalAlignment="Center" HorizontalAlignment="Center"
+                     Opacity="0.75"
+                     IsHitTestVisible="False"/>
+
+          <!-- Left: dock + tools + freeze -->
+          <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center"
+                      HorizontalAlignment="Left">
+
+            <Button x:Name="DockTLBtn" Content="&#x2196;"
+                    AutomationProperties.Name="Dock to top left"
+                    Background="Transparent" Foreground="{DynamicResource BrushText}"
+                    BorderThickness="0" FontSize="19" FontWeight="Bold" Cursor="Hand" Padding="6,0"
+                    TabIndex="1"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Dock top-left"
+                    Click="DockTL_Click" Style="{StaticResource LensIconButton}"/>
+            <Button x:Name="DockTRBtn" Content="&#x2197;"
+                    AutomationProperties.Name="Dock to top right"
+                    Background="Transparent" Foreground="{DynamicResource BrushText}"
+                    BorderThickness="0" FontSize="19" FontWeight="Bold" Cursor="Hand" Padding="6,0"
+                    TabIndex="2"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Dock top-right"
+                    Click="DockTR_Click" Style="{StaticResource LensIconButton}"/>
+            <Button x:Name="DockBLBtn" Content="&#x2199;"
+                    AutomationProperties.Name="Dock to bottom left"
+                    Background="Transparent" Foreground="{DynamicResource BrushText}"
+                    BorderThickness="0" FontSize="19" FontWeight="Bold" Cursor="Hand" Padding="6,0"
+                    TabIndex="3"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Dock bottom-left"
+                    Click="DockBL_Click" Style="{StaticResource LensIconButton}"/>
+            <Button x:Name="DockBRBtn" Content="&#x2198;"
+                    AutomationProperties.Name="Dock to bottom right"
+                    Background="Transparent" Foreground="{DynamicResource BrushText}"
+                    BorderThickness="0" FontSize="19" FontWeight="Bold" Cursor="Hand" Padding="6,0"
+                    TabIndex="4"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Dock bottom-right"
+                    Click="DockBR_Click" Style="{StaticResource LensIconButton}"/>
+
+            <Rectangle x:Name="ToolbarSep1" Width="1" Height="18" Margin="4,0"
+                       Fill="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+
+            <Button x:Name="TitleSizeBtn"
+                    AutomationProperties.Name="Cycle title bar size"
+                    Background="Transparent" Foreground="{DynamicResource BrushHint}"
+                    BorderThickness="0" FontSize="13" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" TabIndex="5"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Title bar size — click to cycle"
+                    Click="TitleSizeBtn_Click" Style="{StaticResource LensIconButton}">
+              <TextBlock x:Name="TitleSizeBtnText" Text="Aa" FontSize="13" FontWeight="Bold"
+                         Foreground="{DynamicResource BrushHint}"
+                         TextOptions.TextFormattingMode="Display"/>
+            </Button>
+
+            <Button x:Name="SizeCycleBtn" Content="&#x2922;"
+                    AutomationProperties.Name="Cycle lens size: default, double, default"
+                    Background="Transparent" Foreground="{DynamicResource BrushText}"
+                    BorderThickness="0" FontSize="19" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" TabIndex="6"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Cycle lens size — default → 2× → default"
+                    Click="SizeCycleBtn_Click" Style="{StaticResource LensIconButton}"/>
+
+            <Button x:Name="ColourPickBtn" Content="Clr"
+                    AutomationProperties.Name="Colour picker"
+                    Background="Transparent" Foreground="{DynamicResource BrushHint}"
+                    BorderThickness="0" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" TabIndex="7"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Colour picker — click pixel to copy hex"
+                    Click="ColourPickBtn_Click" Style="{StaticResource LensIconButton}"/>
+
+            <Button x:Name="SnapBtn" Content="Snap"
+                    AutomationProperties.Name="Save snapshot"
+                    Background="Transparent" Foreground="{DynamicResource BrushHint}"
+                    BorderThickness="0" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" TabIndex="8"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Save snapshot to My Pictures"
+                    Click="SnapBtn_Click" Style="{StaticResource LensIconButton}"/>
+
+            <Button x:Name="ClickThruBtn" Content="Thru"
+                    AutomationProperties.Name="Toggle click-through mode"
+                    Background="Transparent" Foreground="{DynamicResource BrushHint}"
+                    BorderThickness="0" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" TabIndex="9"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Click-through — mouse passes through lens"
+                    Click="ClickThruBtn_Click" Style="{StaticResource LensIconButton}"/>
+
+            <Rectangle x:Name="ToolbarSep2" Width="1" Height="18" Margin="4,0"
+                       Fill="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+
+            <Button x:Name="FreezeBtn"
+                    AutomationProperties.Name="Freeze lens"
+                    Background="Transparent" Foreground="{DynamicResource BrushHint}"
+                    BorderThickness="0" FontSize="13" Cursor="Hand" Padding="6,0"
+                    TabIndex="10"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Freeze / unfreeze lens (Ctrl+Alt+F)"
+                    Click="FreezeBtn_Click" Style="{StaticResource LensIconButton}">
+              <TextBlock x:Name="FreezeBtnText" Text="&#x2744; Freeze" FontSize="13"
+                         Foreground="{DynamicResource BrushHint}"/>
+            </Button>
+
+          </StackPanel>
+
+          <!-- Right: zoom-out · zoom label · zoom-in · close -->
+          <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center"
+                      HorizontalAlignment="Right">
+
+            <Button x:Name="LensZoomOutBtn" Content="&#x2212;"
+                    AutomationProperties.Name="Zoom out"
+                    Background="Transparent" Foreground="{DynamicResource BrushHint}"
+                    BorderThickness="0" FontSize="20" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" TabIndex="11"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Zoom out (Ctrl+Alt+-)"
+                    Click="LensZoomOutBtn_Click" Style="{StaticResource LensIconButton}"/>
+
+            <TextBlock x:Name="LensZoomLabel"
+                       Text="2.00x"
+                       FontFamily="Segoe UI" FontSize="13" FontWeight="Bold"
+                       VerticalAlignment="Center"
+                       Foreground="{DynamicResource BrushText}"
+                       MinWidth="52" TextAlignment="Center"
+                       AutomationProperties.Name="Current zoom level"
+                       Margin="2,0"/>
+
+            <Button x:Name="LensZoomInBtn" Content="+"
+                    AutomationProperties.Name="Zoom in"
+                    Background="Transparent" Foreground="{DynamicResource BrushHint}"
+                    BorderThickness="0" FontSize="20" FontWeight="Bold"
+                    Cursor="Hand" Padding="6,0" TabIndex="12"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Zoom in (Ctrl+Alt+=)"
+                    Click="LensZoomInBtn_Click" Style="{StaticResource LensIconButton}"/>
+
+            <Rectangle Width="1" Height="18" Margin="4,0"
+                       Fill="{DynamicResource BrushHint}" VerticalAlignment="Center"/>
+
+            <Button x:Name="CloseBtn" Content="&#x2715;"
+                    Background="Transparent" Foreground="{DynamicResource BrushRedText}"
+                    BorderThickness="0" FontSize="14" FontWeight="Bold"
+                    Cursor="Hand" Padding="8,0" TabIndex="13"
+                    AutomationProperties.Name="Close lens"
+                    MouseEnter="Btn_MouseEnter" MouseLeave="Btn_MouseLeave" Tag="Close lens"
+                    Click="CloseBtn_Click" Style="{StaticResource LensIconButton}"/>
+
+          </StackPanel>
+        </Grid>
+      </Border>
+
+      <!-- ── Magnifier host ── -->
+      <Border x:Name="MagHostBorder"
+              Grid.Row="1" Grid.Column="1"
+              Background="Black"
+              MouseLeftButtonDown="MagHost_MouseLeftButtonDown"
+              SizeChanged="MagHost_SizeChanged"/>
+
+      <!-- ── Resize grips ── -->
+      <Rectangle Grid.Row="1" Grid.Column="0" Fill="Transparent" Cursor="SizeWE"
+                 MouseLeftButtonDown="ResizeW_MouseLeftButtonDown"/>
+      <Rectangle Grid.Row="1" Grid.Column="2" Fill="Transparent" Cursor="SizeWE"
+                 MouseLeftButtonDown="ResizeE_MouseLeftButtonDown"/>
+      <Rectangle x:Name="ResizeGripS" Grid.Row="2" Grid.Column="1" Fill="Transparent" Cursor="SizeNS"
+                 MouseLeftButtonDown="ResizeS_MouseLeftButtonDown"
+                 AutomationProperties.Name="Resize lens"
+                 AutomationProperties.HelpText="Drag to resize the lens height"/>
+      <Rectangle x:Name="ResizeGripSW" Grid.Row="2" Grid.Column="0" Fill="Transparent" Cursor="SizeNESW"
+                 MouseLeftButtonDown="ResizeSW_MouseLeftButtonDown"/>
+      <Rectangle x:Name="ResizeGripSE" Grid.Row="2" Grid.Column="2" Fill="Transparent" Cursor="SizeNWSE"
+                 MouseLeftButtonDown="ResizeSE_MouseLeftButtonDown"
+                 AutomationProperties.Name="Resize lens (bottom-right handle)"
+                 AutomationProperties.HelpText="Drag to resize the lens width and height"/>
+      <Rectangle Grid.Row="0" Grid.Column="0" Fill="Transparent" Cursor="SizeNWSE"
+                 MouseLeftButtonDown="ResizeNW_MouseLeftButtonDown"/>
+      <Rectangle Grid.Row="0" Grid.Column="2" Fill="Transparent" Cursor="SizeNESW"
+                 MouseLeftButtonDown="ResizeNE_MouseLeftButtonDown"/>
+
+      <!-- Grip glyph overlays — visual-only affordance, click passthrough to Rectangles above -->
+      <TextBlock x:Name="ResizeGripDotsS" Grid.Row="2" Grid.Column="1"
+                 Text="▬ ▬ ▬" FontSize="8" FontWeight="Bold"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 IsHitTestVisible="False"/>
+      <TextBlock x:Name="ResizeGripDotsSE" Grid.Row="2" Grid.Column="2"
+                 Text="◢" FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold"
+                 HorizontalAlignment="Center" VerticalAlignment="Center"
+                 IsHitTestVisible="False"/>
+
+      <!-- ── Colour history swatches (shown during colour pick mode) ── -->
+      <Border x:Name="ColourHistoryBar"
+              Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+              Panel.ZIndex="19"
+              VerticalAlignment="Top"
+              Background="{DynamicResource BrushBar}"
+              BorderBrush="{DynamicResource BrushSurf2}"
+              BorderThickness="0,0,0,1"
+              Padding="6,3"
+              Visibility="Collapsed"
+             
+              AutomationProperties.Name="Colour history">
+        <StackPanel x:Name="ColourSwatchPanel"
+                    Orientation="Horizontal"
+                    VerticalAlignment="Center"/>
+      </Border>
+
+    </Grid>
+  </Border>
+</Window>

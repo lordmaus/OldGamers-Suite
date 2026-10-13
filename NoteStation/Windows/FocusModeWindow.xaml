@@ -1,0 +1,120 @@
+<Window x:Class="NoteStation.Windows.FocusModeWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        WindowStyle="None" AllowsTransparency="True"
+        WindowState="Maximized" Topmost="True"
+        Background="#E61E1E2E"
+        ShowInTaskbar="True"
+        AutomationProperties.Name="Focus Mode — today's tasks">
+
+    <!-- Fixed-dark palette (same as the overlays): implicit CheckBox/Button styles resolve their
+         DynamicResource brushes against this dark surface instead of the app theme. -->
+    <Window.Resources>
+        <ResourceDictionary Source="/Theming/OverlayPalette.xaml"/>
+    </Window.Resources>
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- Header -->
+        <Grid Grid.Row="0" Margin="60,40,60,20">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Left" VerticalAlignment="Center">
+                <Image Source="{StaticResource JtIcon.Focus}" Width="32" Height="32" Margin="0,0,10,0" VerticalAlignment="Center"/>
+                <TextBlock Text="Focus Mode" FontSize="28" FontWeight="Bold" Foreground="#CDD6F4"
+                           AutomationProperties.HeadingLevel="Level1"/>
+                <TextBlock x:Name="TxtDate" FontSize="18" Foreground="{DynamicResource BrushMuted}"
+                           VerticalAlignment="Bottom" Margin="16,0,0,4"/>
+            </StackPanel>
+            <Button Content="✕ Exit (ESC)" HorizontalAlignment="Right"
+                    Height="44" Padding="16,0"
+                    Background="#313244" Foreground="#CDD6F4"
+                    BorderThickness="0" FontSize="14"
+                    Click="BtnExit_Click"
+                    AutomationProperties.Name="Exit focus mode"/>
+        </Grid>
+
+        <!-- Task list -->
+        <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Margin="60,0,60,0">
+            <ItemsControl x:Name="TaskList">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border Background="#1A313244" CornerRadius="8" Margin="0,4"
+                                Padding="20,12">
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="44"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="Auto"/>
+                                    <ColumnDefinition Width="120"/>
+                                </Grid.ColumnDefinitions>
+
+                                <!-- Done checkbox -->
+                                <CheckBox Grid.Column="0" MinWidth="44" MinHeight="44"
+                                          IsChecked="{Binding IsCompleted, Mode=TwoWay}"
+                                          VerticalAlignment="Center"
+                                          Checked="Task_Checked"
+                                          AutomationProperties.Name="{Binding Title, StringFormat='Complete: {0}'}"/>
+
+                                <!-- Title + subtask info -->
+                                <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="8,0">
+                                    <TextBlock Text="{Binding Title}" FontSize="18" Foreground="#CDD6F4"
+                                               TextTrimming="CharacterEllipsis"/>
+                                    <TextBlock Text="{Binding DueDateDisplay}" FontSize="12" Foreground="#F38BA8"
+                                               Visibility="{Binding HasDueDate, Converter={StaticResource BoolToVis}}"/>
+                                </StackPanel>
+
+                                <!-- Priority badge -->
+                                <Border Grid.Column="2" CornerRadius="4" Padding="8,4" Margin="8,0"
+                                        VerticalAlignment="Center">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background" Value="Transparent"/>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding Priority}" Value="3">
+                                                    <Setter Property="Background" Value="#F38BA8"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Priority}" Value="2">
+                                                    <Setter Property="Background" Value="#FAB387"/>
+                                                </DataTrigger>
+                                                <DataTrigger Binding="{Binding Priority}" Value="1">
+                                                    <Setter Property="Background" Value="#A6E3A1"/>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <TextBlock FontSize="{DynamicResource FontSizeCaption}" FontWeight="Bold" Foreground="#1E1E2E">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value=""/>
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Priority}" Value="3"><Setter Property="Text" Value="HIGH"/></DataTrigger>
+                                                    <DataTrigger Binding="{Binding Priority}" Value="2"><Setter Property="Text" Value="MED"/></DataTrigger>
+                                                    <DataTrigger Binding="{Binding Priority}" Value="1"><Setter Property="Text" Value="LOW"/></DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+
+                                <!-- Focus (Pomodoro) button -->
+                                <Button Grid.Column="3" Height="44"
+                                        Background="#313244" Foreground="#CDD6F4"
+                                        BorderThickness="0" FontSize="13"
+                                        Click="BtnPomodoro_Click" Tag="{Binding}"
+                                        AutomationProperties.Name="{Binding Title, StringFormat='Start Pomodoro for: {0}'}"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Focus}" Style="{StaticResource JtInlineIcon}"/><TextBlock Text="Focus" VerticalAlignment="Center"/></StackPanel></Button>
+                            </Grid>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+
+        <!-- Footer hint -->
+        <TextBlock Grid.Row="2" Text="Press ESC to exit • Focus starts a Pomodoro in TimerStudio"
+                   FontSize="12" Foreground="{DynamicResource BrushMuted}" HorizontalAlignment="Center" Margin="0,12,0,24"/>
+    </Grid>
+</Window>

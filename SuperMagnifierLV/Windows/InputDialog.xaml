@@ -1,0 +1,34 @@
+<Window x:Class="SuperMagnifier.InputDialog"
+        ResizeMode="CanResize"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:SuperMagnifier.Controls"
+        Title="Name Preset" Width="340" SizeToContent="Height"
+        Background="{DynamicResource BrushBg}" ShowInTaskbar="False">
+  <StackPanel Margin="20,16,20,16">
+    <TextBlock x:Name="PromptLabel" Text="Enter preset name:"
+               FontFamily="Segoe UI" FontSize="{DynamicResource FontSizeCaption}"
+               Foreground="{DynamicResource BrushText}" Margin="0,0,0,8"/>
+    <TextBox x:Name="InputBox"
+             FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeBody}"
+             MinHeight="44" VerticalContentAlignment="Center"
+             Background="{DynamicResource BrushBar}"
+             Foreground="{DynamicResource BrushText}"
+             BorderBrush="{DynamicResource BrushBlue}"
+             Padding="6,5" MaxLength="32"
+             AutomationProperties.Name="Preset name"
+             AutomationProperties.HelpText="Type a name for this preset, then press Enter or click OK"
+             KeyDown="InputBox_KeyDown"/>
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Margin="0,12,0,0">
+      <Button Content="OK" Style="{StaticResource PrimaryButton}"
+              Padding="24,6" MinHeight="44" IsDefault="True"
+              AutomationProperties.Name="Confirm preset name"
+              Click="OkBtn_Click"/>
+      <Button Content="Cancel" Style="{StaticResource FlatButton}"
+              Padding="16,6" MinHeight="44" Margin="8,0,0,0" IsCancel="True"
+              AutomationProperties.Name="Cancel and discard"
+              Click="CancelBtn_Click"/>
+    </StackPanel>
+    <ctl:AccessibleResizeGrip Margin="0,0,-20,-16"/>
+  </StackPanel>
+</Window>

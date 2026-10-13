@@ -1,0 +1,14 @@
+# Build outputs
+bin/
+obj/
+
+
+# Installer staging (moved to Builds\ on success — root copy not kept)
+ReticleOverlay_Source_*.zip
+
+# Builds folder is tracked — versioned EXE + installer live there
+# Builds/
+
+# User data
+*.user
+.vs/

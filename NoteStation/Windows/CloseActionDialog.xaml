@@ -1,0 +1,91 @@
+<Window x:Class="NoteStation.CloseActionDialog"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        Title="What should ✕ do?"
+        Width="420" Height="Auto" SizeToContent="Height"
+        MinWidth="380"
+        ResizeMode="CanResize"
+        WindowStartupLocation="CenterOwner"
+        Background="{DynamicResource BrushBg}"
+        ShowInTaskbar="False"
+        AutomationProperties.Name="Close button action"
+        AutomationProperties.HelpText="Choose what happens when you click the close button">
+
+  <StackPanel Margin="28,24,28,24" >
+
+    <!-- Icon + heading -->
+    <TextBlock Text="When you click ✕, NoteStation should:"
+               Style="{StaticResource DialogTitle}"
+               FontFamily="Segoe UI" FontSize="14"
+               TextWrapping="Wrap" Margin="0,0,0,18"/>
+
+    <!-- Option buttons -->
+    <RadioButton x:Name="RbTaskbar"
+                 GroupName="CloseAction"
+                 IsChecked="True"
+                 Margin="0,0,0,10"
+                 FontSize="13"
+                 Foreground="{DynamicResource BrushText}"
+                 MinHeight="44"
+                 AutomationProperties.Name="Minimize to taskbar">
+      <StackPanel Orientation="Vertical" Margin="4,0,0,0">
+        <TextBlock Text="Minimize to taskbar" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushText}" FontSize="13"/>
+        <TextBlock Text="The window minimizes. NoteStation stays on the taskbar."
+                   Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                   TextWrapping="Wrap"/>
+      </StackPanel>
+    </RadioButton>
+
+    <RadioButton x:Name="RbTray"
+                 GroupName="CloseAction"
+                 Margin="0,0,0,10"
+                 FontSize="13"
+                 Foreground="{DynamicResource BrushText}"
+                 MinHeight="44"
+                 AutomationProperties.Name="Minimize to system tray">
+      <StackPanel Orientation="Vertical" Margin="4,0,0,0">
+        <TextBlock Text="Minimize to system tray" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushText}" FontSize="13"/>
+        <TextBlock Text="The window hides. NoteStation stays in the notification area."
+                   Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                   TextWrapping="Wrap"/>
+      </StackPanel>
+    </RadioButton>
+
+    <RadioButton x:Name="RbExit"
+                 GroupName="CloseAction"
+                 Margin="0,0,0,22"
+                 FontSize="13"
+                 Foreground="{DynamicResource BrushText}"
+                 MinHeight="44"
+                 AutomationProperties.Name="Exit the application">
+      <StackPanel Orientation="Vertical" Margin="4,0,0,0">
+        <TextBlock Text="Exit" FontWeight="SemiBold"
+                   Foreground="{DynamicResource BrushText}" FontSize="13"/>
+        <TextBlock Text="NoteStation closes completely."
+                   Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                   TextWrapping="Wrap"/>
+      </StackPanel>
+    </RadioButton>
+
+    <TextBlock Text="You can change this anytime in Settings → Startup / Tray."
+               Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+               TextWrapping="Wrap" Margin="0,0,0,20"/>
+
+    <!-- Buttons -->
+    <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+      <Button x:Name="BtnOk" Content="OK" Width="90" Height="44"
+              IsDefault="True"
+              Click="BtnOk_Click"
+              Style="{StaticResource PrimaryButton}"
+              AutomationProperties.Name="Confirm close button action"/>
+    </StackPanel>
+
+    <!-- Resize grip — suite-canonical AccessibleResizeGrip (the OS ResizeGrip here was decorative only).
+         Negative margin tucks it into the corner past the StackPanel's 28,24 margin. -->
+    <ctl:AccessibleResizeGrip Margin="0,0,-24,-20"/>
+
+  </StackPanel>
+</Window>

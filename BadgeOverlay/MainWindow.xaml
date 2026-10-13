@@ -1,0 +1,1006 @@
+<Window x:Class="BadgeOverlay.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ctl="clr-namespace:BadgeOverlay.Controls"
+        Title="Badge Overlay"
+        Width="460" Height="1080"
+        MinWidth="420" MinHeight="600"
+        WindowStartupLocation="CenterScreen"
+        Background="{DynamicResource BrushBg}"
+        Foreground="{DynamicResource BrushText}"
+        FontFamily="{DynamicResource AppFontFamily}"
+        ResizeMode="CanResize">
+
+    <Window.InputBindings>
+        <!-- F1 opens the keyboard-shortcut cheat-sheet (item #24).
+             InputBinding rather than KeyDown so automation peers
+             discover it as an invocable action and screen readers
+             can advertise the shortcut. The handler code-behind
+             routes to BtnCheatSheet_Click. -->
+        <KeyBinding Key="F1" Command="{x:Static ApplicationCommands.Help}"/>
+    </Window.InputBindings>
+    <Window.CommandBindings>
+        <CommandBinding Command="{x:Static ApplicationCommands.Help}"
+                        Executed="OpenCheatSheet_Executed"/>
+    </Window.CommandBindings>
+
+    <Grid>
+        <Grid x:Name="ScaleRoot">
+            <Grid.LayoutTransform>
+                <ScaleTransform x:Name="UiScaleTransform" ScaleX="1.0" ScaleY="1.0"/>
+            </Grid.LayoutTransform>
+
+            <Grid x:Name="MainGrid">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                    <RowDefinition Height="Auto"/>
+                </Grid.RowDefinitions>
+
+                <!-- ═══ SECTION 1 — Identity & Scaling ═══ -->
+                <Border Grid.Row="0" Background="{DynamicResource BrushBar}"
+                        BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1"
+                        MinHeight="52" Padding="14,0">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+                        <StackPanel VerticalAlignment="Center">
+                            <TextBlock Text="◉  Badge Overlay" FontSize="17" FontWeight="Bold"
+                                       Foreground="{DynamicResource BrushText}"
+                                       AutomationProperties.HeadingLevel="Level1"/>
+                            <TextBlock Text="Badge detection · Cursor-agnostic · Accessibility"
+                                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,2,0,0"/>
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Button x:Name="BtnNavHotkeysId"
+                                    Style="{StaticResource FlatButton}"
+                                    Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,4,0"
+                                    FontSize="12"
+                                    ToolTip="Global hotkey editor (Alt+H)"
+                                    AutomationProperties.Name="Hotkeys"
+                                    AutomationProperties.AccessKey="H"
+                                    AutomationProperties.HelpText="Open global hotkey editor"
+                                    Click="BtnNavHotkeys_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Hotkeys" VerticalAlignment="Center"/></StackPanel></Button>
+                            <Button x:Name="BtnStartupSettingsId"
+                                    Style="{StaticResource FlatButton}"
+                                    Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,4,0"
+                                    FontSize="12"
+                                    ToolTip="Startup, defaults, export/import (Alt+S)"
+                                    AutomationProperties.Name="Settings"
+                                    AutomationProperties.AccessKey="S"
+                                    AutomationProperties.HelpText="Open startup, defaults, and export/import settings"
+                                    Click="BtnStartupSettings_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Settings}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Settings" VerticalAlignment="Center"/></StackPanel></Button>
+                            <Button x:Name="BtnThemeToggle"
+                                    Content="◑ Theme"
+                                    Style="{StaticResource FlatButton}"
+                                    Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,4,0"
+                                    FontSize="12"
+                                    ToolTip="Pick UI theme — 13 dark, 6 light (Alt+T)"
+                                    AutomationProperties.Name="Theme"
+                                    AutomationProperties.AccessKey="T"
+                                    AutomationProperties.HelpText="Open theme picker: 13 dark themes and 6 light themes available"
+                                    Click="BtnThemeToggle_Click"/>
+                            <Button x:Name="BtnAboutId"
+                                    Style="{StaticResource FlatButton}"
+                                    Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,10,0"
+                                    FontSize="12"
+                                    ToolTip="About Badge Overlay (Alt+A)"
+                                    AutomationProperties.Name="About"
+                                    AutomationProperties.AccessKey="A"
+                                    AutomationProperties.HelpText="Open about dialog"
+                                    Click="BtnAbout_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.About}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="About" VerticalAlignment="Center"/></StackPanel></Button>
+                            <!-- Divider -->
+                            <Rectangle Width="1" Height="24"
+                                       Fill="{DynamicResource BrushSurf2}"
+                                       VerticalAlignment="Center"
+                                       Margin="0,0,10,0"/>
+                            <Button x:Name="BtnCycleSize" Content="⊞ Compact (0.75×)" FontSize="12"
+                                    Style="{StaticResource FlatButton}"
+                                    MinHeight="44" MinWidth="44" Padding="10,6" Margin="0,0,4,0"
+                                    ToolTip="Cycle UI size: Compact (0.75×) → Standard → Medium → Large → Xtra Large (2×) (Alt+U)"
+                                    AutomationProperties.Name="Cycle UI size"
+                                    AutomationProperties.AccessKey="U"
+                                    AutomationProperties.HelpText="Cycle through Compact (0.75×), Standard, Medium (1.25×), Large (1.5×), and Xtra Large (2×) UI sizes"
+                                    Click="BtnCycleSize_Click"/>
+                            <!-- WCAG 3.3.5 (Help, AAA): keyboard-reachable
+                                 help affordance. Same target as F1 but
+                                 visible and Tab-reachable for users who
+                                 don't know F1 is bound. Tab order places
+                                 it last in the identity row so it doesn't
+                                 interrupt the natural Theme → Size flow. -->
+                            <Button x:Name="BtnHelpIdentity"
+                                    Style="{StaticResource SectionHelpButton}"
+                                    Margin="6,0,0,0"
+                                    ToolTip="Open keyboard shortcuts &amp; help (F1)"
+                                    AutomationProperties.Name="Open help"
+                                    AutomationProperties.HelpText="Opens the keyboard shortcuts cheat sheet. Same as pressing F1 anywhere in the app."
+                                    Click="BtnSectionHelp_Click"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ═══ SECTION 2 — Navigation ═══ -->
+                <!-- LandmarkType set in code-behind (MainWindow.xaml.cs
+                     InitLandmarks) — WPF's XAML parser doesn't accept
+                     the AutomationProperties.LandmarkType attached
+                     property directly; it must be assigned via the
+                     static SetLandmarkType helper. -->
+                <Border x:Name="NavLandmark"
+                        Grid.Row="1" Background="{DynamicResource BrushBar}"
+                        BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,0,0,1"
+                        MinHeight="52" Padding="8,0">
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource FlatButton}"
+                                Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,4,0"
+                                TabIndex="10"
+                                Click="BtnBadgeColors_Click"
+                                AutomationProperties.Name="Badge colours"
+                                AutomationProperties.AccessKey="C"
+                                AutomationProperties.PositionInSet="1"
+                                AutomationProperties.SizeOfSet="2"
+                                AutomationProperties.HelpText="Open badge colour settings for each detection category"
+                                ToolTip="Badge detection colours per category (Alt+C)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Swatches}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Badge Colours" VerticalAlignment="Center"/></StackPanel></Button>
+                        <Button Style="{StaticResource FlatButton}"
+                                Padding="10,6" MinHeight="44" MinWidth="44" Margin="0,0,4,0"
+                                TabIndex="11"
+                                Click="BtnCustomRules_Click"
+                                AutomationProperties.Name="Custom rules"
+                                AutomationProperties.AccessKey="R"
+                                AutomationProperties.PositionInSet="2"
+                                AutomationProperties.SizeOfSet="2"
+                                AutomationProperties.HelpText="Open user-defined detection rule editor"
+                                ToolTip="User-defined detection rules (Alt+R)"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Rules}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Custom Rules" VerticalAlignment="Center"/></StackPanel></Button>
+                    </StackPanel>
+                </Border>
+
+                <!-- ═══ SECTION 3 — Activation & Preview ═══ -->
+                <Border Grid.Row="2" Background="{DynamicResource BrushBar}" Padding="14,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="Auto"/>
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,14,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,0,0,3"><Image Source="{StaticResource JtIcon.Overlay}" Style="{StaticResource JtInlineIcon}" Margin="0,0,4,0"/><TextBlock Text="OVERLAY" FontSize="{DynamicResource FontSizeCaption}" FontWeight="SemiBold" AutomationProperties.HeadingLevel="Level2"
+                                       Foreground="{DynamicResource BrushMuted}" VerticalAlignment="Center"
+                                       /></StackPanel>
+                            <ToggleButton x:Name="TglEnable" AutomationProperties.Name="Enable overlay"
+                                          Width="56" Height="44" MinHeight="44" MinWidth="44"
+                                          IsChecked="{Binding OverlayEnabled, Mode=TwoWay}"
+                                          ToolTip="Enable or disable the badge overlay">
+                                <ToggleButton.Style>
+                                    <Style TargetType="ToggleButton">
+                                        <Setter Property="Template">
+                                            <Setter.Value>
+                                                <ControlTemplate TargetType="ToggleButton">
+                                                    <!-- Outer focus ring is always present; opacity flips
+                                                         on keyboard OR programmatic focus so low-vision
+                                                         users see it regardless of how focus arrived. -->
+                                                    <Grid>
+                                                        <Border x:Name="FocusRing"
+                                                                CornerRadius="16"
+                                                                BorderThickness="2"
+                                                                BorderBrush="{DynamicResource FocusRingBrush}"
+                                                                Margin="-3"
+                                                                Opacity="0"
+                                                                IsHitTestVisible="False"/>
+                                                        <Border x:Name="Bd"
+                                                                CornerRadius="14"
+                                                                Background="{DynamicResource BrushSurf}"
+                                                                BorderThickness="2"
+                                                                BorderBrush="{DynamicResource BrushMuted}"
+                                                                Width="56" Height="44" MinHeight="44">
+                                                            <StackPanel Orientation="Horizontal"
+                                                                        HorizontalAlignment="Center"
+                                                                        VerticalAlignment="Center">
+                                                                <!-- Glyph: ✕ = off, ✓ = on.
+                                                                     Redundant with the text label AND the
+                                                                     colour fill, so state is conveyed three
+                                                                     ways for WCAG 1.4.1 (Use of Colour). -->
+                                                                <TextBlock x:Name="Glyph"
+                                                                           Text="✕"
+                                                                           FontSize="12"
+                                                                           FontWeight="Bold"
+                                                                           Foreground="{DynamicResource BrushText}"
+                                                                           Margin="0,0,3,0"
+                                                                           VerticalAlignment="Center"/>
+                                                                <TextBlock x:Name="Lbl"
+                                                                           Text="OFF"
+                                                                           FontSize="{DynamicResource FontSizeCaption}"
+                                                                           FontWeight="Bold"
+                                                                           Foreground="{DynamicResource BrushText}"
+                                                                           VerticalAlignment="Center"/>
+                                                            </StackPanel>
+                                                        </Border>
+                                                    </Grid>
+                                                    <ControlTemplate.Triggers>
+                                                        <Trigger Property="IsChecked" Value="True">
+                                                            <!-- ON: GreenText outline + text on Surf (>= 7:1, checker-enforced);
+                                                                 was light BrushText on a BrushGreen fill (~1.6:1). -->
+                                                            <Setter TargetName="Bd"    Property="BorderBrush" Value="{DynamicResource BrushGreenText}"/>
+                                                            <Setter TargetName="Glyph" Property="Foreground" Value="{DynamicResource BrushGreenText}"/>
+                                                            <Setter TargetName="Lbl"   Property="Foreground" Value="{DynamicResource BrushGreenText}"/>
+                                                            <Setter TargetName="Lbl"   Property="Text" Value="ON"/>
+                                                            <Setter TargetName="Glyph" Property="Text" Value="✓"/>
+                                                        </Trigger>
+                                                        <!-- Keyboard focus: show ring -->
+                                                        <Trigger Property="IsKeyboardFocused" Value="True">
+                                                            <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+                                                        </Trigger>
+                                                        <!-- Programmatic focus: also show ring -->
+                                                        <Trigger Property="IsFocused" Value="True">
+                                                            <Setter TargetName="FocusRing" Property="Opacity" Value="1"/>
+                                                        </Trigger>
+                                                        <Trigger Property="IsMouseOver" Value="True">
+                                                            <Setter TargetName="Bd" Property="BorderThickness" Value="3"/>
+                                                        </Trigger>
+                                                        <!-- Disabled: muted + dashed border + "—" glyph.
+                                                             Ensures the control reads as inactive
+                                                             via shape AND colour (WCAG 1.4.1). -->
+                                                        <Trigger Property="IsEnabled" Value="False">
+                                                            <Setter TargetName="Bd"    Property="Opacity" Value="0.5"/>
+                                                            <Setter TargetName="Bd"    Property="BorderBrush" Value="{DynamicResource BrushDisabled}"/>
+                                                            <Setter TargetName="Glyph" Property="Text" Value="—"/>
+                                                            <Setter TargetName="Glyph" Property="Foreground" Value="{DynamicResource BrushDisabled}"/>
+                                                            <Setter TargetName="Lbl"   Property="Foreground" Value="{DynamicResource BrushDisabled}"/>
+                                                        </Trigger>
+                                                    </ControlTemplate.Triggers>
+                                                </ControlTemplate>
+                                            </Setter.Value>
+                                        </Setter>
+                                    </Style>
+                                </ToggleButton.Style>
+                            </ToggleButton>
+                        </StackPanel>
+
+                        <!-- Badge-only preview -->
+                        <Border Grid.Column="1" Height="80"
+                                Background="{DynamicResource BrushSurf}"
+                                BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="1"
+                                CornerRadius="8" ClipToBounds="True">
+                            <Canvas x:Name="PreviewCanvas">
+                                <Border x:Name="PrevBadge" Canvas.Left="24" Canvas.Top="18" Background="{DynamicResource OverlayBg}"
+                                        CornerRadius="7" BorderThickness="2" Padding="10,5,12,5"
+                                        BorderBrush="{DynamicResource BrushRed}">
+                                    <StackPanel Orientation="Horizontal">
+                                        <TextBlock Text="✕ " Foreground="{DynamicResource OverlayText}"
+                                                   FontWeight="Bold" FontSize="12"/>
+                                        <StackPanel>
+                                            <!-- Badge preview text: bound to BadgeFontBase so the
+                                                 in-app preview reflects the user's chosen badge size. -->
+                                            <TextBlock Text="Close Window" Foreground="{DynamicResource OverlayText}"
+                                                       FontSize="{DynamicResource BadgeFontBase}" FontWeight="SemiBold"/>
+                                            <TextBlock Text="Preview" Foreground="{DynamicResource OverlayMuted}" FontSize="{DynamicResource FontSizeCaption}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </Canvas>
+                        </Border>
+
+                        <StackPanel Grid.Column="2" VerticalAlignment="Center" Margin="10,0,0,0">
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <Ellipse x:Name="StatusDot" Width="8" Height="8"
+                                         Fill="{DynamicResource BrushGreen}" Margin="0,0,5,0"/>
+                                <TextBlock x:Name="StatusLabel" Text="Active"
+                                           Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                                           AutomationProperties.Name="Badge overlay status"
+                                           AutomationProperties.LiveSetting="Polite"/>
+                            </StackPanel>
+                            <TextBlock x:Name="VersionLabel" Text="v2026.04.18"
+                                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                                       HorizontalAlignment="Right" Margin="0,3,0,0"/>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ═══ SECTION 4 — Badge Options ═══ -->
+                <ScrollViewer x:Name="MainLandmark"
+                              Grid.Row="3" VerticalScrollBarVisibility="Auto">
+                    <StackPanel Margin="14,10,14,10">
+
+                        <TextBlock Text="BUTTON BADGE" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Text="Works alongside any cursor — Windows default, YoloMouse, custom schemes."
+                                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                                   Margin="0,4,0,8" TextWrapping="Wrap"/>
+
+                        <!-- Two-column checkbox grid — saves vertical space.
+                             UniformGrid auto-balances rows; each item gets
+                             a uniform cell so column widths don't shift
+                             when one label wraps. Order is row-major: the
+                             two most-used toggles in the top row, the two
+                             power-user options in the bottom. -->
+                        <UniformGrid Columns="2" Margin="0,6,0,8">
+                            <CheckBox x:Name="ChkBadge" Content="Show _badge tooltip on recognised buttons"
+                                      AutomationProperties.Name="Show badge tooltip"
+                                      AutomationProperties.AccessKey="B"
+                                      ToolTip="Show the badge tooltip on recognised buttons (Alt+B)"
+                                      IsChecked="{Binding ShowBadge, Mode=TwoWay}" Margin="0,2,8,4"/>
+                            <CheckBox x:Name="ChkUIADetection" Content="_Enhanced detection (Office, browsers, WPF)"
+                                      IsChecked="True" Margin="0,2,0,4"
+                                      AutomationProperties.Name="Enhanced UI Automation detection"
+                                      AutomationProperties.AccessKey="E"
+                                      AutomationProperties.HelpText="Enable UI Automation for Office ribbon, browser toolbars, and WPF controls"
+                                      ToolTip="Uses UI Automation to detect Office ribbon buttons, browser toolbars, WPF/UWP controls.&#x0A;&#x0A;Cursor-dwell gating minimises conflict with YoloMouse and custom cursor tools. (Alt+E)"
+                                      Checked="ChkUIADetection_Changed" Unchecked="ChkUIADetection_Changed"/>
+                            <CheckBox x:Name="ChkBadgeHidden" Content="S_ilent mode — detect but hide badge"
+                                      IsChecked="False" Margin="0,2,8,4"
+                                      AutomationProperties.Name="Silent mode"
+                                      AutomationProperties.AccessKey="I"
+                                      AutomationProperties.HelpText="Continue detecting buttons but hide the badge"
+                                      ToolTip="Badge still detects buttons (used by Info Overlay), but the tooltip is invisible (Alt+I)"
+                                      Checked="ChkBadgeHidden_Changed" Unchecked="ChkBadgeHidden_Changed"/>
+                            <CheckBox x:Name="ChkBadgePinned" Content="Pi_n badge to a fixed screen position"
+                                      IsChecked="False" Margin="0,2,0,4"
+                                      AutomationProperties.Name="Pin badge to fixed position"
+                                      AutomationProperties.AccessKey="N"
+                                      AutomationProperties.HelpText="Anchor the badge at one spot on screen instead of following the cursor"
+                                      ToolTip="When enabled the badge no longer follows the cursor — it stays at a fixed screen location (Alt+N)"
+                                      Checked="ChkBadgePinned_Changed" Unchecked="ChkBadgePinned_Changed"/>
+                        </UniformGrid>
+
+                        <!-- Badge position -->
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Position" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       ToolTip="Preferred side for badge. Auto-flips near screen edges."/>
+                            <WrapPanel Grid.Column="1" Orientation="Horizontal"
+                                       AutomationProperties.Name="Badge position"
+                                       AutomationProperties.HelpText="Choose which side of the cursor shows the badge">
+                                <RadioButton x:Name="RbPosRight"       Content="Right"
+                                             Foreground="{DynamicResource BrushText}"
+                                             Margin="0,0,10,4" Tag="Right"
+                                             AutomationProperties.Name="Badge position right of cursor"
+                                             Checked="BadgePosition_Checked"/>
+                                <RadioButton x:Name="RbPosBottomRight" Content="↘ Bot Right"
+                                             Foreground="{DynamicResource BrushText}"
+                                             Margin="0,0,10,4" Tag="BottomRight"
+                                             AutomationProperties.Name="Badge position bottom right of cursor"
+                                             IsChecked="True" Checked="BadgePosition_Checked"/>
+                                <RadioButton x:Name="RbPosBottom"      Content="Bottom"
+                                             Foreground="{DynamicResource BrushText}"
+                                             Margin="0,0,10,4" Tag="Bottom"
+                                             AutomationProperties.Name="Badge position below cursor"
+                                             Checked="BadgePosition_Checked"/>
+                                <RadioButton x:Name="RbPosBottomLeft"  Content="↙ Bot Left"
+                                             Foreground="{DynamicResource BrushText}"
+                                             Margin="0,0,10,4" Tag="BottomLeft"
+                                             AutomationProperties.Name="Badge position bottom left of cursor"
+                                             Checked="BadgePosition_Checked"/>
+                                <RadioButton x:Name="RbPosLeft"        Content="Left"
+                                             Foreground="{DynamicResource BrushText}"
+                                             Margin="0,0,0,4"  Tag="Left"
+                                             AutomationProperties.Name="Badge position left of cursor"
+                                             Checked="BadgePosition_Checked"/>
+                            </WrapPanel>
+                        </Grid>
+
+                        <!-- Opacity -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="48"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Opacity" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"/>
+                            <Slider Grid.Column="1" x:Name="SldBadgeOpacity"
+                                    Minimum="0.30" Maximum="1.00"
+                                    Value="{Binding BadgeOpacity, Mode=TwoWay}"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Badge opacity"
+                                    AutomationProperties.HelpText="Adjust badge transparency from 30 to 100 percent"
+                                    AutomationProperties.LiveSetting="Polite"/>
+                            <TextBlock Grid.Column="2" x:Name="LblBadgeOpacity"
+                                       Text="{Binding BadgeOpacityLabel}"
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                                       Foreground="{DynamicResource BrushMuted}" FontSize="12"/>
+                        </Grid>
+
+                        <!-- Badge style (BO-05): colours of the badge + Info Overlay. Windows High Contrast always overrides. -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Badge style" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"/>
+                            <ComboBox Grid.Column="1" x:Name="CboBadgeStyle"
+                                      MinHeight="44"
+                                      SelectionChanged="CboBadgeStyle_Changed"
+                                      ToolTip="Colours of the badge and Info Overlay. Windows High Contrast always takes over."
+                                      AutomationProperties.Name="Badge style"
+                                      AutomationProperties.HelpText="Dark, Light, or match the app theme. Windows High Contrast always takes over.">
+                                <ComboBoxItem Content="Dark" Tag="Dark"/>
+                                <ComboBoxItem Content="Light" Tag="Light"/>
+                                <ComboBoxItem Content="Match app theme" Tag="MatchTheme"/>
+                            </ComboBox>
+                        </Grid>
+
+                        <!-- Distance -->
+                        <Grid Margin="0,0,0,4">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="48"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Distance" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       ToolTip="Distance from cursor tip to badge edge"/>
+                            <Slider Grid.Column="1" x:Name="SldBadgeOffset"
+                                    Minimum="4" Maximum="80"
+                                    Value="{Binding BadgeOffsetX, Mode=TwoWay}"
+                                    TickFrequency="2" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Badge distance from cursor"
+                                    AutomationProperties.HelpText="Distance in pixels from cursor tip to badge edge"
+                                    AutomationProperties.LiveSetting="Polite"/>
+                            <TextBlock Grid.Column="2" x:Name="LblBadgeOffset"
+                                       Text="{Binding BadgeOffsetLabel}"
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                                       Foreground="{DynamicResource BrushMuted}" FontSize="12"/>
+                        </Grid>
+
+                        <!-- Scale -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="48"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Badge size" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       ToolTip="Scale the badge tooltip larger or smaller"/>
+                            <Slider Grid.Column="1" x:Name="SldBadgeScale"
+                                    Minimum="0.5" Maximum="2.0"
+                                    Value="{Binding BadgeScale, Mode=TwoWay}"
+                                    TickFrequency="0.1" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Badge size scale"
+                                    AutomationProperties.HelpText="Scale the badge from half size to double size"
+                                    AutomationProperties.LiveSetting="Polite"/>
+                            <TextBlock Grid.Column="2" x:Name="LblBadgeScale"
+                                       Text="{Binding BadgeScaleLabel}"
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                                       Foreground="{DynamicResource BrushMuted}" FontSize="12"/>
+                        </Grid>
+
+                        <Separator/>
+
+                        <!-- ═══ BEHAVIOUR ═══ -->
+                        <TextBlock Text="BEHAVIOUR" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Text="When and how the badge appears."
+                                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                                   Margin="0,4,0,8" TextWrapping="Wrap"/>
+
+                        <!-- Hover delay slider — 0 = immediate, 500 ms = deliberate dwell.
+                             Prevents label flicker when sweeping the cursor. -->
+                        <Grid Margin="0,2,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="64"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Hover delay" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       ToolTip="How long the cursor must dwell on an element before the badge label changes.&#x0A;0 ms = instant (legacy). 150–250 ms reduces flicker on fast cursor motion."/>
+                            <Slider Grid.Column="1" x:Name="SldHoverDelay"
+                                    Minimum="0" Maximum="500"
+                                    Value="{Binding HoverDelayMs, Mode=TwoWay}"
+                                    TickFrequency="50" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Hover delay in milliseconds"
+                                    AutomationProperties.HelpText="Dwell time before the badge label switches to the element under the cursor"
+                                    AutomationProperties.LiveSetting="Polite"/>
+                            <TextBlock Grid.Column="2" x:Name="LblHoverDelay"
+                                       Text="{Binding HoverDelayLabel}"
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                                       Foreground="{DynamicResource BrushMuted}" FontSize="12"/>
+                        </Grid>
+
+                        <CheckBox x:Name="ChkSuppressWhenBg"
+                                  Content="Suppress badge when cursor is over a background app"
+                                  IsChecked="False" Margin="0,2,0,4"
+                                  AutomationProperties.Name="Suppress when background"
+                                  AutomationProperties.HelpText="Hide the badge when the cursor is over a window that isn't the focused app"
+                                  ToolTip="Only show the badge over the currently-focused application. Useful when working in one app and you don't want badges over background chat / email windows."
+                                  Checked="ChkSuppressWhenBg_Changed" Unchecked="ChkSuppressWhenBg_Changed"/>
+
+                        <CheckBox x:Name="ChkPauseOnFullscreen"
+                                  Content="Pause when a fullscreen app is foreground (games, presentations)"
+                                  IsChecked="True" Margin="0,2,0,4"
+                                  AutomationProperties.Name="Pause on fullscreen"
+                                  AutomationProperties.HelpText="Hide the badge while a fullscreen app is in focus"
+                                  ToolTip="Detects fullscreen apps (games, Teams / Zoom presenter mode, fullscreen video) and hides the badge automatically."
+                                  Checked="ChkPauseOnFullscreen_Changed" Unchecked="ChkPauseOnFullscreen_Changed"/>
+
+                        <CheckBox x:Name="ChkReduceMotion"
+                                  Content="Reduce motion (WCAG 2.3.3)"
+                                  IsChecked="False" Margin="0,2,0,8"
+                                  AutomationProperties.Name="Reduce motion"
+                                  AutomationProperties.HelpText="Disable non-essential animation and slow screen-reader announcements"
+                                  ToolTip="Disables non-essential animation and slows live-region announcements to one per second. Recommended for users with vestibular disorders."
+                                  Checked="ChkReduceMotion_Changed" Unchecked="ChkReduceMotion_Changed"/>
+
+                        <CheckBox x:Name="ChkSoundFeedback"
+                                  Content="Audio cue when overlay is toggled (Asterisk on / Hand off)"
+                                  IsChecked="False" Margin="0,2,0,8"
+                                  AutomationProperties.Name="Audio cue when overlay is toggled"
+                                  AutomationProperties.HelpText="Plays a brief Windows system sound when the overlay is enabled, paused, frozen, or unfrozen via the global hotkey"
+                                  ToolTip="Plays a brief Windows system sound when the overlay is enabled, paused, frozen, or unfrozen via the global hotkey. Useful when you can't see the badge state at a glance."
+                                  Checked="ChkSoundFeedback_Changed" Unchecked="ChkSoundFeedback_Changed"/>
+
+                        <!-- Idle dim — fade the badge after a stationary
+                             cursor period. Useful while reading, watching
+                             video, dictating; a stationary badge in those
+                             contexts is just visual clutter. Detection
+                             keeps running, only the visual fades. Cursor
+                             movement restores full opacity instantly. -->
+                        <CheckBox x:Name="ChkIdleDim"
+                                  Content="Dim badge when cursor is stationary"
+                                  IsChecked="False" Margin="0,2,0,4"
+                                  AutomationProperties.Name="Dim badge when cursor is stationary"
+                                  AutomationProperties.HelpText="Fade the badge to a lower opacity after the cursor has been still for a configurable period; restores instantly on the next move"
+                                  ToolTip="Fades the badge to a lower opacity after the cursor has been still for the configured number of seconds. Useful while reading, watching video, or dictating. Cursor movement restores full opacity instantly."
+                                  Checked="ChkIdleDim_Changed" Unchecked="ChkIdleDim_Changed"/>
+
+                        <Grid Margin="22,0,0,2" IsEnabled="{Binding IsChecked, ElementName=ChkIdleDim}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="46"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="After (seconds)" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       FontSize="{DynamicResource FontSizeCaption}"
+                                       ToolTip="How many seconds the cursor must be stationary before the badge dims"/>
+                            <Slider Grid.Column="1" x:Name="SldIdleDimSec"
+                                    Minimum="1" Maximum="600" Value="30"
+                                    SmallChange="1" LargeChange="5"
+                                    TickFrequency="30" IsSnapToTickEnabled="False"
+                                    AutomationProperties.Name="Idle dim seconds"
+                                    AutomationProperties.LiveSetting="Polite"
+                                    ValueChanged="SldIdleDimSec_Changed"/>
+                            <TextBlock Grid.Column="2" x:Name="LblIdleDimSec"
+                                       Text="30"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"/>
+                        </Grid>
+
+                        <Grid Margin="22,0,0,8" IsEnabled="{Binding IsChecked, ElementName=ChkIdleDim}">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="46"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Dim opacity" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       FontSize="{DynamicResource FontSizeCaption}"
+                                       ToolTip="How faint the badge becomes when dimmed (5 % to 100 %)"/>
+                            <Slider Grid.Column="1" x:Name="SldIdleDimOpacity"
+                                    Minimum="0.05" Maximum="1.0" Value="0.30"
+                                    SmallChange="0.05" LargeChange="0.10"
+                                    TickFrequency="0.10" IsSnapToTickEnabled="False"
+                                    AutomationProperties.Name="Idle dim opacity"
+                                    AutomationProperties.LiveSetting="Polite"
+                                    ValueChanged="SldIdleDimOpacity_Changed"/>
+                            <TextBlock Grid.Column="2" x:Name="LblIdleDimOpacity"
+                                       Text="30 %"
+                                       VerticalAlignment="Center"
+                                       HorizontalAlignment="Right"
+                                       Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"/>
+                        </Grid>
+
+                        <!-- Screen-reader mode — speech via OS TTS.
+                             Three trigger modes (radio group) and an
+                             optional flag to keep the visual badge
+                             visible alongside speech. -->
+                        <CheckBox x:Name="ChkScreenReaderMode"
+                                  Content="Screen Reader Mode (speak labels aloud)"
+                                  IsChecked="False" Margin="0,4,0,4"
+                                  AutomationProperties.Name="Screen Reader Mode"
+                                  AutomationProperties.HelpText="Speaks every detected element label aloud through the operating system's text-to-speech engine. Independent of any screen reader you may also be running."
+                                  ToolTip="Speaks detected labels aloud using the Windows text-to-speech engine. Works without NVDA, JAWS, or Narrator. Choose how speech is triggered below."
+                                  Checked="ChkScreenReaderMode_Changed" Unchecked="ChkScreenReaderMode_Changed"/>
+
+                        <!-- Sub-options block, indented and gated on the
+                             master checkbox. IsEnabled binding keeps the
+                             whole sub-tree disabled when SR Mode is off.
+                             TabNavigation=Local keeps Tab from jumping
+                             out of the sub-panel prematurely when the
+                             user is navigating the trigger radios. -->
+                        <StackPanel Margin="22,0,0,8"
+                                    IsEnabled="{Binding IsChecked, ElementName=ChkScreenReaderMode}"
+                                    KeyboardNavigation.TabNavigation="Local">
+
+                            <CheckBox x:Name="ChkSpeechSuppressesBadge"
+                                      Content="Also hide the visual badge"
+                                      IsChecked="True" Margin="0,2,0,8"
+                                      AutomationProperties.Name="Hide visual badge while speaking"
+                                      AutomationProperties.HelpText="When checked, enabling Screen Reader Mode hides the visual badge. Uncheck to keep the badge visible alongside speech."
+                                      ToolTip="When checked, enabling Screen Reader Mode also hides the inline visual badge. Uncheck if you want both the visual badge AND speech."
+                                      Checked="ChkSpeechSuppressesBadge_Changed" Unchecked="ChkSpeechSuppressesBadge_Changed"/>
+
+                            <!-- WCAG 1.3.1 Info and Relationships:
+                                 GroupBox provides UIA Group semantics
+                                 with a programmatic label (Header) so
+                                 screen readers announce "When to speak,
+                                 group" before each radio. The visual
+                                 GroupBox border is restyled to a flat
+                                 caption-only look so it doesn't add
+                                 visual chrome users would otherwise
+                                 not expect. -->
+                            <GroupBox Header="When to speak"
+                                      BorderThickness="0"
+                                      Padding="0"
+                                      Margin="0,4,0,0"
+                                      Foreground="{DynamicResource BrushMuted}"
+                                      AutomationProperties.Name="When to speak"
+                                      AutomationProperties.HelpText="Choose between speaking immediately on hover, after a cursor dwell, or never (silence until hotkey toggle).">
+                                <StackPanel>
+                                    <RadioButton x:Name="RbSpeakImmediate"
+                                                 GroupName="SpeechTrigger"
+                                                 Content="Immediately on hover"
+                                                 IsChecked="True" Margin="0,2,0,2"
+                                                 AutomationProperties.Name="Speak immediately on hover"
+                                                 ToolTip="Speak every label as soon as the cursor lands on a new element. Most responsive, but can be noisy in dense UIs."
+                                                 Checked="RbSpeechTrigger_Changed"/>
+                                    <RadioButton x:Name="RbSpeakDwell"
+                                                 GroupName="SpeechTrigger"
+                                                 Content="After cursor rests on the element"
+                                                 Margin="0,2,0,2"
+                                                 AutomationProperties.Name="Speak after dwell"
+                                                 ToolTip="Speak only when the cursor has been over the same element for the chosen number of seconds. Sweeping past stays silent."
+                                                 Checked="RbSpeechTrigger_Changed"/>
+                                </StackPanel>
+                            </GroupBox>
+
+                            <Grid Margin="22,2,0,4"
+                                  IsEnabled="{Binding IsChecked, ElementName=RbSpeakDwell}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="120"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="46"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Dwell (seconds)" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource BrushMuted}"
+                                           FontSize="{DynamicResource FontSizeCaption}"/>
+                                <Slider Grid.Column="1" x:Name="SldSpeechDwellSec"
+                                        Minimum="1" Maximum="10" Value="3"
+                                        SmallChange="1" LargeChange="1"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        AutomationProperties.Name="Speech dwell seconds"
+                                        ValueChanged="SldSpeechDwellSec_Changed"/>
+                                <TextBlock Grid.Column="2" x:Name="LblSpeechDwellSec"
+                                           Text="3"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Right"
+                                           Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"/>
+                            </Grid>
+
+                            <Button x:Name="BtnConfigureSpeakHotkey"
+                                    Style="{StaticResource FlatButton}"
+                                    HorizontalAlignment="Left"
+                                    Padding="12,6"
+                                    Margin="0,8,0,0"
+                                    AutomationProperties.Name="Open the keyboard shortcuts dialog to configure the speech-toggle hotkey"
+                                    ToolTip="Bind a keyboard shortcut to mute / unmute Screen Reader Mode speech on the fly. Useful for silencing speech during meetings or phone calls without changing your trigger mode or dwell."
+                                    Click="BtnConfigureSpeakHotkey_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Keyboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Configure speech-toggle hotkey…" VerticalAlignment="Center"/></StackPanel></Button>
+
+                            <!-- Voice picker (#35) + Rate slider (#36).
+                                 Voice list is populated in code-behind on
+                                 SR-Mode checkbox Checked. Rate mirrors the
+                                 SAPI range -10..+10; 0 = OS default.
+                                 Both only matter when speech is actually
+                                 producing output, so they live inside the
+                                 SR Mode sub-panel. -->
+                            <Separator Margin="0,10,0,8"/>
+
+                            <Grid Margin="0,0,0,6">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Voice" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                                           ToolTip="The Windows text-to-speech voice used to speak detected labels"/>
+                                <ComboBox Grid.Column="1" x:Name="CboSpeechVoice"
+                                          MinHeight="44"
+                                          AutomationProperties.Name="Speech voice"
+                                          AutomationProperties.HelpText="Choose which installed Windows text-to-speech voice speaks detected labels. The list is populated from your installed SAPI voices."
+                                          ToolTip="Choose the text-to-speech voice. Additional voices can be added in Settings → Time &amp; Language → Speech."
+                                          SelectionChanged="CboSpeechVoice_Changed"/>
+                            </Grid>
+
+                            <Grid Margin="0,0,0,2">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="90"/>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="36"/>
+                                </Grid.ColumnDefinitions>
+                                <TextBlock Text="Speed" VerticalAlignment="Center"
+                                           Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"
+                                           ToolTip="Speech rate: slow (−10) to fast (+10). 0 = OS default. Your OS speech-rate setting applies in addition to this."/>
+                                <Slider Grid.Column="1" x:Name="SldSpeechRate"
+                                        Minimum="-10" Maximum="10" Value="2"
+                                        SmallChange="1" LargeChange="2"
+                                        TickFrequency="1" IsSnapToTickEnabled="True"
+                                        AutomationProperties.Name="Speech rate"
+                                        AutomationProperties.HelpText="Speech speed from -10 (slowest) to +10 (fastest). 0 is the OS default rate."
+                                        ValueChanged="SldSpeechRate_Changed"/>
+                                <TextBlock Grid.Column="2" x:Name="LblSpeechRate"
+                                           Text="+2"
+                                           VerticalAlignment="Center"
+                                           HorizontalAlignment="Right"
+                                           Foreground="{DynamicResource BrushMuted}" FontSize="{DynamicResource FontSizeCaption}"/>
+                            </Grid>
+                            <TextBlock Text="0 = OS default   ·   add voices in Settings → Time &amp; Language → Speech"
+                                       FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                                       TextWrapping="Wrap" Margin="0,2,0,0"/>
+                        </StackPanel>
+
+                        <!-- Detection granularity — trades completeness for calm.
+                             All-named is verbose, ideal for cursor training.
+                             Interactive-only is the everyday balance.
+                             Buttons-only is for ribbon-heavy apps where
+                             every toolbar label would otherwise pop a badge.
+
+                             WCAG 1.3.1: GroupBox provides UIA Group
+                             semantics so screen readers announce the
+                             relationship between the radios. -->
+                        <GroupBox Header="Badge fires on"
+                                  BorderThickness="0"
+                                  Padding="0"
+                                  Margin="0,6,0,8"
+                                  Foreground="{DynamicResource BrushMuted}"
+                                  AutomationProperties.Name="Badge fires on"
+                                  AutomationProperties.HelpText="Choose detection granularity — verbose, balanced, or strict.">
+                            <StackPanel Orientation="Vertical" Margin="8,0,0,0">
+                                <RadioButton x:Name="RbGranAll"
+                                             GroupName="Granularity"
+                                             Content="All named elements  (verbose, cursor training)"
+                                             Tag="AllNamed"
+                                             Margin="0,2,0,2"
+                                             AutomationProperties.Name="All named elements"
+                                             ToolTip="Fire a badge for every UIA element with a name — labels, images, static text. Most context, most flicker."
+                                             Checked="RbGranularity_Checked"/>
+                                <RadioButton x:Name="RbGranInteractive"
+                                             GroupName="Granularity"
+                                             Content="Interactive controls only  (balanced)"
+                                             Tag="InteractiveOnly"
+                                             Margin="0,2,0,2"
+                                             AutomationProperties.Name="Interactive controls only"
+                                             ToolTip="Skip pure labels and decorations. Fire only on elements you can click, type in, toggle, or select."
+                                             Checked="RbGranularity_Checked"/>
+                                <RadioButton x:Name="RbGranButtons"
+                                             GroupName="Granularity"
+                                             Content="Buttons only  (strict, ribbon-heavy apps)"
+                                             Tag="ButtonsOnly"
+                                             Margin="0,2,0,2"
+                                             AutomationProperties.Name="Buttons only"
+                                             ToolTip="Fire only on buttons, split buttons, and menu items. Strictest — eliminates ribbon-cascade flicker."
+                                             Checked="RbGranularity_Checked"/>
+                            </StackPanel>
+                        </GroupBox>
+
+                        <Separator/>
+
+                        <TextBlock Text="INFO OVERLAY (LOW VISION)" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Text="Floating panel with large-text button labels."
+                                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}" Margin="0,4,0,6"/>
+
+                        <UniformGrid Columns="2" Margin="0,2,0,10">
+                            <CheckBox x:Name="ChkInfoOverlay" Content="Show large-text inf_o overlay"
+                                      IsChecked="True" Margin="0,2,8,4"
+                                      AutomationProperties.Name="Show info overlay"
+                                      AutomationProperties.AccessKey="O"
+                                      ToolTip="Toggle the floating large-text panel (Alt+O). Shows the detected button label in a large readable font."
+                                      AutomationProperties.HelpText="Enables the floating Info Overlay panel that displays detected button labels in large text. Useful for low-vision users who need labels larger than the badge can show."
+                                      Checked="ChkInfoOverlay_Changed" Unchecked="ChkInfoOverlay_Changed"/>
+                            <CheckBox x:Name="ChkInfoOverlayMeta"
+                                      Content="Show extra detail (shortcut, value, link, type)"
+                                      IsChecked="True" Margin="0,2,0,4"
+                                      AutomationProperties.Name="Show info overlay extra detail"
+                                      ToolTip="Adds keyboard shortcut, toggle state, value, link URL, item type below the label. Disable for a calmer panel."
+                                      AutomationProperties.HelpText="Show extended metadata under the label and category"
+                                      Checked="ChkInfoOverlayMeta_Changed" Unchecked="ChkInfoOverlayMeta_Changed"/>
+                        </UniformGrid>
+
+                        <Separator/>
+
+                        <!-- ═══ TYPOGRAPHY (LOW VISION) ═══
+                             App-wide font family + badge text size. Wired to
+                             App.xaml resources (AppFontFamily / BadgeFontBase)
+                             via App.SetAppFontFamily() and App.SetBadgeFontSize()
+                             so changes take effect immediately across the whole
+                             app — no restart needed. Dyslexia-friendly families
+                             (OpenDyslexic, Atkinson Hyperlegible) appear at the
+                             top of the family picker. -->
+                        <TextBlock Text="TYPOGRAPHY (LOW VISION)" Style="{StaticResource SectionHeader}"/>
+                        <TextBlock Text="App-wide font family and badge text size."
+                                   FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushMuted}"
+                                   Margin="0,4,0,8" TextWrapping="Wrap"/>
+
+                        <!-- App font family — curated low-vision picks first, then full system list -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="App font" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       ToolTip="Font family used app-wide. OpenDyslexic and Atkinson Hyperlegible improve readability for low-vision and dyslexic users."/>
+                            <ComboBox Grid.Column="1" x:Name="CboAppFontFamily"
+                                      MinHeight="44"
+                                      ToolTip="App-wide font family (low-vision support)"
+                                      AutomationProperties.Name="App font family"
+                                      AutomationProperties.HelpText="Choose a font family used app-wide. OpenDyslexic and Atkinson Hyperlegible are designed for low-vision and dyslexia."
+                                      SelectionChanged="CboAppFontFamily_Changed"/>
+                        </Grid>
+
+                        <!-- Badge text size — drives BadgeFontBase resource (8..72 px) -->
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="110"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="48"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Badge text" VerticalAlignment="Center"
+                                       Foreground="{DynamicResource BrushMuted}"
+                                       ToolTip="Badge text size in pixels (8 to 72). Independent of the Badge size scale slider."/>
+                            <Slider Grid.Column="1" x:Name="SldBadgeFontSize"
+                                    Minimum="8" Maximum="72" Value="11"
+                                    TickFrequency="2" IsSnapToTickEnabled="True"
+                                    VerticalAlignment="Center"
+                                    AutomationProperties.Name="Badge text size"
+                                    AutomationProperties.HelpText="Badge text size in pixels from 8 to 72"
+                                    AutomationProperties.LiveSetting="Polite"
+                                    ToolTip="Badge text size in pixels (8 to 72). Larger values help low-vision users read the badge from further away."
+                                    ValueChanged="SldBadgeFontSize_ValueChanged"/>
+                            <TextBlock Grid.Column="2" x:Name="LblBadgeFontSize" Text="11 px"
+                                       VerticalAlignment="Center" HorizontalAlignment="Right"
+                                       Foreground="{DynamicResource BrushMuted}" FontSize="12"/>
+                        </Grid>
+
+                    </StackPanel>
+                </ScrollViewer>
+
+                <!-- ═══ SECTION 5 — Presets 1-5 / Save ═══
+                     Five quick-recall slots. Click = recall; Ctrl+Click = save to slot.
+                     Save button targets the active slot (highlighted blue).
+                     ◆ dot below slot number = slot has saved data (WCAG 1.4.1 non-color).
+                     AutomationProperties.Name updated dynamically by UpdatePresetButtons().
+                     -->
+                <Border x:Name="FooterLandmark"
+                        Grid.Row="4" Background="{DynamicResource BrushBar}"
+                        BorderBrush="{DynamicResource BrushSurf2}" BorderThickness="0,1,0,0"
+                        Padding="8,6,52,6">
+                    <StackPanel>
+
+                        <!-- Preset slot row: 5 numbered buttons + Save -->
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="Auto"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Button x:Name="BtnPreset1" Grid.Column="0" Tag="0"
+                                    Style="{StaticResource PresetButton}"
+                                    AutomationProperties.Name="Preset 1, empty"
+                                    AutomationProperties.PositionInSet="1" AutomationProperties.SizeOfSet="5"
+                                    MinHeight="44"
+                                    ToolTip="Recall preset 1 · Ctrl+Click to save here"
+                                    Click="BtnPreset_Click" Margin="0,0,3,0">
+                                <StackPanel>
+                                    <TextBlock Text="1" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="PresetDot1" Text="◆" FontSize="{DynamicResource FontSizeCaption}" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource BrushBlueText}" Visibility="Collapsed"
+                                               AutomationProperties.Name=""/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="BtnPreset2" Grid.Column="1" Tag="1"
+                                    Style="{StaticResource PresetButton}"
+                                    AutomationProperties.Name="Preset 2, empty"
+                                    AutomationProperties.PositionInSet="2" AutomationProperties.SizeOfSet="5"
+                                    MinHeight="44"
+                                    ToolTip="Recall preset 2 · Ctrl+Click to save here"
+                                    Click="BtnPreset_Click" Margin="0,0,3,0">
+                                <StackPanel>
+                                    <TextBlock Text="2" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="PresetDot2" Text="◆" FontSize="{DynamicResource FontSizeCaption}" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource BrushBlueText}" Visibility="Collapsed"
+                                               AutomationProperties.Name=""/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="BtnPreset3" Grid.Column="2" Tag="2"
+                                    Style="{StaticResource PresetButton}"
+                                    AutomationProperties.Name="Preset 3, empty"
+                                    AutomationProperties.PositionInSet="3" AutomationProperties.SizeOfSet="5"
+                                    MinHeight="44"
+                                    ToolTip="Recall preset 3 · Ctrl+Click to save here"
+                                    Click="BtnPreset_Click" Margin="0,0,3,0">
+                                <StackPanel>
+                                    <TextBlock Text="3" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="PresetDot3" Text="◆" FontSize="{DynamicResource FontSizeCaption}" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource BrushBlueText}" Visibility="Collapsed"
+                                               AutomationProperties.Name=""/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="BtnPreset4" Grid.Column="3" Tag="3"
+                                    Style="{StaticResource PresetButton}"
+                                    AutomationProperties.Name="Preset 4, empty"
+                                    AutomationProperties.PositionInSet="4" AutomationProperties.SizeOfSet="5"
+                                    MinHeight="44"
+                                    ToolTip="Recall preset 4 · Ctrl+Click to save here"
+                                    Click="BtnPreset_Click" Margin="0,0,3,0">
+                                <StackPanel>
+                                    <TextBlock Text="4" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="PresetDot4" Text="◆" FontSize="{DynamicResource FontSizeCaption}" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource BrushBlueText}" Visibility="Collapsed"
+                                               AutomationProperties.Name=""/>
+                                </StackPanel>
+                            </Button>
+
+                            <Button x:Name="BtnPreset5" Grid.Column="4" Tag="4"
+                                    Style="{StaticResource PresetButton}"
+                                    AutomationProperties.Name="Preset 5, empty"
+                                    AutomationProperties.PositionInSet="5" AutomationProperties.SizeOfSet="5"
+                                    MinHeight="44"
+                                    ToolTip="Recall preset 5 · Ctrl+Click to save here"
+                                    Click="BtnPreset_Click" Margin="0,0,3,0">
+                                <StackPanel>
+                                    <TextBlock Text="5" FontSize="14" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                    <TextBlock x:Name="PresetDot5" Text="◆" FontSize="{DynamicResource FontSizeCaption}" HorizontalAlignment="Center"
+                                               Foreground="{DynamicResource BrushBlueText}" Visibility="Collapsed"
+                                               AutomationProperties.Name=""/>
+                                </StackPanel>
+                            </Button>
+
+                            <!-- Save targets the active slot; disabled until a slot is selected -->
+                            <Button x:Name="BtnPresetSave" Grid.Column="5"
+                                    Style="{StaticResource PrimaryButton}" Padding="14,0" MinHeight="44"
+                                    AutomationProperties.Name="Save current settings to selected preset"
+                                    AutomationProperties.AccessKey="S"
+                                    ToolTip="Save current settings to the highlighted preset slot. Select a slot first."
+                                    IsEnabled="False"
+                                    Click="BtnPresetSave_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Save}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Save Preset" VerticalAlignment="Center"/></StackPanel></Button>
+                        </Grid>
+
+                        <!-- Hide Panel row -->
+                        <Grid>
+                            <Button HorizontalAlignment="Right"
+                                    Content="Hide Panel"
+                                    Style="{StaticResource PrimaryButton}"
+                                    Padding="12,5" MinHeight="44"
+                                    AutomationProperties.Name="Hide panel"
+                                    ToolTip="Send this window to the system tray. Double-click the tray icon to restore."
+                                    AutomationProperties.HelpText="Minimises the settings panel to the system tray. Double-click the Badge Overlay tray icon or right-click and choose Show Panel to restore it."
+                                    Click="BtnHide_Click"/>
+                        </Grid>
+
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Grid>
+
+        <!-- Resize handle — drag OR keyboard (WCAG 2.5.7 / 2.1.3), 44px, 2px focus ring (suite-canonical) -->
+        <ctl:AccessibleResizeGrip/>
+    </Grid>
+</Window>
