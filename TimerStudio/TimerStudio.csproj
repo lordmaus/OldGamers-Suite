@@ -14,7 +14,7 @@
     <AssemblyVersion>2026.10.12.3</AssemblyVersion>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
-    <DebugType>none</DebugType>
+    <DebugType>portable</DebugType>
     <ApplicationManifest>Assets\app.manifest</ApplicationManifest>
     <ApplicationIcon>Assets\app.ico</ApplicationIcon>
     <ImplicitUsings>disable</ImplicitUsings>

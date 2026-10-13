@@ -1,0 +1,16 @@
+<Project>
+  <!--
+    Suite-wide defaults (2026-10-13, S-04a / S-08). Imported automatically by every
+    project under this folder (6 apps, Shared library, *.Tests). A project's own
+    csproj values win, so these are defaults only.
+  -->
+  <PropertyGroup>
+    <SuiteRoot>$(MSBuildThisFileDirectory)</SuiteRoot>
+    <LangVersion>latest</LangVersion>
+    <Deterministic>true</Deterministic>
+    <DebugType>portable</DebugType>
+    <!-- .NET analyzers at the minimum rule set, as warnings only (no WarningsAsErrors yet). -->
+    <EnableNETAnalyzers>true</EnableNETAnalyzers>
+    <AnalysisLevel>latest-minimum</AnalysisLevel>
+  </PropertyGroup>
+</Project>

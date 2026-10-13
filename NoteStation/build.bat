@@ -85,6 +85,7 @@ set STAGE=Builds\!APP_VERSION!
 if not exist "%STAGE%" mkdir "%STAGE%"
 
 copy /Y "%EXE%" "%STAGE%\NoteStation.exe" >nul
+if exist "%OUTDIR%\NoteStation.pdb" copy /Y "%OUTDIR%\NoteStation.pdb" "%STAGE%\NoteStation.pdb" >nul
 echo       Copied NoteStation.exe
 
 if exist "Builds\!APP_VERSION!\NoteStation_Setup.exe" (

@@ -93,6 +93,7 @@ set STAGE=Builds\!APP_VERSION!
 if not exist "%STAGE%" mkdir "%STAGE%"
 
 copy /Y "%EXE%" "%STAGE%\TimerStudio.exe" >nul
+if exist "%OUTDIR%\TimerStudio.pdb" copy /Y "%OUTDIR%\TimerStudio.pdb" "%STAGE%\TimerStudio.pdb" >nul
 echo       Copied TimerStudio.exe
 
 if exist "TimerStudio_Setup.exe" (
