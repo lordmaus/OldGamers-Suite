@@ -2,7 +2,7 @@
         ResizeMode="CanResize"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:SuperMagnifier.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         xmlns:local="clr-namespace:SuperMagnifier"
         Title="Hotkeys — Super Magnifier LV"
         Width="520" SizeToContent="Height"
@@ -206,6 +206,6 @@
     </Grid>
 
 
-  <ctl:AccessibleResizeGrip/>
+  <sh:AccessibleResizeGrip/>
   </StackPanel>
 </Window>

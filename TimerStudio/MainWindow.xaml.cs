@@ -2081,7 +2081,7 @@ namespace TimerStudio
             {
                 Text              = active ? "✓ " + label : label,
                 FontFamily        = _segoeUI,
-                FontSize          = Controls.TypeRamp.Caption,
+                FontSize          = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                 FontWeight        = active ? FontWeights.SemiBold : FontWeights.Normal,
                 Foreground        = active
                     ? FindResource("BrushOnAccent") as System.Windows.Media.Brush

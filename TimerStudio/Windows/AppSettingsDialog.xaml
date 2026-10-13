@@ -1,7 +1,7 @@
 <Window x:Class="TimerStudio.AppSettingsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:TimerStudio.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Timer Studio — Settings"
         Width="540" SizeToContent="Height" MaxHeight="700"
         MinWidth="460" MinHeight="480"
@@ -263,6 +263,6 @@
     </Border>
 
   <!-- WCAG 2.2 AAA: shared 44x44 keyboard + mouse resize grip (Controls/AccessibleResizeGrip.cs) -->
-  <ctl:AccessibleResizeGrip/>
+  <sh:AccessibleResizeGrip/>
   </Grid>
 </Window>

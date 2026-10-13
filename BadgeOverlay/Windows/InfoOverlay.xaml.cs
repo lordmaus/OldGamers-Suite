@@ -51,7 +51,7 @@ namespace BadgeOverlay
             Focusable = true;
             // WCAG 2.1.3 — the DragBar move is mouse-only; Alt+Arrow works even when a
             // title-bar button has focus (plain arrows only reach OnKeyDown on the window).
-            Controls.KeyboardWindowMover.Attach(this, DragBar, allowResize: true);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, DragBar, allowResize: true);
         }
 
         /// <summary>
@@ -248,7 +248,7 @@ namespace BadgeOverlay
 
             InfoLabel.FontSize    = effective;
             InfoIcon.FontSize     = effective;
-            InfoCategory.FontSize = Math.Max(Controls.TypeRamp.Caption, Math.Round(effective * 0.55));
+            InfoCategory.FontSize = Math.Max(OldGamers.Wpf.Shared.Controls.TypeRamp.Caption, Math.Round(effective * 0.55));
             FontSizeLabel.Text    = osScale > 1.01
                 ? $"{(int)size} pt  (×{osScale:F2})"
                 : $"{(int)size} pt";

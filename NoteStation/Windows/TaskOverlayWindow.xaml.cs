@@ -38,7 +38,7 @@ namespace NoteStation
             InitializeComponent();
             // WCAG 2.1.3: borderless overlay — Alt+Arrow moves, Ctrl+Alt+Arrow resizes; the header's
             // right-click menu gets "Move/Resize with keyboard" (the drag band is mouse-only).
-            NoteStation.Controls.KeyboardWindowMover.Attach(this, DragHandle, allowResize: true);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, DragHandle, allowResize: true);
             SourceInitialized += (_, __) =>
             {
                 _hwndSrc = HwndSource.FromHwnd(new WindowInteropHelper(this).Handle);

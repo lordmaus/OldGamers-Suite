@@ -27,7 +27,7 @@ namespace TimerStudio
             InitializeComponent();
 
             // WCAG 2.1.3: borderless pill — Alt+Arrow move + "Move with keyboard" (SC_MOVE) context item.
-            Controls.KeyboardWindowMover.Attach(this, PillRoot, allowResize: false);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, PillRoot, allowResize: false);
             // Defer positioning until Loaded: PresentationSource.FromVisual() returns
             // null before the window is shown, causing wrong DPI scale and off-screen
             // placement on HiDPI displays.

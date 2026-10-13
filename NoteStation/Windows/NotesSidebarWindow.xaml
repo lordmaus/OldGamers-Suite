@@ -1,7 +1,7 @@
 <Window x:Class="NoteStation.NotesSidebarWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         WindowStyle="None"
         AllowsTransparency="True"
         Background="Transparent"
@@ -37,7 +37,7 @@
          screen interior (the outer edge stays pinned to the dock edge). Edge flipped in code-behind
          (DockToEdge). Suite AccessibleResizeGrip in width-only mode (WCAG 2.1.3/2.4.7): drag, or
          focus it and use Left/Right arrows; always-visible glyph (was invisible until hover). -->
-    <ctl:AccessibleResizeGrip x:Name="ResizeGrip" Edge="Left"/>
+    <sh:AccessibleResizeGrip x:Name="ResizeGrip" Edge="Left"/>
 
     <DockPanel LastChildFill="True" Margin="4,10">
 

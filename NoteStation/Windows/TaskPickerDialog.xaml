@@ -1,7 +1,7 @@
 <Window x:Class="NoteStation.Windows.TaskPickerDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Link to Task"
         Width="420" SizeToContent="Height" MaxHeight="520"
         WindowStyle="None" AllowsTransparency="True"
@@ -86,7 +86,7 @@
         </StackPanel>
 
         <!-- Resize grip — suite-canonical AccessibleResizeGrip (WCAG 2.1.3/2.5.5); Ctrl+Alt+Arrow also resizes. -->
-        <ctl:AccessibleResizeGrip/>
+        <sh:AccessibleResizeGrip/>
       </Grid>
     </Border>
 </Window>

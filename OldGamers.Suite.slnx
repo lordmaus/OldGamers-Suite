@@ -1,0 +1,21 @@
+<Solution>
+  <Folder Name="/Shared/">
+    <Project Path="Shared/OldGamers.Wpf.Shared/OldGamers.Wpf.Shared.csproj" />
+  </Folder>
+  <Folder Name="/Apps/">
+    <Project Path="BadgeOverlay/BadgeOverlay.csproj" />
+    <Project Path="FileCopy/FileCopy.csproj" />
+    <Project Path="NoteStation/NoteStation.csproj" />
+    <Project Path="ReticleOverlay/ReticleOverlay.csproj" />
+    <Project Path="SuperMagnifierLV/SuperMagnifier.csproj" />
+    <Project Path="TimerStudio/TimerStudio.csproj" />
+  </Folder>
+  <Folder Name="/Tests/">
+    <Project Path="BadgeOverlay.Tests/BadgeOverlay.Tests.csproj" />
+    <Project Path="FileCopy.Tests/FileCopy.Tests.csproj" />
+    <Project Path="NoteStation.Tests/NoteStation.Tests.csproj" />
+    <Project Path="ReticleOverlay.Tests/ReticleOverlay.Tests.csproj" />
+    <Project Path="SuperMagnifierLV.Tests/SuperMagnifierLV.Tests.csproj" />
+    <Project Path="TimerStudio.Tests/TimerStudio.Tests.csproj" />
+  </Folder>
+</Solution>

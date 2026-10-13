@@ -336,7 +336,7 @@ namespace BadgeOverlay
                 labelStack.Children.Add(new TextBlock
                 {
                     Text       = def.Description,
-                    FontSize   = Controls.TypeRamp.Caption,
+                    FontSize   = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                     Foreground = (Brush)FindResource("BrushMuted"),
                     TextWrapping = TextWrapping.Wrap,
                 });

@@ -105,7 +105,7 @@ namespace NoteStation
             sp.Children.Add(titleTb);
             if (!string.IsNullOrEmpty(subtitle))
             {
-                var subTb = new TextBlock { Text = subtitle, FontSize = NoteStation.Controls.TypeRamp.Caption, TextTrimming = TextTrimming.CharacterEllipsis };
+                var subTb = new TextBlock { Text = subtitle, FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption, TextTrimming = TextTrimming.CharacterEllipsis };
                 subTb.SetResourceReference(TextBlock.ForegroundProperty, "BrushMuted");
                 sp.Children.Add(subTb);
             }

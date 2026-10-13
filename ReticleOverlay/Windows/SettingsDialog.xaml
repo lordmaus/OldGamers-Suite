@@ -2,7 +2,7 @@
         ResizeMode="CanResize"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:ReticleOverlay.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Settings"
         Width="540" SizeToContent="Height"
         MinWidth="460"
@@ -130,6 +130,6 @@
     </StackPanel>
     </ScrollViewer>
   </DockPanel>
-  <ctl:AccessibleResizeGrip/>
+  <sh:AccessibleResizeGrip/>
   </Grid>
 </Window>

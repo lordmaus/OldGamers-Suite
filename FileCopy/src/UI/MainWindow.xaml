@@ -1,7 +1,7 @@
 <Window x:Class="FileCopy.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:FileCopy.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         xmlns:local="clr-namespace:FileCopy"
         Title="File Copy Studio"
         Width="1100" Height="820"
@@ -1071,7 +1071,7 @@
 
   <!-- WCAG: Bottom-right drag handle — outside the scaled grid so it's always at the true corner -->
   <!-- Focusable="True" + KeyDown provides WCAG 2.5.7 keyboard alternative for drag-resize -->
-  <ctl:AccessibleResizeGrip/>
+  <sh:AccessibleResizeGrip/>
 
   </Grid><!-- end outer unscaled grid -->
 </Window>

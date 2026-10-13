@@ -2,7 +2,7 @@
         ResizeMode="CanResize"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:ReticleOverlay.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="About Reticle Overlay"
         AutomationProperties.Name="About Reticle Overlay"
         AutomationProperties.HelpText="About information, version, links, and donation options for Reticle Overlay"
@@ -237,6 +237,6 @@
   <!-- WCAG 2.5.7: canonical accessible resize grip (see FileCopy's SettingsDialog.xaml) —
        focusable, keyboard-resizable, mouse-draggable via WM_NCLBUTTONDOWN. Replaces the
        prior decorative-only Path (IsHitTestVisible="False", no drag/keyboard handlers). -->
-  <ctl:AccessibleResizeGrip/>
+  <sh:AccessibleResizeGrip/>
   </Grid>
 </Window>

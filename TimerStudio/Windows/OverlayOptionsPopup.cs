@@ -149,14 +149,14 @@ namespace TimerStudio
             {
                 Text       = title,
                 FontFamily = new FontFamily("Segoe UI"),
-                FontSize   = Controls.TypeRamp.Caption,
+                FontSize   = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                 Foreground = Brushes.White
             });
             sp.Children.Add(new TextBlock
             {
                 Text       = sub,
                 FontFamily = new FontFamily("Segoe UI"),
-                FontSize   = Controls.TypeRamp.Caption,
+                FontSize   = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                 Foreground = new SolidColorBrush(Color.FromRgb(0xC0, 0xC0, 0xC0))
             });
             return sp;
@@ -181,7 +181,7 @@ namespace TimerStudio
             lbl = new TextBlock
             {
                 Text              = "1.00×",
-                FontSize          = Controls.TypeRamp.Caption,
+                FontSize          = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                 FontWeight        = FontWeights.SemiBold,
                 Foreground        = Brushes.White,
                 VerticalAlignment = VerticalAlignment.Center,

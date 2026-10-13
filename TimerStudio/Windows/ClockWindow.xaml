@@ -1,7 +1,7 @@
 <Window x:Class="TimerStudio.ClockWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:TimerStudio.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Clock — Timer Studio"
         Width="480" Height="260"
         MinWidth="280" MinHeight="160"
@@ -132,7 +132,7 @@
         <!-- Single explicit resize grip: 44x44, drag or arrow keys (Controls/AccessibleResizeGrip).
              Keyboard move/resize for the whole borderless window: Alt+Arrow / Ctrl+Alt+Arrow,
              or right-click / Shift+F10 → "Move with keyboard" (KeyboardWindowMover). -->
-        <ctl:AccessibleResizeGrip Margin="0,0,-4,-4"/>
+        <sh:AccessibleResizeGrip Margin="0,0,-4,-4"/>
       </Grid>
     </Grid>
   </Border>

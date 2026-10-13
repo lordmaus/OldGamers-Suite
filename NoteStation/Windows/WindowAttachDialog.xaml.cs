@@ -26,7 +26,7 @@ namespace NoteStation.Windows
         {
             InitializeComponent();
             // WCAG 2.1.3: borderless dialog — Alt+Arrow moves, Ctrl+Alt+Arrow resizes.
-            NoteStation.Controls.KeyboardWindowMover.Attach(this, null, allowResize: true);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, null, allowResize: true);
             TxtPattern.Text = currentPattern ?? "";
             LoadRunningWindows();
             PreviewKeyDown += (s, e) => { if (e.Key == Key.Escape) { Confirmed = false; Close(); } };

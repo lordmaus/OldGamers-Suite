@@ -2,7 +2,7 @@
         ResizeMode="CanResize"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:SuperMagnifier.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Name Preset" Width="340" SizeToContent="Height"
         Background="{DynamicResource BrushBg}" ShowInTaskbar="False">
   <StackPanel Margin="20,16,20,16">
@@ -29,6 +29,6 @@
               AutomationProperties.Name="Cancel and discard"
               Click="CancelBtn_Click"/>
     </StackPanel>
-    <ctl:AccessibleResizeGrip Margin="0,0,-20,-16"/>
+    <sh:AccessibleResizeGrip Margin="0,0,-20,-16"/>
   </StackPanel>
 </Window>

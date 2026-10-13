@@ -1,7 +1,7 @@
 <Window x:Class="NoteStation.CategoryManagerDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Manage Categories"
         Width="480" Height="520"
         MinWidth="360" MinHeight="320"
@@ -147,7 +147,7 @@
 
     <!-- Resize grip — suite-canonical AccessibleResizeGrip (replaces the OS CanResizeWithGrip grip,
          which is mouse-only). Negative margin cancels the root Grid's 16px margin. -->
-    <ctl:AccessibleResizeGrip Margin="0,0,-16,-16"/>
+    <sh:AccessibleResizeGrip Margin="0,0,-16,-16"/>
 
   </Grid>
 </Window>

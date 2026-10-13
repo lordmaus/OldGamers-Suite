@@ -194,7 +194,7 @@ namespace TimerStudio
                 {
                     Content   = f.Name + "  (" + f.FullPath + ")",
                     IsChecked = visible,
-                    FontSize  = Controls.TypeRamp.Caption,
+                    FontSize  = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                     Margin    = new Thickness(2, 3, 2, 3),
                     Tag       = f.FullPath,
                     ToolTip   = "Show or hide this calendar in auto-pull and the import picker"

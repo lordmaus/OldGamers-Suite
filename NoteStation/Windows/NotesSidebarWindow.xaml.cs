@@ -125,7 +125,7 @@ namespace NoteStation
             // anchor doesn't depend on height at all).
             PositionVertically(Math.Max(MinHeight, ActualHeight));
             // The grip always sits on the inner edge (the one that isn't pinned to the screen).
-            ResizeGrip.Edge = IsDockedLeft ? NoteStation.Controls.GripEdge.Right : NoteStation.Controls.GripEdge.Left;
+            ResizeGrip.Edge = IsDockedLeft ? OldGamers.Wpf.Shared.Controls.GripEdge.Right : OldGamers.Wpf.Shared.Controls.GripEdge.Left;
         }
 
         /// <summary>Undocks the bar so it floats free at an arbitrary screen position instead of
@@ -669,7 +669,7 @@ namespace NoteStation
             if (_isUndocked)
             {
                 var moveKb = new MenuItem { Header = "_Move with keyboard", InputGestureText = "Alt+Arrows" };
-                moveKb.Click += (_, __) => NoteStation.Controls.KeyboardWindowMover.BeginKeyboardMove(this);
+                moveKb.Click += (_, __) => OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.BeginKeyboardMove(this);
                 menu.Items.Add(moveKb);
             }
 

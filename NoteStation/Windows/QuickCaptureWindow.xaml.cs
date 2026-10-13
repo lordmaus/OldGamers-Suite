@@ -16,7 +16,7 @@ namespace NoteStation
             InitializeComponent();
             Loaded += (_, _) => { TxtCapture.Focus(); };
             // WCAG 2.1.3: borderless — Alt+Arrow moves, Ctrl+Alt+Arrow resizes, header right-click menu adds the keyboard move/resize loops.
-            NoteStation.Controls.KeyboardWindowMover.Attach(this, DragHandle, allowResize: true);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, DragHandle, allowResize: true);
 
             // Wire up title placeholder visibility to TxtTitle text changes
             TxtTitle.TextChanged += (_, _) =>

@@ -70,7 +70,7 @@ namespace NoteStation
 
             // WCAG 2.1.3: borderless note — Alt+Arrow moves, Ctrl+Alt+Arrow resizes, and the
             // right-click menu gains "Move/Resize with keyboard" (title bar / grips are mouse-only).
-            NoteStation.Controls.KeyboardWindowMover.Attach(this, RootBorder, allowResize: true);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, RootBorder, allowResize: true);
         }
 
         // ── Apply note model → UI ─────────────────────────────────────────────

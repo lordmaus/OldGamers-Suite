@@ -1,0 +1,44 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Editorial — navy/blue dark theme, gold focus ring. Added 2026-09-04
+       as part of the editorial typography/hierarchy redesign pass.
+       Same 13-brush contract as every other theme (see Dark.xaml). -->
+  <!-- Verified (relative-luminance, WCAG formula) against every background
+       brush it's actually painted on: BrushMuted and BrushBlue/BrushRed
+       (PrimaryButton/DangerButton paint BrushBg text on these fills, so
+       they need to be light enough) all clear 7:1. BrushHint is the one
+       tertiary tone that lands ~5.2:1 on BrushSurf2 / ~6.7:1 on BrushBg —
+       AA, not quite AAA — it's only ever used for timestamps/placeholder
+       text, never primary reading text; tightening it further pushed it
+       visually indistinguishable from BrushMuted. -->
+  <SolidColorBrush x:Key="BrushBg"       Color="#0F1D33"/>
+  <SolidColorBrush x:Key="BrushSurf"     Color="#16294A"/>
+  <SolidColorBrush x:Key="BrushSurf2"    Color="#1B3153"/>
+  <SolidColorBrush x:Key="BrushText"     Color="#FFFFFF"/>
+  <SolidColorBrush x:Key="BrushMuted"    Color="#B7C3DA"/>
+  <SolidColorBrush x:Key="BrushHint"     Color="#A7B5CF"/>
+  <SolidColorBrush x:Key="BrushBlue"     Color="#94B4F5"/>
+  <SolidColorBrush x:Key="BrushRed"      Color="#F29A93"/>
+  <SolidColorBrush x:Key="BrushGreen"    Color="#5FBB8E"/>
+  <SolidColorBrush x:Key="BrushAmber"    Color="#F2B84B"/>
+  <SolidColorBrush x:Key="BrushBar"      Color="#0A1526"/>
+  <SolidColorBrush x:Key="BrushDisabled" Color="#57678A"/>
+  <SolidColorBrush x:Key="FocusRingBrush" Color="#FFD23F"/><!-- Gold: ~8:1 on BrushBg -->
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#94A4C4"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#F39E98"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#95B5F5"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#75C59E"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#F2B84B"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#000000"/>
+
+  <!-- Suite superset keys (2026-10-13): copied from Light, re-checked by check_theme_contrast.py -->
+  <SolidColorBrush x:Key="BrushOrange"      Color="#7A3300"/>
+  <SolidColorBrush x:Key="GoldFocusBrush"   Color="#FFD23F"/>
+  <SolidColorBrush x:Key="BrushSelectedText" Color="#262626"/>
+  <SolidColorBrush x:Key="BrushYellow"       Color="#886600"/>
+  <SolidColorBrush x:Key="BrushPurple"       Color="#660099"/>
+  <SolidColorBrush x:Key="BrushPink"         Color="#990055"/>
+  <SolidColorBrush x:Key="BrushTeal"         Color="#006666"/>
+  <SolidColorBrush x:Key="BrushBgForChecked" Color="#606060"/>
+</ResourceDictionary>

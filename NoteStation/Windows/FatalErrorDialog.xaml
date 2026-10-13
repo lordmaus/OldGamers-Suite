@@ -1,7 +1,7 @@
 <Window x:Class="NoteStation.FatalErrorDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="NoteStation needs to close"
         Width="460" SizeToContent="Height"
         MinWidth="380"
@@ -41,6 +41,6 @@
               AutomationProperties.Name="Close NoteStation"/>
     </StackPanel>
 
-    <ctl:AccessibleResizeGrip Margin="0,0,-24,-20"/>
+    <sh:AccessibleResizeGrip Margin="0,0,-24,-20"/>
   </StackPanel>
 </Window>

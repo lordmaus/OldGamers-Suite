@@ -1,5 +1,9 @@
 # Shared Theme System — Reference
 
+> **2026-10-13:** themes now live once in `Shared/Themes/` (108 files, superset of every app's keys,
+> NoteStation/TimerStudio palette family) and are linked into each app. Edit them there only.
+
+
 All apps in this suite share the same ResourceDictionary key names.
 Copy any `.xaml` file from `TimerStudio/Themes/` into another app's `Themes/` folder,
 wire it into `App.xaml`, and it works with zero code changes.
@@ -67,12 +71,12 @@ History: 2026-09-07 tightened FocusRing (Bg+Surf) and Muted to 7:1 and Hint to 4
 (RosePineDawn ring 2.79:1, C64 Muted 1.65:1). 2026-09-25 raised Hint to 7:1 (4.5:1 is AA),
 added Surf2/Bar backgrounds, the `*Text` / `BrushOnAccent` / `BrushDivider` tokens.
 
-### Checker — `BadgeOverlay/Tools/check_theme_contrast.py`
+### Checker — `Tools/check_theme_contrast.py`
 
 ```
-python3 BadgeOverlay/Tools/check_theme_contrast.py --app-dir <App>          # report; exit 1 on any failure
-python3 BadgeOverlay/Tools/check_theme_contrast.py --app-dir <App> --fix    # generate missing keys + re-derive failing brushes
-python3 BadgeOverlay/Tools/check_theme_contrast.py --dir <App>/Themes       # contrast + contract keys only
+python3 Tools/check_theme_contrast.py --app-dir <App>          # report; exit 1 on any failure
+python3 Tools/check_theme_contrast.py --app-dir <App> --fix    # generate missing keys + re-derive failing brushes
+python3 Tools/check_theme_contrast.py --dir <App>/Themes       # contrast + contract keys only
 ```
 
 - `--app-dir` also fails when any key the app references (`DynamicResource` /

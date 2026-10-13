@@ -293,7 +293,7 @@ namespace FileCopy
             tb.SetResourceReference(Control.ForegroundProperty, "BrushText");
             var root = new Grid();
             root.Children.Add(dock);
-            root.Children.Add(new FileCopy.Controls.AccessibleResizeGrip());
+            root.Children.Add(new OldGamers.Wpf.Shared.Controls.AccessibleResizeGrip());
             w.Content = root;
             w.Loaded += (_, __) => tb.Dispatcher.InvokeAsync(
                 tb.ScrollToEnd,

@@ -20,7 +20,7 @@ namespace TimerStudio
             InitializeComponent();
 
             // WCAG 2.1.3: borderless window — Alt+Arrow move, Ctrl+Alt+Arrow resize, SC_MOVE/SC_SIZE menu items.
-            Controls.KeyboardWindowMover.Attach(this, RootBorder, allowResize: true);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, RootBorder, allowResize: true);
 
             _tick = new DispatcherTimer { Interval = TimeSpan.FromMilliseconds(250) };
             _tick.Tick += (s, e) => Refresh();

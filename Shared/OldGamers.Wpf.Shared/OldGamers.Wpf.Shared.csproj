@@ -1,0 +1,20 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- Suite shared library (2026-10-13, S-05). Referenced by all six apps.
+       Holds code that was copied between apps: accessible resize grip, keyboard window mover,
+       type ramp, version display, themed dialog, second-launch activation.
+       Themes are not compiled here: Shared\Themes\*.xaml are linked into each app so the
+       existing relative "Themes/X.xaml" URIs keep working. -->
+  <PropertyGroup>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <OutputType>Library</OutputType>
+    <RootNamespace>OldGamers.Wpf.Shared</RootNamespace>
+    <AssemblyName>OldGamers.Wpf.Shared</AssemblyName>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+    <Version>2026.10.13.1</Version>
+  </PropertyGroup>
+
+</Project>

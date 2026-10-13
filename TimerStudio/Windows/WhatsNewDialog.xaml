@@ -1,7 +1,7 @@
 <Window x:Class="TimerStudio.WhatsNewDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:TimerStudio.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="What's New in Timer Studio"
         Width="480" SizeToContent="Height"
         ResizeMode="CanResize"
@@ -94,6 +94,6 @@
 
 
   <!-- WCAG 2.2 AAA: shared 44x44 keyboard + mouse resize grip (Controls/AccessibleResizeGrip.cs) -->
-  <ctl:AccessibleResizeGrip Margin="0,0,-32,-28"/>
+  <sh:AccessibleResizeGrip Margin="0,0,-32,-28"/>
   </StackPanel>
 </Window>

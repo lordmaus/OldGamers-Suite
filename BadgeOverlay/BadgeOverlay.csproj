@@ -97,4 +97,10 @@
              Text="Build counter: $(_TodayUtc).$(_NextNumPadded)"/>
   </Target>
 
+  <!-- Suite (2026-10-13): shared library + canonical themes (Shared\Themes, linked so "Themes/X.xaml" URIs still resolve). -->
+  <ItemGroup>
+    <ProjectReference Include="..\Shared\OldGamers.Wpf.Shared\OldGamers.Wpf.Shared.csproj" />
+    <Page Include="..\Shared\Themes\*.xaml" Link="Themes\%(Filename)%(Extension)" />
+  </ItemGroup>
+
 </Project>

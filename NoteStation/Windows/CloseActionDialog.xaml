@@ -1,7 +1,7 @@
 <Window x:Class="NoteStation.CloseActionDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:NoteStation.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="What should ✕ do?"
         Width="420" Height="Auto" SizeToContent="Height"
         MinWidth="380"
@@ -85,7 +85,7 @@
 
     <!-- Resize grip — suite-canonical AccessibleResizeGrip (the OS ResizeGrip here was decorative only).
          Negative margin tucks it into the corner past the StackPanel's 28,24 margin. -->
-    <ctl:AccessibleResizeGrip Margin="0,0,-24,-20"/>
+    <sh:AccessibleResizeGrip Margin="0,0,-24,-20"/>
 
   </StackPanel>
 </Window>

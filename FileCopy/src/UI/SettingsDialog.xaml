@@ -1,7 +1,7 @@
 <Window x:Class="FileCopy.SettingsDialog"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:FileCopy.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Settings — File Copy Studio"
         Width="540" SizeToContent="Height"
         MinWidth="460"
@@ -168,6 +168,6 @@
          focusable, keyboard-resizable (WCAG 2.5.7), mouse-draggable via WM_NCLBUTTONDOWN
          through shared NativeMethods. Replaces native ResizeMode="CanResizeWithGrip",
          which drew a glyph with no keyboard path — converged 2026-09-15. -->
-    <ctl:AccessibleResizeGrip/>
+    <sh:AccessibleResizeGrip/>
   </Grid>
 </Window>

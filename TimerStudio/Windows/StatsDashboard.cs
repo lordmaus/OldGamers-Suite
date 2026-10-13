@@ -90,7 +90,7 @@ namespace TimerStudio
                 var nameLabel = new TextBlock
                 {
                     Text                = name,
-                    FontSize            = Controls.TypeRamp.Caption,
+                    FontSize            = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                     Foreground          = textBrush,
                     VerticalAlignment   = VerticalAlignment.Center,
                     TextTrimming        = TextTrimming.CharacterEllipsis,
@@ -122,7 +122,7 @@ namespace TimerStudio
                 var countLabel = new TextBlock
                 {
                     Text              = count.ToString(),
-                    FontSize          = Controls.TypeRamp.Caption,
+                    FontSize          = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                     Foreground        = mutedBrush,
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Right,
@@ -174,7 +174,7 @@ namespace TimerStudio
 
                 var nameLabel = new TextBlock
                 {
-                    Text = dayLabel, FontSize = Controls.TypeRamp.Caption, Foreground = mutedBrush,
+                    Text = dayLabel, FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption, Foreground = mutedBrush,
                     VerticalAlignment = VerticalAlignment.Center,
                     Margin = new Thickness(0, 0, 8, 0)
                 };
@@ -199,7 +199,7 @@ namespace TimerStudio
 
                 var countLabel = new TextBlock
                 {
-                    Text = count.ToString(), FontSize = Controls.TypeRamp.Caption, Foreground = mutedBrush,
+                    Text = count.ToString(), FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption, Foreground = mutedBrush,
                     VerticalAlignment = VerticalAlignment.Center,
                     HorizontalAlignment = HorizontalAlignment.Right,
                     Margin = new Thickness(4, 0, 0, 0)

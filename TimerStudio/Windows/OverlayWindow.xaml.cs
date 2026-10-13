@@ -20,7 +20,7 @@ namespace TimerStudio
             // Restore opacity slider default
             OuterBorder.Opacity = SldOpacity.Value;
             // UI-1: keyboard move (Alt+Arrow) / resize alongside the grip
-            Controls.KeyboardWindowMover.Attach(this, DragHandle, allowResize: true);
+            OldGamers.Wpf.Shared.Controls.KeyboardWindowMover.Attach(this, DragHandle, allowResize: true);
         }
 
         // ── Called by MainWindow.Tick every 40ms ─────────────────────────────
@@ -233,7 +233,7 @@ namespace TimerStudio
 
             _lblName = new TextBlock
             {
-                FontSize     = Controls.TypeRamp.Caption,
+                FontSize     = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                 FontWeight   = FontWeights.SemiBold,
                 TextTrimming = TextTrimming.CharacterEllipsis,
                 Margin       = new Thickness(0, 0, 0, 2)
@@ -342,13 +342,13 @@ namespace TimerStudio
         {
             _timeScale  = timeScale;
             _titleScale = titleScale;
-            _lblName.FontSize = Controls.TypeRamp.Caption * _titleScale;
+            _lblName.FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption * _titleScale;
         }
 
         public void Update(TimerModel model)
         {
             _lblName.Text     = model.Name;
-            _lblName.FontSize = Controls.TypeRamp.Caption * _titleScale;
+            _lblName.FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption * _titleScale;
 
             // Time display with auto-scaling font
             string display = model.DisplayTime;

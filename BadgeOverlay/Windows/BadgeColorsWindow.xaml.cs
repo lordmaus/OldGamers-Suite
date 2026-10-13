@@ -218,7 +218,7 @@ namespace BadgeOverlay
                 var lbl = new StackPanel { VerticalAlignment = VerticalAlignment.Center };
                 lbl.Children.Add(new TextBlock { Text = cat.Label, FontSize = 13, FontWeight = FontWeights.SemiBold });
                 // Muted token at full opacity (was 10px @ 0.55 opacity ≈ 3:1)
-                var desc = new TextBlock { Text = cat.Desc, FontSize = Controls.TypeRamp.Caption, TextWrapping = TextWrapping.Wrap };
+                var desc = new TextBlock { Text = cat.Desc, FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption, TextWrapping = TextWrapping.Wrap };
                 desc.SetResourceReference(TextBlock.ForegroundProperty, "BrushMuted");
                 lbl.Children.Add(desc);
                 Grid.SetColumn(lbl, 0);
@@ -263,7 +263,7 @@ namespace BadgeOverlay
                 // Contrast grade (WCAG) — dual readout: badge body + icon pill
                 var contrastLbl = new TextBlock
                 {
-                    FontSize     = Controls.TypeRamp.Caption,
+                    FontSize     = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                     FontWeight   = FontWeights.SemiBold,
                     FontFamily   = new FontFamily("Consolas"),
                     TextAlignment = TextAlignment.Right,

@@ -1728,7 +1728,7 @@ namespace NoteStation
             sp.Children.Add(new System.Windows.Controls.TextBlock
             {
                 Text = note.SafeContentPreview,
-                FontSize = Controls.TypeRamp.Caption,
+                FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                 Foreground = new System.Windows.Media.SolidColorBrush(fgColor),
                 TextWrapping = System.Windows.TextWrapping.Wrap,
                 MaxHeight = 100,
@@ -1775,14 +1775,14 @@ namespace NoteStation
             var sp = new StackPanel { Margin = new Thickness(8) };
             sp.Children.Add(new TextBlock
             {
-                Text = note.Title, FontSize = Controls.TypeRamp.Caption, FontWeight = FontWeights.SemiBold,
+                Text = note.Title, FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption, FontWeight = FontWeights.SemiBold,
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(note.TextColor)),
                 TextTrimming = TextTrimming.CharacterEllipsis,
             });
             sp.Children.Add(new TextBlock
             {
-                Text = note.SafeContentPreview, FontSize = Controls.TypeRamp.Caption,
+                Text = note.SafeContentPreview, FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                 Foreground = new System.Windows.Media.SolidColorBrush(
                     (System.Windows.Media.Color)System.Windows.Media.ColorConverter.ConvertFromString(note.TextColor)),
                 TextWrapping = TextWrapping.Wrap,
@@ -2524,7 +2524,7 @@ namespace NoteStation
                     Tag         = cat,
                     Padding     = new Thickness(10, 4, 10, 4),
                     Margin      = new Thickness(0, 0, 6, 4),
-                    FontSize    = Controls.TypeRamp.Caption,
+                    FontSize    = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                     FontWeight  = active ? FontWeights.SemiBold : FontWeights.Normal,
                     Background  = active
                                     ? App.GetBrush("BrushBlue")
@@ -5284,7 +5284,7 @@ namespace NoteStation
                     var dayLbl = new TextBlock
                     {
                         Text = dayNum.ToString(),
-                        FontSize = Controls.TypeRamp.Caption, FontWeight = isToday ? FontWeights.Bold : FontWeights.Normal,
+                        FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption, FontWeight = isToday ? FontWeights.Bold : FontWeights.Normal,
                         Foreground = isToday
                             ? App.GetBrush("BrushBlueText")
                             : App.GetBrush("BrushText"),
@@ -5299,7 +5299,7 @@ namespace NoteStation
                         {
                             // Overdue: "⚠" glyph + RedText (not colour-only, WCAG 1.4.1)
                             Text = (task.DueDate?.Date < today ? "⚠ " : "• ") + task.Title,
-                            FontSize = Controls.TypeRamp.Caption,
+                            FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                             TextTrimming = TextTrimming.CharacterEllipsis,
                             Foreground = task.DueDate?.Date < today
                                 ? App.GetBrush("BrushRedText")
@@ -5325,7 +5325,7 @@ namespace NoteStation
                         sp.Children.Add(tb);
                     }
                     if (dayTasks.Count > 3)
-                        sp.Children.Add(new TextBlock { Text = $"+{dayTasks.Count - 3} more", FontSize = Controls.TypeRamp.Caption,
+                        sp.Children.Add(new TextBlock { Text = $"+{dayTasks.Count - 3} more", FontSize = OldGamers.Wpf.Shared.Controls.TypeRamp.Caption,
                             Foreground = App.GetBrush("BrushMuted") });
 
                     cellBorder.Background = isToday

@@ -1,0 +1,37 @@
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <!-- Peach — warm soft peach tones -->
+  <SolidColorBrush x:Key="BrushBg"           Color="#2E1A10"/>
+  <SolidColorBrush x:Key="BrushSurf"         Color="#3A201A"/>
+  <SolidColorBrush x:Key="BrushSurf2"        Color="#4A2A22"/>
+  <SolidColorBrush x:Key="BrushText"         Color="#FFD9B3"/>
+  <SolidColorBrush x:Key="BrushMuted"        Color="#EBB58C"/>
+  <SolidColorBrush x:Key="BrushHint"         Color="#D6A888"/>
+  <SolidColorBrush x:Key="BrushBlue"         Color="#80D8FF"/>
+  <SolidColorBrush x:Key="BrushRed"          Color="#FF80AB"/>
+  <SolidColorBrush x:Key="BrushGreen"        Color="#CCFF90"/>
+  <SolidColorBrush x:Key="BrushAmber"        Color="#FFF9C4"/>
+  <SolidColorBrush x:Key="BrushOrange"       Color="#FFAB76"/>
+  <SolidColorBrush x:Key="BrushYellow"       Color="#FFF9C4"/>
+  <SolidColorBrush x:Key="BrushPurple"       Color="#CE93D8"/>
+  <SolidColorBrush x:Key="BrushPink"         Color="#FF80AB"/>
+  <SolidColorBrush x:Key="BrushTeal"         Color="#A7FFEB"/>
+  <SolidColorBrush x:Key="BrushBar"          Color="#26140B"/>
+  <!-- BrushDisabled exempt per WCAG — inactive UI -->
+  <SolidColorBrush x:Key="BrushDisabled"     Color="#4A2818"/>
+  <!-- Focus ring — 7:1+ contrast on BrushBg -->
+  <SolidColorBrush x:Key="FocusRingBrush"    Color="#FFD700"/>
+  <!-- CheckBox glyph on BrushBlue fill -->
+  <SolidColorBrush x:Key="BrushBgForChecked" Color="#000000"/>
+  <!-- WCAG AAA text tokens (check_theme_contrast.py, 2026-09-25): accent fills stay BrushRed/Blue/Green/Amber; text uses *Text; text on fills uses BrushOnAccent -->
+  <SolidColorBrush x:Key="BrushDivider"     Color="#C07848"/>
+  <SolidColorBrush x:Key="BrushRedText"     Color="#FF8FB5"/>
+  <SolidColorBrush x:Key="BrushBlueText"    Color="#80D8FF"/>
+  <SolidColorBrush x:Key="BrushGreenText"   Color="#CCFF90"/>
+  <SolidColorBrush x:Key="BrushAmberText"   Color="#FFF9C4"/>
+  <SolidColorBrush x:Key="BrushOnAccent"    Color="#000000"/>
+
+  <!-- Suite superset keys (2026-10-13): app-specific tokens merged from other apps -->
+  <SolidColorBrush x:Key="BrushSelectedText"   Color="#000000"/>
+  <SolidColorBrush x:Key="GoldFocusBrush"      Color="#FFD700"/>
+</ResourceDictionary>

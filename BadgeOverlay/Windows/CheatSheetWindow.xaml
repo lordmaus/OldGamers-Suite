@@ -1,7 +1,7 @@
 <Window x:Class="BadgeOverlay.CheatSheetWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ctl="clr-namespace:BadgeOverlay.Controls"
+        xmlns:sh="clr-namespace:OldGamers.Wpf.Shared.Controls;assembly=OldGamers.Wpf.Shared"
         Title="Keyboard Shortcuts — Badge Overlay"
         Width="540" Height="640"
         MinWidth="500" MinHeight="540"
@@ -149,6 +149,6 @@
         </StackPanel>
 
         <!-- WCAG 2.2 AAA grip: 44px, focusable, arrow-key resize, 2px focus ring (suite-canonical) -->
-        <ctl:AccessibleResizeGrip Margin="0,0,-20,-16"/>
+        <sh:AccessibleResizeGrip Margin="0,0,-20,-16"/>
     </Grid>
 </Window>
