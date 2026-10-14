@@ -37,6 +37,9 @@
         "dependencies": {
           "BouncyCastle.Cryptography": "2.7.0"
         }
+      },
+      "oldgamers.wpf.shared": {
+        "type": "Project"
       }
     },
     "net10.0-windows7.0/win-x64": {}

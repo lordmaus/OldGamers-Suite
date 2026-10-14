@@ -33,7 +33,7 @@ Source-level change (not build-verified in the session that made it). `version.t
 ### Changed
 - **WCAG 2.2 AAA (§6):** all 107 themes pass 7:1 (Muted/Hint/Focus fixed; new `BrushDivider`, `*Text`, `BrushOnAccent`; `GoldFocusBrush` / `BrushSelectedText` added where missing); accent-coloured text uses `*Text` tokens; undefined `BrushBorder` → `BrushDivider`; minimum text 12 px (`FontSizeCaption`, 70 sites); section headings exposed as headings; 44 px keyboard `AccessibleResizeGrip` on all 6 windows and the log viewer (was 20 px).
 - Release builds log at Information and above (FC-11); PRIVACY.md documents log content/location/retention and the correct data folder name.
-- About: donation buttons are text-only (emoji removed). Unused `AllowUnsafeBlocks` removed.
+- About: donation buttons are text-only (emoji removed).
 
 ## [2026.09.24.0002] — 2026-09-24
 

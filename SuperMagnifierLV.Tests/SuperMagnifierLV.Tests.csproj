@@ -24,7 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SuperMagnifierLV\SuperMagnifier.csproj" AdditionalProperties="SkipBumpBuildCounter=true" />
+    <ProjectReference Include="..\SuperMagnifierLV\SuperMagnifier.csproj" />
   </ItemGroup>
 
 </Project>

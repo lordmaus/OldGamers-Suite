@@ -79,7 +79,7 @@
        ════════════════════════════════════════════════════════════════════════ -->
   <Target Name="BumpBuildCounter"
           BeforeTargets="PrepareForBuild"
-          Condition="'$(SkipBumpBuildCounter)' != 'true'">
+          Condition="'$(SkipBumpBuildCounter)' != 'true' And '$(Configuration)' == 'Release'">
     <PropertyGroup>
       <_VersionFile>$(MSBuildProjectDirectory)\version.txt</_VersionFile>
       <_TodayUtc>$([System.DateTime]::UtcNow.ToString(yyyy.MM.dd))</_TodayUtc>

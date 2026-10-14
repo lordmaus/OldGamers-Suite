@@ -12,6 +12,8 @@
     <!-- b2: CS8600-CS8604 promoted to visible warnings (not errors) so null-deref risks surface in build output -->
     <WarningsNotAsErrors>CS8600;CS8601;CS8602;CS8603;CS8604;CS8612;CS8618;CS8619;CS8620;CS8621;CS8622;CS8625;CS8629;CS8633;CS8714;CS9264</WarningsNotAsErrors>
     <NoWarn>CS0067;CS8612;CS8618;CS8622;CS8625;CS8629;CS8633</NoWarn>
+    <!-- Required: [LibraryImport] source generation + unsafe P/Invoke in DwmHelpers/MainWindow (SYSLIB1062 / CS0227). -->
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SourceRevisionId>build-$([System.DateTime]::UtcNow.ToString("yyyyMMdd-HHmm"))</SourceRevisionId>
     <LangVersion>latest</LangVersion>
     <Version>2026.09.24.0002</Version>
