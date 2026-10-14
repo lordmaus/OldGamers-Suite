@@ -79,6 +79,28 @@ jobs:
           dotnet test ${{ env.SOLUTION }} -c Release --no-build ${{ env.BUILD_PROPS }}
           --logger "trx;LogFilePrefix=results" --results-directory TestResults
 
+      - name: Report failed tests
+        if: failure()
+        shell: pwsh
+        run: |
+          $files = Get-ChildItem TestResults -Recurse -Filter *.trx -ErrorAction SilentlyContinue
+          if (-not $files) { Write-Output "::error title=Tests::No .trx produced (test run did not start)"; exit 0 }
+          $summary = @("## Failed tests", "")
+          foreach ($f in $files) {
+            [xml]$x = Get-Content $f.FullName -Raw
+            $ns = @{ t = 'http://microsoft.com/schemas/VisualStudio/TeamTest/2010' }
+            $counters = Select-Xml -Xml $x -XPath '//t:Counters' -Namespace $ns | Select-Object -First 1
+            if ($counters) { $c = $counters.Node; Write-Output "::notice title=$($f.Name)::total=$($c.total) passed=$($c.passed) failed=$($c.failed)" }
+            foreach ($r in (Select-Xml -Xml $x -XPath "//t:UnitTestResult[@outcome='Failed']" -Namespace $ns)) {
+              $n = $r.Node
+              $msg = ($n.Output.ErrorInfo.Message -replace '\r?\n', ' ')
+              if ($msg.Length -gt 600) { $msg = $msg.Substring(0, 600) }
+              Write-Output "::error title=$($n.testName)::$msg"
+              $summary += "- **$($n.testName)**: $msg"
+            }
+          }
+          $summary | Out-File $env:GITHUB_STEP_SUMMARY -Append -Encoding utf8
+
       - name: Upload test results
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
