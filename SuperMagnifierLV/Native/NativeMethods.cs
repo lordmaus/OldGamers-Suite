@@ -40,7 +40,7 @@ namespace SuperMagnifier
         public static extern bool MagShowSystemCursor(bool fShowCursor);
 
         // ── User32 ──────────────────────────────────────────────────────────
-        [DllImport("user32.dll")]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr CreateWindowEx(
             uint dwExStyle, string lpClassName, string lpWindowName,
             uint dwStyle, int x, int y, int nWidth, int nHeight,
@@ -98,7 +98,7 @@ namespace SuperMagnifier
         [DllImport("user32.dll")]
         public static extern IntPtr SetCursor(IntPtr hCursor);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr LoadCursor(IntPtr hInstance, int lpCursorName);
 
         // Creates an invisible (blank) cursor
@@ -124,7 +124,7 @@ namespace SuperMagnifier
         public static extern bool GetCursorPos(out POINT lpPoint);
 
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr SendMessage(IntPtr hWnd, uint Msg, IntPtr wParam, IntPtr lParam);
 
         // C-6 (SuperMagnifierLV_CodeSecA11y_Review_2026-09-14): GetWindowText/GetClassName
@@ -152,7 +152,7 @@ namespace SuperMagnifier
             uint uiAction, uint uiParam, ref IntPtr pvParam, uint fWinIni);
 
         // ── Kernel32 ────────────────────────────────────────────────────────
-        [DllImport("kernel32.dll")]
+        [DllImport("kernel32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr GetModuleHandle(string lpModuleName);
 
         // ── DWM ─────────────────────────────────────────────────────────────

@@ -34,7 +34,7 @@ namespace SuperMagnifier
     public partial class HotkeyRemapDialog : Window
     {
         [DllImport("user32.dll")] static extern short GetAsyncKeyState(int vKey);
-        [DllImport("user32.dll")] static extern int   GetKeyNameTextW(int lParam, System.Text.StringBuilder lpString, int nSize);
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int   GetKeyNameTextW(int lParam, System.Text.StringBuilder lpString, int nSize);
 
         // ── Modifier VK codes ─────────────────────────────────────────────────
         private static readonly int[] ModifierVKs = { 0x10, 0x11, 0x12, 0x5B, 0x5C }; // Shift/Ctrl/Alt/Win L/R

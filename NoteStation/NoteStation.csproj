@@ -22,9 +22,9 @@
     <ApplicationManifest>app.manifest</ApplicationManifest>
 
     <!-- Version -->
-    <Version>2026.10.13.0001</Version>
-    <FileVersion>2026.10.13.0001</FileVersion>
-    <AssemblyVersion>2026.10.13.1</AssemblyVersion>
+    <Version>2026.10.13.0002</Version>
+    <FileVersion>2026.10.13.0002</FileVersion>
+    <AssemblyVersion>2026.10.13.2</AssemblyVersion>
 
     <Product>NoteStation</Product>
     <Company>Matthew Pittman</Company>

@@ -1,0 +1,32 @@
+# Suite analyzer severities (2026-10-13). Directory.Build.props turns on the .NET analyzers
+# (AnalysisLevel latest-minimum). The rules below were reviewed on the first full suite build:
+# they are style/performance hints or deliberate patterns in this codebase, not bugs, so they
+# show in the IDE as suggestions instead of flooding the build output. Anything not listed
+# here (e.g. CA2101 string marshalling) stays a warning.
+root = true
+
+[*.cs]
+# P/Invoke declarations are public on purpose (shared NativeMethods classes)
+dotnet_diagnostic.CA1401.severity = suggestion
+# Win32 return values deliberately ignored (SetWindowLong, GetWindowText, ReleaseDC...)
+dotnet_diagnostic.CA1806.severity = suggestion
+# Ignoring Dispose pattern detail on sealed helpers
+dotnet_diagnostic.CA1816.severity = suggestion
+# (int)IntPtr casts on hook wParam values — small message ids, no overflow
+dotnet_diagnostic.CA2020.severity = suggestion
+# Performance / style suggestions — fix opportunistically when touching the code
+dotnet_diagnostic.CA1068.severity = suggestion
+dotnet_diagnostic.CA1510.severity = suggestion
+dotnet_diagnostic.CA1822.severity = suggestion
+dotnet_diagnostic.CA1845.severity = suggestion
+dotnet_diagnostic.CA1846.severity = suggestion
+dotnet_diagnostic.CA1859.severity = suggestion
+dotnet_diagnostic.CA1860.severity = suggestion
+dotnet_diagnostic.CA1861.severity = suggestion
+dotnet_diagnostic.CA1862.severity = suggestion
+dotnet_diagnostic.CA1866.severity = suggestion
+dotnet_diagnostic.CA1868.severity = suggestion
+dotnet_diagnostic.CA1869.severity = suggestion
+dotnet_diagnostic.CA1873.severity = suggestion
+dotnet_diagnostic.CA2249.severity = suggestion
+dotnet_diagnostic.CA2263.severity = suggestion

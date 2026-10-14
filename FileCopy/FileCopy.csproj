@@ -16,9 +16,9 @@
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <SourceRevisionId>build-$([System.DateTime]::UtcNow.ToString("yyyyMMdd-HHmm"))</SourceRevisionId>
     <LangVersion>latest</LangVersion>
-    <Version>2026.10.13.0001</Version>
-    <FileVersion>2026.10.13.0001</FileVersion>
-    <AssemblyVersion>2026.10.13.1</AssemblyVersion>
+    <Version>2026.10.13.0002</Version>
+    <FileVersion>2026.10.13.0002</FileVersion>
+    <AssemblyVersion>2026.10.13.2</AssemblyVersion>
     <Optimize>true</Optimize>
     <DebugType>embedded</DebugType>
     <ApplicationManifest>app.manifest</ApplicationManifest>

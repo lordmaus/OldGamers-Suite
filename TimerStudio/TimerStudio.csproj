@@ -9,9 +9,9 @@
     <RootNamespace>TimerStudio</RootNamespace>
     <Nullable>disable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>2026.10.13.0001</Version>
-    <FileVersion>2026.10.13.0001</FileVersion>
-    <AssemblyVersion>2026.10.13.1</AssemblyVersion>
+    <Version>2026.10.13.0002</Version>
+    <FileVersion>2026.10.13.0002</FileVersion>
+    <AssemblyVersion>2026.10.13.2</AssemblyVersion>
     <AllowUnsafeBlocks>false</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>

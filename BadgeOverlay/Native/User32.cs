@@ -20,19 +20,19 @@ namespace BadgeOverlay
         [DllImport("user32.dll")]
         public static extern IntPtr WindowFromPoint(POINT point);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         public static extern IntPtr FindWindowEx(
             IntPtr hwndParent, IntPtr hwndChildAfter,
             string lpszClass, string lpszWindow);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern int GetClassName(
             IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern int GetWindowText(
             IntPtr hWnd, StringBuilder lpString, int nMaxCount);
 

@@ -16,13 +16,13 @@ namespace SuperMagnifier
         private static extern bool EnumDisplayMonitors(IntPtr hdc, IntPtr lprcClip,
             MonitorEnumProc lpfnEnum, IntPtr dwData);
 
-        [DllImport("user32.dll", CharSet = CharSet.Auto)]
+        [DllImport("user32.dll", CharSet = CharSet.Unicode)]
         private static extern bool GetMonitorInfo(IntPtr hMonitor, ref MONITORINFOEX lpmi);
 
         private delegate bool MonitorEnumProc(IntPtr hMonitor, IntPtr hdcMonitor,
             ref RECT lprcMonitor, IntPtr dwData);
 
-        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Auto)]
+        [StructLayout(LayoutKind.Sequential, CharSet = CharSet.Unicode)]
         private struct MONITORINFOEX
         {
             public int    cbSize;

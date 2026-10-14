@@ -267,7 +267,7 @@ namespace NoteStation
             // Defer the heavy, non-critical startup work (the other two folder trees
             // and reopening note windows) to a background dispatch so the main window
             // paints immediately instead of blocking on it.
-            Dispatcher.BeginInvoke(new Action(() =>
+            _ = Dispatcher.BeginInvoke(new Action(() =>
             {
                 if (_activeTab != "Clipboard") BuildFolderTree("Clipboard");
                 if (_activeTab != "Notes")     BuildFolderTree("Notes");

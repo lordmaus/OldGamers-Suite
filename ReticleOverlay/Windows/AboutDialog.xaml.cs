@@ -82,7 +82,7 @@ namespace ReticleOverlay
             // deleted every profile not present in the imported file, despite
             // the dialog below promising "will merge these profiles into your
             // current list."
-            System.Collections.Generic.List<ReticleProfile>? parsed = null;
+            System.Collections.Generic.List<ReticleProfile> parsed = null;
             try
             {
                 string content = File.ReadAllText(dlg.FileName, System.Text.Encoding.UTF8);
