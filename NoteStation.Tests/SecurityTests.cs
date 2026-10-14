@@ -1,7 +1,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
 using NoteStation.Core;
@@ -135,8 +134,13 @@ namespace NoteStation.Tests
 
     public class TimerStudioIpcContractTests
     {
-        private static string Root([CallerFilePath] string here = "") =>
-            Path.GetFullPath(Path.Combine(Path.GetDirectoryName(here)!, ".."));
+        private static string Root()
+        {
+            for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir != null; dir = dir.Parent)
+                if (File.Exists(Path.Combine(dir.FullName, "OldGamers.Suite.slnx")))
+                    return dir.FullName;
+            throw new DirectoryNotFoundException("Suite root (OldGamers.Suite.slnx) not found above " + AppContext.BaseDirectory);
+        }
 
         [Fact]
         public void Both_apps_use_the_same_local_mutex_name()
