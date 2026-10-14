@@ -1,0 +1,103 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  DOTNET_NOLOGO: true
+  DOTNET_CLI_TELEMETRY_OPTOUT: true
+  DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
+  NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
+  SOLUTION: OldGamers.Suite.slnx
+  # CI must never bump version.txt / installer.nsi (BO, SML BumpBuildCounter targets).
+  BUILD_PROPS: -p:SkipBumpBuildCounter=true -p:ContinuousIntegrationBuild=true
+
+jobs:
+  themes:
+    name: Theme contrast (WCAG AAA)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@ece7cb06caefa5fff74198d8649806c4678c61a1 # v6.3.0
+        with:
+          python-version: '3.12'
+
+      - name: Check themes for each app
+        shell: bash
+        run: |
+          rc=0
+          for app in BadgeOverlay FileCopy NoteStation ReticleOverlay SuperMagnifierLV TimerStudio; do
+            echo "::group::$app"
+            python3 -I Tools/check_theme_contrast.py --app-dir "$app" || { echo "::error title=Theme contrast::$app failed"; rc=1; }
+            echo "::endgroup::"
+          done
+          exit $rc
+
+  build-test:
+    name: Build + test (Release)
+    runs-on: windows-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: NuGet cache
+        uses: actions/cache@2c8a9bd7457de244a408f35966fab2fb45fda9c8 # v6.0.0
+        with:
+          path: ${{ env.NUGET_PACKAGES }}
+          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props') }}
+          restore-keys: nuget-${{ runner.os }}-
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION }}
+
+      - name: Build
+        run: dotnet build ${{ env.SOLUTION }} -c Release --no-restore ${{ env.BUILD_PROPS }}
+
+      - name: Test
+        run: >
+          dotnet test ${{ env.SOLUTION }} -c Release --no-build ${{ env.BUILD_PROPS }}
+          --logger "trx;LogFilePrefix=results" --results-directory TestResults
+
+      - name: Upload test results
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: test-results
+          path: TestResults/**/*.trx
+          if-no-files-found: warn
+          retention-days: 14
+
+      - name: Upload app builds
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: apps-${{ github.sha }}
+          path: |
+            BadgeOverlay/bin/Release/
+            FileCopy/bin/Release/
+            NoteStation/bin/Release/
+            ReticleOverlay/bin/Release/
+            SuperMagnifierLV/bin/Release/
+            TimerStudio/bin/Release/
+          if-no-files-found: error
+          retention-days: 14
