@@ -21,7 +21,7 @@ SetCompressor /SOLID lzma
 ; Both are required for WACK / Windows App Certification Kit silent-mode tests.
 
 !define APP_NAME      "Reticle Overlay"
-!define APP_VERSION   "2026.09.25.001"
+!define APP_VERSION   "2026.10.13.0001"
 !define APP_PUBLISHER "Matthew Pittman"
 !define APP_EXE       "ReticleOverlay.exe"
 !define APP_REG_KEY   "Software\Reticle Overlay"
@@ -69,7 +69,7 @@ SetDatablockOptimize on
 CRCCheck on
 XPStyle on
 
-VIProductVersion "2026.9.25.1"
+VIProductVersion "2026.10.13.1"
 VIAddVersionKey "ProductName"     "${APP_NAME}"
 VIAddVersionKey "ProductVersion"  "${APP_VERSION}"
 VIAddVersionKey "CompanyName"     "${APP_PUBLISHER}"

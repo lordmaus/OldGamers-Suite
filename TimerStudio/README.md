@@ -146,6 +146,6 @@ Pomodoro (25 min), Short break (5 min), Long break (15 min), 1 hour, End of day 
 
 ## Version
 
-**2026.10.12.0002** — Windows · WPF · .NET 10
+**2026.10.13.0001** — Windows · WPF · .NET 10
 
 Created by Matthew Pittman

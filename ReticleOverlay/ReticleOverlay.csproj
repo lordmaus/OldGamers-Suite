@@ -9,9 +9,9 @@
     <RootNamespace>ReticleOverlay</RootNamespace>
     <Nullable>disable</Nullable>
     <LangVersion>latest</LangVersion>
-    <Version>2026.09.25.001</Version>
-    <FileVersion>2026.09.25.001</FileVersion>
-    <AssemblyVersion>2026.9.25.1</AssemblyVersion>
+    <Version>2026.10.13.0001</Version>
+    <FileVersion>2026.10.13.0001</FileVersion>
+    <AssemblyVersion>2026.10.13.1</AssemblyVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <Optimize>true</Optimize>
     <DebugType>portable</DebugType>

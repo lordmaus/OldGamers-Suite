@@ -68,23 +68,16 @@ if exist "README.md" (
     echo       NOTE: README.md not found — skipping copy.
 )
 
-:: ── 4. NSIS installer (optional) ─────────────────────────────────────────────
+:: ── 4. NSIS installer (required) ─────────────────────────────────────────────
 :: No code-signing certificate exists for this app (or any app in this
 :: suite) and none is planned — builds are unsigned by design.
 echo.
 echo [4/5] Building installer...
-where makensis >nul 2>&1
-if %errorlevel%==0 (
-    makensis installer.nsi
-    if errorlevel 1 (
-        echo WARNING: Installer build failed -- app build was still successful.
-    ) else (
-        echo       Installer: TimerStudio_Setup.exe
-    )
-) else (
-    echo NOTE: makensis not found — skipping installer.
-    echo       Install NSIS 3.x from https://nsis.sourceforge.io/
-)
+call "%~dp0..\Tools\find_makensis.cmd"
+if errorlevel 1 goto :nsis_missing
+"!MAKENSIS!" installer.nsi
+if errorlevel 1 goto :nsis_failed
+echo       Installer: TimerStudio_Setup.exe
 
 :: ── 5. Stage to Builds\<version>\ ────────────────────────────────────────────
 echo.
@@ -112,6 +105,17 @@ echo   Staged: %STAGE%\
 echo ============================================================
 echo.
 goto :end
+
+:nsis_missing
+echo.
+echo ERROR: makensis.exe (NSIS 3.x) not found - the installer could not be built.
+echo        Install NSIS from https://nsis.sourceforge.io/ or set NSIS_HOME to its folder, then run build.bat again.
+goto :build_error
+
+:nsis_failed
+echo.
+echo ERROR: Installer build failed - see the makensis output above.
+goto :build_error
 
 :build_error
 echo.

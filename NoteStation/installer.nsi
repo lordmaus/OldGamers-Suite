@@ -15,7 +15,7 @@ Unicode True
 SetCompressor /SOLID lzma
 
 !define APP_NAME      "NoteStation"
-!define APP_VERSION   "2026.10.12.0003"
+!define APP_VERSION   "2026.10.13.0001"
 !define APP_PUBLISHER "Matthew Pittman"
 !define APP_EXE       "NoteStation.exe"
 !define APP_REG_KEY   "Software\NoteStation"
@@ -62,7 +62,7 @@ CRCCheck on
 XPStyle on
 
 ; -- Version info embedded in the setup exe ------------------------------------
-VIProductVersion "2026.10.12.3"
+VIProductVersion "2026.10.13.1"
 VIAddVersionKey  "ProductName"     "${APP_NAME}"
 VIAddVersionKey  "ProductVersion"  "${APP_VERSION}"
 VIAddVersionKey  "CompanyName"     "${APP_PUBLISHER}"

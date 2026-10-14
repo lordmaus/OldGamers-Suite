@@ -66,23 +66,30 @@ copy /y "%EXE%" "!BUILD_DIR!\SuperMagnifierLV.exe" >nul
 if exist "bin\Release\net10.0-windows\win-x64\publish\SuperMagnifierLV.pdb" copy /y "bin\Release\net10.0-windows\win-x64\publish\SuperMagnifierLV.pdb" "!BUILD_DIR!\SuperMagnifierLV.pdb" >nul
 echo Staged:  Builds\!NEW_VER!\SuperMagnifierLV.exe
 
-:: 5. NSIS (optional)
+:: 5. NSIS installer (required)
 echo.
 echo [3/3] Installer...
-where makensis >nul 2>&1
-if %errorlevel%==0 (
-    makensis installer.nsi
-    if errorlevel 1 ( echo WARNING: Installer failed ) else (
-        echo Installer built: SuperMagnifierLV_Setup.exe
-        copy /y "SuperMagnifierLV_Setup.exe" "!BUILD_DIR!\SuperMagnifierLV_Setup.exe" >nul
-        echo Staged:  Builds\!NEW_VER!\SuperMagnifierLV_Setup.exe
-    )
-) else (
-    echo NOTE: makensis not found - skipping installer.
-)
+call "%~dp0..\Tools\find_makensis.cmd"
+if errorlevel 1 goto :nsis_missing
+"!MAKENSIS!" installer.nsi
+if errorlevel 1 goto :nsis_failed
+echo Installer built: SuperMagnifierLV_Setup.exe
+move /y "SuperMagnifierLV_Setup.exe" "!BUILD_DIR!\SuperMagnifierLV_Setup.exe" >nul
+echo Staged:  Builds\!NEW_VER!\SuperMagnifierLV_Setup.exe
 echo.
 echo Build complete: !NEW_VER!
 goto :end
+
+:nsis_missing
+echo.
+echo ERROR: makensis.exe (NSIS 3.x) not found - the installer could not be built.
+echo        Install NSIS from https://nsis.sourceforge.io/ or set NSIS_HOME to its folder, then run build.bat again.
+goto :err
+
+:nsis_failed
+echo.
+echo ERROR: Installer build failed - see the makensis output above.
+goto :err
 
 :err
 echo.

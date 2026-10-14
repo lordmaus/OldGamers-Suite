@@ -108,21 +108,12 @@ echo       Output : %EXE%
 echo       Version: !NEW_VERSION!
 echo.
 
-where makensis >nul 2>&1
-if %errorlevel%==0 (
-    echo Building NSIS installer...
-    makensis installer.nsi
-    if errorlevel 1 (
-        echo.
-        echo WARNING: Installer build failed - app build was still successful.
-    ) else (
-        echo Installer: ReticleOverlay_Setup.exe
-    )
-) else (
-    echo NOTE: makensis not found - skipping installer.
-    echo       Install NSIS 3.x from https://nsis.sourceforge.io/
-    echo       then run:  makensis installer.nsi
-)
+call "%~dp0..\Tools\find_makensis.cmd"
+if errorlevel 1 goto :nsis_missing
+echo Building NSIS installer...
+"!MAKENSIS!" installer.nsi
+if errorlevel 1 goto :nsis_failed
+echo Installer: ReticleOverlay_Setup.exe
 
 REM -- Copy outputs to Builds\{version}\ ----------------------------------------
 echo.
@@ -142,6 +133,17 @@ if exist "ReticleOverlay_Setup.exe" (
 echo.
 echo Done!  Version !NEW_VERSION!
 goto :end
+
+:nsis_missing
+echo.
+echo ERROR: makensis.exe (NSIS 3.x) not found - the installer could not be built.
+echo        Install NSIS from https://nsis.sourceforge.io/ or set NSIS_HOME to its folder, then run build.bat again.
+goto :build_error
+
+:nsis_failed
+echo.
+echo ERROR: Installer build failed - see the makensis output above.
+goto :build_error
 
 :build_error
 echo.

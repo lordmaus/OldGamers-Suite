@@ -14,7 +14,7 @@ Unicode True
 SetCompressor /SOLID lzma
 
 !define APP_NAME      "File Copy Studio"
-!define APP_VERSION   "2026.09.24.0002"
+!define APP_VERSION   "2026.10.13.0001"
 !define APP_PUBLISHER "Matthew Pittman"
 !define APP_EXE       "FileCopyStudio.exe"
 !define APP_REG_KEY   "Software\File Copy Studio"
@@ -55,7 +55,7 @@ SetDatablockOptimize on
 CRCCheck on
 XPStyle on
 
-VIProductVersion "2026.9.24.2"
+VIProductVersion "2026.10.13.1"
 VIAddVersionKey "ProductName"     "${APP_NAME}"
 VIAddVersionKey "ProductVersion"  "${APP_VERSION}"
 VIAddVersionKey "CompanyName"     "${APP_PUBLISHER}"
