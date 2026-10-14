@@ -9,31 +9,7 @@
     <RootNamespace>SuperMagnifier</RootNamespace>
     <Nullable>disable</Nullable>
     <LangVersion>latest</LangVersion>
-    <!-- ── Auto-versioning ─────────────────────────────────────────────────
-         Version format yyyy.MM.dd.xxxx — resolved at build time:
-           yyyy.MM.dd  = today's date (UTC)
-           xxxx        = build counter for today, padded to 4 digits
-
-         Counter persists in version.txt (same file, same "yyyy.MM.dd.NNNN"
-         format already used here). The BumpBuildCounter target (below)
-         runs BeforeTargets="PrepareForBuild" — i.e. on EVERY dotnet build
-         / dotnet publish, IDE build included, not just build.bat — and:
-           • if version.txt's date matches today → increment counter
-           • otherwise → reset counter to 0001 with today's date
-
-         Result: every build produces a strictly higher version, and
-         build.bat reads the same version.txt afterward to patch
-         installer.nsi so the installer metadata stays in lock-step.
-
-         The three properties below are therefore COMPUTED, not literal.
-         Don't hand-edit them; edit version.txt or just rebuild. -->
-    <BuildDate>$([System.DateTime]::UtcNow.ToString(yyyy.MM.dd))</BuildDate>
-    <BuildCounter Condition="'$(BuildCounter)' == ''">0001</BuildCounter>
-    <Version>$(BuildDate).$(BuildCounter)</Version>
-    <FileVersion>$(BuildDate).$(BuildCounter)</FileVersion>
-    <!-- AssemblyVersion uses unpadded 4-part numeric — Win32 APIs and the
-         NSIS VIProductVersion expect that exact shape. -->
-    <AssemblyVersion>$([System.DateTime]::UtcNow.Year).$([System.DateTime]::UtcNow.Month).$([System.DateTime]::UtcNow.Day).$([System.Convert]::ToInt32($(BuildCounter)))</AssemblyVersion>
+    <!-- Version: from version.txt via ..\Directory.Build.props (S-03); build.bat bumps it. -->
     <!-- Publish as a self-contained single-file exe:
          dotnet publish -c Release -r win-x64 /p:PublishSingleFile=true /p:SelfContained=true -->
     <Optimize>true</Optimize>
@@ -66,56 +42,6 @@
     <!-- Embedded resource so GetManifestResourceStream works in single-file publish -->
     <EmbeddedResource Include="Assets\app.ico" LogicalName="SuperMagnifier.app.ico" />
   </ItemGroup>
-
-  <!-- ════════════════════════════════════════════════════════════════════════
-       BumpBuildCounter — runs before every Build / Publish (IDE or CLI).
-
-       Reads version.txt ("yyyy.MM.dd.NNNN"), computes the new counter
-       (increment if same UTC day, reset to 0001 if rolled over), writes
-       the file back, and promotes the value to $(BuildCounter) so the
-       PropertyGroup above resolves Version/FileVersion/AssemblyVersion
-       correctly on this build. build.bat reads the same version.txt
-       after the build to patch installer.nsi in lock-step.
-       ════════════════════════════════════════════════════════════════════════ -->
-  <Target Name="BumpBuildCounter"
-          BeforeTargets="PrepareForBuild"
-          Condition="'$(SkipBumpBuildCounter)' != 'true' And '$(Configuration)' == 'Release'">
-    <PropertyGroup>
-      <_VersionFile>$(MSBuildProjectDirectory)\version.txt</_VersionFile>
-      <_TodayUtc>$([System.DateTime]::UtcNow.ToString(yyyy.MM.dd))</_TodayUtc>
-    </PropertyGroup>
-
-    <!-- Read existing "yyyy.MM.dd.NNNN" line, or treat as empty if missing. -->
-    <ReadLinesFromFile File="$(_VersionFile)" Condition="Exists('$(_VersionFile)')">
-      <Output TaskParameter="Lines" PropertyName="_StoredLine"/>
-    </ReadLinesFromFile>
-
-    <PropertyGroup>
-      <_StoredParts>$(_StoredLine.Split('.'))</_StoredParts>
-      <_StoredDate Condition="$(_StoredLine.Contains('.'))">$(_StoredLine.Substring(0, $(_StoredLine.LastIndexOf('.'))))</_StoredDate>
-      <_StoredDate Condition="'$(_StoredDate)' == ''"></_StoredDate>
-      <_StoredNum Condition="$(_StoredLine.Contains('.'))">$(_StoredLine.Substring($([MSBuild]::Add($(_StoredLine.LastIndexOf('.')), 1))))</_StoredNum>
-      <_StoredNum Condition="'$(_StoredNum)' == ''">0000</_StoredNum>
-      <!-- Same UTC day = increment, else reset. -->
-      <_NextNum Condition="'$(_StoredDate)' == '$(_TodayUtc)'">$([MSBuild]::Add($([System.Convert]::ToInt32($(_StoredNum))), 1))</_NextNum>
-      <_NextNum Condition="'$(_StoredDate)' != '$(_TodayUtc)'">1</_NextNum>
-      <_NextNumPadded>$(_NextNum.PadLeft(4, '0'))</_NextNumPadded>
-    </PropertyGroup>
-
-    <!-- Write back so the next build starts from this value. -->
-    <WriteLinesToFile File="$(_VersionFile)"
-                      Lines="$(_TodayUtc).$(_NextNumPadded)"
-                      Overwrite="true"/>
-
-    <!-- Promote to a GLOBAL property so the PropertyGroup at the top of
-         the csproj sees it on this build. -->
-    <CreateProperty Value="$(_NextNumPadded)">
-      <Output TaskParameter="Value" PropertyName="BuildCounter"/>
-    </CreateProperty>
-
-    <Message Importance="high"
-             Text="Build counter: $(_TodayUtc).$(_NextNumPadded)"/>
-  </Target>
 
   <!-- Suite (2026-10-13): shared library + canonical themes (Shared\Themes, linked so "Themes/X.xaml" URIs still resolve). -->
   <ItemGroup>

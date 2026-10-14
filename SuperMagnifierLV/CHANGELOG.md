@@ -4,6 +4,14 @@ All notable changes to Super Magnifier LV are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows `yyyy.mm.dd.xxx`.
 
 
+## [Unreleased] – 2026-10-14 · One version mechanism (S-03)
+
+### Changed
+- **Version comes from `version.txt` only.** `build.bat` bumps it (`..\Tools\bump_version.cmd`, local date, `yyyy.MM.dd.NNNN`); `..\Directory.Build.props` stamps the exe from the same file and `installer.nsi` reads it through `..\Tools\version.nsh`. The csproj and installer.nsi no longer hold version numbers, so a build only changes `version.txt`.
+- IDE, `dotnet build` and CI builds read the version without bumping it.
+- **Fixed:** the exe version could differ from the `Builds\<version>` folder (the old MSBuild counter was applied after the version was computed). Date is now local, not UTC.
+- Removed the `BumpBuildCounter` MSBuild target.
+
 ## [Unreleased] – 2026-10-13 · Suite shared library
 
 Source-level change (not build-verified in the session that made it). Suite repo: `OldGamers.Suite.slnx`.

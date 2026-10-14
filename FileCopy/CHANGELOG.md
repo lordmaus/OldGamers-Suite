@@ -3,6 +3,13 @@
 All notable changes to File Copy Studio are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows `yyyy.MM.dd.NNNN`.
 
+## [Unreleased] – 2026-10-14 · One version mechanism (S-03)
+
+### Changed
+- **Version comes from `version.txt` only.** `build.bat` bumps it (`..\Tools\bump_version.cmd`, local date, `yyyy.MM.dd.NNNN`); `..\Directory.Build.props` stamps the exe from the same file and `installer.nsi` reads it through `..\Tools\version.nsh`. The csproj and installer.nsi no longer hold version numbers, so a build only changes `version.txt`.
+- IDE, `dotnet build` and CI builds read the version without bumping it.
+- Removed `patch_version.ps1`.
+
 ## [Unreleased] – 2026-10-13 · Suite shared library
 
 Source-level change (not build-verified in the session that made it). Suite repo: `OldGamers.Suite.slnx`.

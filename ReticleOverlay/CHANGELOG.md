@@ -4,6 +4,13 @@ All notable changes to Reticle Overlay are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versions follow `yyyy.mm.dd.xxxx` (date + 4-digit daily build counter; 3-digit before 2026-10-13).
 
+## [Unreleased] – 2026-10-14 · One version mechanism (S-03)
+
+### Changed
+- **Version comes from `version.txt` only.** `build.bat` bumps it (`..\Tools\bump_version.cmd`, local date, `yyyy.MM.dd.NNNN`); `..\Directory.Build.props` stamps the exe from the same file and `installer.nsi` reads it through `..\Tools\version.nsh`. The csproj and installer.nsi no longer hold version numbers, so a build only changes `version.txt`.
+- IDE, `dotnet build` and CI builds read the version without bumping it.
+- Removed `patch_version.ps1`.
+
 ## [Unreleased] – 2026-10-13 · Suite shared library
 
 Source-level change (not build-verified in the session that made it). Suite repo: `OldGamers.Suite.slnx`.

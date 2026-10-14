@@ -12,7 +12,8 @@ Unicode True
 SetCompressor zlib
 
 !define APP_NAME      "Super Magnifier LV"
-!define APP_VERSION   "2026.10.14.0008"
+!define APP_VERSION_FILE "${__FILEDIR__}\version.txt"
+!include "${__FILEDIR__}\..\Tools\version.nsh"   ; APP_VERSION + APP_VERSION_NUMERIC (S-03)
 !define APP_PUBLISHER "Matthew Pittman"
 !define APP_URL       "https://github.com/supermagnifier"
 !define APP_EXE       "SuperMagnifierLV.exe"
@@ -61,7 +62,7 @@ CRCCheck on
 XPStyle on
 
 ; -- Version info embedded in the setup exe -----------------------------------
-VIProductVersion "2026.10.14.8"
+VIProductVersion "${APP_VERSION_NUMERIC}"
 VIAddVersionKey  "ProductName"     "${APP_NAME}"
 VIAddVersionKey  "ProductVersion"  "${APP_VERSION}"
 VIAddVersionKey  "CompanyName"     "${APP_PUBLISHER}"

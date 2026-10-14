@@ -4,7 +4,7 @@ call build.bat > _build_log.txt 2>&1
 set EXIT_CODE=%errorlevel%
 
 :: Copy log into the Builds folder that build.bat just created.
-:: version.txt was updated by BumpBuildCounter during the build.
+:: version.txt was bumped by build.bat (Tools\bump_version.cmd).
 set "VER_DATE=" & set "VER_NUM="
 for /f "tokens=1-4 delims=. " %%a in (version.txt) do if not defined VER_DATE (
     set "VER_DATE=%%a.%%b.%%c"

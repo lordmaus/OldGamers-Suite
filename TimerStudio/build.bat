@@ -14,20 +14,11 @@ if not exist "TimerStudio.csproj" (
     exit /b 1
 )
 
-:: ── Auto-increment version ────────────────────────────────────────────────────
 echo [0/5] Computing version...
-powershell -NoProfile -ExecutionPolicy Bypass -File "version_bump.ps1"
-if errorlevel 1 (
-    echo ERROR: Version increment failed.
-    exit /b 1
-)
-
-:: Re-read updated version for use in staging
-for /f "tokens=3 delims=><" %%V in ('findstr /i "<Version>" TimerStudio.csproj') do set APP_VERSION=%%V
-if "!APP_VERSION!"=="" (
-    echo ERROR: Could not read updated ^<Version^> from TimerStudio.csproj
-    exit /b 1
-)
+:: ── Version: bump version.txt (yyyy.MM.dd.NNNN, Tools\bump_version.cmd, S-03) ──────────
+:: Directory.Build.props stamps the exe from the same file; installer.nsi gets /DAPP_VERSION.
+call "%~dp0..\Tools\bump_version.cmd" "%~dp0version.txt"
+if errorlevel 1 exit /b 1
 echo.
 
 :: ── 1. Restore ────────────────────────────────────────────────────────────────
@@ -75,7 +66,7 @@ echo.
 echo [4/5] Building installer...
 call "%~dp0..\Tools\find_makensis.cmd"
 if errorlevel 1 goto :nsis_missing
-"!MAKENSIS!" installer.nsi
+"!MAKENSIS!" /DAPP_VERSION=!APP_VERSION! /DAPP_VERSION_NUMERIC=!APP_VERSION_NUMERIC! installer.nsi
 if errorlevel 1 goto :nsis_failed
 echo       Installer: TimerStudio_Setup.exe
 

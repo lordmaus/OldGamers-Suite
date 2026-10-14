@@ -19,3 +19,4 @@
 *.wav     binary
 *.ttf     binary
 *.pdf     binary
+*.nsh     text eol=crlf

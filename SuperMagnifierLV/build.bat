@@ -12,10 +12,13 @@ if not exist "SuperMagnifier.csproj" (
     exit /b 1
 )
 
+:: ── Version: bump version.txt (yyyy.MM.dd.NNNN, Tools\bump_version.cmd, S-03) ──────────
+:: Directory.Build.props stamps the exe from the same file; installer.nsi gets /DAPP_VERSION.
+call "%~dp0..\Tools\bump_version.cmd" "%~dp0version.txt"
+if errorlevel 1 goto :err
+set "NEW_VER=!APP_VERSION!"
+
 :: 1. Restore + Publish
-:: Version is no longer patched here — the BumpBuildCounter MSBuild target
-:: in SuperMagnifier.csproj runs automatically on this (and every other,
-:: including IDE) build and bumps version.txt itself.
 echo [1/3] Building...
 dotnet restore SuperMagnifier.csproj -r win-x64
 if errorlevel 1 goto :err
@@ -25,38 +28,10 @@ if errorlevel 1 goto :err
 set EXE=bin\Release\net10.0-windows\win-x64\publish\SuperMagnifierLV.exe
 if not exist "%EXE%" ( echo ERROR: %EXE% not found & goto :err )
 
-:: 2. Read the version the build just wrote to version.txt ("yyyy.MM.dd.NNNN")
-if not exist "version.txt" ( echo ERROR: version.txt not found after build & goto :err )
-for /f "tokens=*" %%A in (version.txt) do set NEW_VER=%%A
-for /f "tokens=1,2,3,4 delims=." %%A in ("!NEW_VER!") do (
-    set YY=%%A
-    set MM=%%B
-    set DD=%%C
-    set NN=%%D
-)
-set /a YY_NUM=!YY!
-set /a MM_NUM=1!MM!-100
-set /a DD_NUM=1!DD!-100
-set /a NN_NUM=1!NN!-10000
-set VI_VER=!YY_NUM!.!MM_NUM!.!DD_NUM!.!NN_NUM!
-
 echo.
 echo [2/3] Built version: !NEW_VER!
 echo       %EXE%
 echo.
-
-:: 3. Patch installer.nsi to match — write ps1 to avoid < > / ! cmd-escaping issues
-:: $bang=[char]33 produces ! without triggering delayed-expansion stripping.
-:: [\d.]+ avoids [^"] which causes ^ to be treated as a batch escape character.
-echo $bang=[char]33;$nv='!NEW_VER!';$vi='!VI_VER!';$f='installer.nsi' > _patch.ps1
-echo $c=Get-Content $f -Raw >> _patch.ps1
-echo $c=$c -replace ($bang+'define APP_VERSION\s+"[\d.]+"'),($bang+'define APP_VERSION   "'+$nv+'"') >> _patch.ps1
-echo $c=$c -replace ('VIProductVersion\s+"[\d.]+"'),('VIProductVersion "'+$vi+'"') >> _patch.ps1
-echo [System.IO.File]::WriteAllText((Resolve-Path $f).Path,$c,[System.Text.Encoding]::UTF8) >> _patch.ps1
-echo Patching installer.nsi...
-powershell -NoProfile -ExecutionPolicy Bypass -File _patch.ps1
-if errorlevel 1 ( del _patch.ps1 & goto :err )
-del _patch.ps1
 
 :: 4. Stage exe to versioned Builds\ folder
 set "BUILD_DIR=%~dp0Builds\!NEW_VER!"
@@ -71,7 +46,7 @@ echo.
 echo [3/3] Installer...
 call "%~dp0..\Tools\find_makensis.cmd"
 if errorlevel 1 goto :nsis_missing
-"!MAKENSIS!" installer.nsi
+"!MAKENSIS!" /DAPP_VERSION=!APP_VERSION! /DAPP_VERSION_NUMERIC=!APP_VERSION_NUMERIC! installer.nsi
 if errorlevel 1 goto :nsis_failed
 echo Installer built: SuperMagnifierLV_Setup.exe
 move /y "SuperMagnifierLV_Setup.exe" "!BUILD_DIR!\SuperMagnifierLV_Setup.exe" >nul

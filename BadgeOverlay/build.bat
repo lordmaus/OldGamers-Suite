@@ -25,6 +25,11 @@ if errorlevel 1 (
     exit /b 1
 )
 
+:: ── Version: bump version.txt (yyyy.MM.dd.NNNN, Tools\bump_version.cmd, S-03) ──────────
+:: Directory.Build.props stamps the exe from the same file; installer.nsi gets /DAPP_VERSION.
+call "%~dp0..\Tools\bump_version.cmd" "%~dp0version.txt"
+if errorlevel 1 goto :build_error
+
 :: ── 1. Restore ────────────────────────────────────────────────────────────────
 echo [1/3] Restoring NuGet packages...
 dotnet restore BadgeOverlay.csproj
@@ -50,17 +55,10 @@ echo       Output: %EXE%
 echo.
 
 :: ── Stage exe to versioned Builds\ folder ────────────────────────────────────
-:: Reads the version BumpBuildCounter just wrote so the folder name is always
-:: in sync with the embedded assembly version.
-set "VER_DATE=" & set "VER_NUM="
-for /f "usebackq tokens=1-4 delims=. " %%a in ("%~dp0version.txt") do if not defined VER_DATE (
-    set "VER_DATE=%%a.%%b.%%c"
-    set "VER_NUM=%%d"
-)
-set "BUILD_DIR=%~dp0Builds\%VER_DATE%.%VER_NUM%"
+set "BUILD_DIR=%~dp0Builds\!APP_VERSION!"
 if not exist "%BUILD_DIR%" mkdir "%BUILD_DIR%"
 copy /y "%EXE%" "%BUILD_DIR%\BadgeOverlay.exe" >nul
-echo Staged:  Builds\%VER_DATE%.%VER_NUM%\BadgeOverlay.exe
+echo Staged:  Builds\!APP_VERSION!\BadgeOverlay.exe
 :: Portable PDB (DebugType=portable) — kept with the build for crash-stack line numbers, not shipped in the installer.
 if exist "bin\Release\net10.0-windows\win-x64\publish\BadgeOverlay.pdb" copy /y "bin\Release\net10.0-windows\win-x64\publish\BadgeOverlay.pdb" "%BUILD_DIR%\BadgeOverlay.pdb" >nul
 echo.
@@ -75,38 +73,14 @@ if errorlevel 1 goto :nsis_missing
 goto :build_installer
 
 :build_installer
-
-:: Read version.txt — same source the csproj BumpBuildCounter target writes.
-:: Format: "yyyy.MM.dd.NNNN" (one line). Produces APP_VERSION (yyyy.MM.dd.NNNN)
-:: and APP_VERSION_NUMERIC (Y.M.D.N) for VIProductVersion.
-set "VER_FILE=%~dp0version.txt"
-if exist "%VER_FILE%" goto :ver_found
-echo ERROR: version.txt missing at %VER_FILE% — cannot build the installer.
-goto :build_error
-:ver_found
-set "VER_DATE=" & set "VER_NUM="
-for /f "usebackq tokens=1-4 delims=. " %%a in ("%VER_FILE%") do if not defined VER_DATE (
-    set "VER_DATE=%%a.%%b.%%c"
-    set "VER_NUM=%%d"
-)
-:: Strip leading zeros: "1xx - 100" trick avoids octal parsing of 08/09.
-set "VER_Y=" & set "VER_M=" & set "VER_D="
-for /f "tokens=1,2,3 delims=." %%a in ("%VER_DATE%") do (
-    set /a VER_Y=%%a
-    set /a VER_M=1%%b - 100
-    set /a VER_D=1%%c - 100
-)
-set /a VER_N=1%VER_NUM% - 1000
-set "APP_VERSION=%VER_DATE%.%VER_NUM%"
-set "APP_VERSION_NUMERIC=%VER_Y%.%VER_M%.%VER_D%.%VER_N%"
-echo Building installer with version %APP_VERSION% (numeric %APP_VERSION_NUMERIC%)...
-"%MAKENSIS%" /DAPP_VERSION=%APP_VERSION% /DAPP_VERSION_NUMERIC=%APP_VERSION_NUMERIC% installer.nsi
+echo Building installer with version !APP_VERSION! (numeric !APP_VERSION_NUMERIC!)...
+"!MAKENSIS!" /DAPP_VERSION=!APP_VERSION! /DAPP_VERSION_NUMERIC=!APP_VERSION_NUMERIC! installer.nsi
 if errorlevel 1 goto :nsis_failed
 goto :installer_ok
 :installer_ok
 echo Installer: BadgeOverlay_Setup.exe
 move /y "BadgeOverlay_Setup.exe" "%BUILD_DIR%\BadgeOverlay_Setup.exe" >nul 2>&1
-echo Staged:  Builds\%VER_DATE%.%VER_NUM%\BadgeOverlay_Setup.exe
+echo Staged:  Builds\!APP_VERSION!\BadgeOverlay_Setup.exe
 :skip_installer
 
 echo.

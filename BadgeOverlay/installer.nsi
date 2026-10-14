@@ -12,42 +12,8 @@ Unicode True
 SetCompressor zlib
 
 !define APP_NAME      "Badge Overlay"
-; ── Version ───────────────────────────────────────────────────────────────────
-; Resolution order:
-;   1. /DAPP_VERSION=... /DAPP_VERSION_NUMERIC=... passed by build.bat
-;      (single source of truth — version.txt at repo root, parsed by the
-;      same script that runs `dotnet publish`).
-;   2. Otherwise, parse ../version.txt directly. This makes a manual
-;      `makensis installer.nsi` invocation (no defines) still produce the
-;      correct version — falling back to a hard-coded literal would silently
-;      ship stale version metadata, which is exactly the bug we just hit.
-;
-; version.txt format: a single line "yyyy.MM.dd.NNNN" written by the
-; csproj BumpBuildCounter MSBuild target. Example: "2026.09.25.0005".
-!ifndef APP_VERSION
-  ; !searchparse: extract the date and counter substrings from the file's
-  ; first line. The wildcards (* placeholders) bind the segments into
-  ; named symbols. Errors are fatal here — better to fail the installer
-  ; build than ship a wrong version number.
-  !searchparse /file "version.txt" "" _VER_Y "." _VER_M "." _VER_D "." _VER_NUM
-  !define APP_VERSION "${_VER_Y}.${_VER_M}.${_VER_D}.${_VER_NUM}"
-!endif
-!ifndef APP_VERSION_NUMERIC
-  ; The numeric tuple required by VIProductVersion must have NO leading zeros —
-  ; Windows PE resource compiler rejects them (silently zeroes the component).
-  ; build.bat strips zeros via cmd arithmetic before passing /DAPP_VERSION_NUMERIC,
-  ; but a manual `makensis installer.nsi` skips that step.
-  ; Fix: use !define /math to coerce each padded component to an integer.
-  ; NSIS preprocessor treats leading-zero strings as decimal (not octal), so
-  ; "05" + 0 = 5 and "09" + 0 = 9 — no octal hazard.
-  !ifndef _VER_NUM
-    !searchparse /file "version.txt" "" _VER_Y "." _VER_M "." _VER_D "." _VER_NUM
-  !endif
-  !define /math _VER_M_INT ${_VER_M} + 0
-  !define /math _VER_D_INT ${_VER_D} + 0
-  !define /math _VER_N_INT ${_VER_NUM} + 0
-  !define APP_VERSION_NUMERIC "${_VER_Y}.${_VER_M_INT}.${_VER_D_INT}.${_VER_N_INT}"
-!endif
+!define APP_VERSION_FILE "${__FILEDIR__}\version.txt"
+!include "${__FILEDIR__}\..\Tools\version.nsh"   ; APP_VERSION + APP_VERSION_NUMERIC (S-03)
 !define APP_PUBLISHER "Matthew Pittman"
 !define APP_URL       "https://github.com/lordmaus/Badge-Overlay"
 !define APP_WEBSITE   "https://oldgamerssoftware.com/"

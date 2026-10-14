@@ -2,7 +2,7 @@ name: CI
 
 on:
   push:
-    branches: [main]
+    branches: ['**']
   pull_request:
     branches: [main]
   workflow_dispatch:
@@ -20,8 +20,8 @@ env:
   DOTNET_SKIP_FIRST_TIME_EXPERIENCE: true
   NUGET_PACKAGES: ${{ github.workspace }}/.nuget/packages
   SOLUTION: OldGamers.Suite.slnx
-  # CI must never bump version.txt / installer.nsi (BO, SML BumpBuildCounter targets).
-  BUILD_PROPS: -p:SkipBumpBuildCounter=true -p:ContinuousIntegrationBuild=true
+  # dotnet build only READS <app>\version.txt (Directory.Build.props); only build.bat bumps it.
+  BUILD_PROPS: -p:ContinuousIntegrationBuild=true
 
 jobs:
   themes:
@@ -74,6 +74,25 @@ jobs:
       - name: Build
         run: dotnet build ${{ env.SOLUTION }} -c Release --no-restore ${{ env.BUILD_PROPS }}
 
+      - name: Verify exe version = version.txt
+        shell: pwsh
+        run: |
+          $apps = [ordered]@{ BadgeOverlay='BadgeOverlay'; FileCopy='FileCopyStudio'; NoteStation='NoteStation'
+                              ReticleOverlay='ReticleOverlay'; SuperMagnifierLV='SuperMagnifierLV'; TimerStudio='TimerStudio' }
+          $bad = 0
+          foreach ($dir in $apps.Keys) {
+            $want = (Get-Content "$dir/version.txt" -Raw).Trim()
+            $dll  = Get-ChildItem "$dir/bin/Release" -Recurse -Filter "$($apps[$dir]).dll" | Select-Object -First 1
+            if (-not $dll) { Write-Output "::error title=Version $dir::$($apps[$dir]).dll not found"; $bad++; continue }
+            $vi   = $dll.VersionInfo
+            $info = $vi.ProductVersion.Split('+')[0]
+            if ([version]$vi.FileVersion -ne [version]$want -or $info -ne $want) {
+              Write-Output "::error title=Version $dir::version.txt=$want, FileVersion=$($vi.FileVersion), ProductVersion=$($vi.ProductVersion)"
+              $bad++
+            } else { Write-Output "$dir $want OK" }
+          }
+          exit $bad
+
       - name: Test
         run: >
           dotnet test ${{ env.SOLUTION }} -c Release --no-build ${{ env.BUILD_PROPS }}
@@ -121,5 +140,44 @@ jobs:
             ReticleOverlay/bin/Release/
             SuperMagnifierLV/bin/Release/
             TimerStudio/bin/Release/
+          if-no-files-found: error
+          retention-days: 14
+
+  installers:
+    name: build.bat + installer (${{ matrix.app }})
+    needs: build-test
+    runs-on: windows-latest
+    timeout-minutes: 30
+    strategy:
+      fail-fast: false
+      matrix:
+        app: [BadgeOverlay, FileCopy, NoteStation, ReticleOverlay, SuperMagnifierLV, TimerStudio]
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-dotnet@26b0ec14cb23fa6904739307f278c14f94c95bf1 # v5.4.0
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: NSIS
+        shell: pwsh
+        run: |
+          if (-not (Test-Path "${env:ProgramFiles(x86)}\NSIS\makensis.exe") -and -not (Get-Command makensis -ErrorAction SilentlyContinue)) {
+            choco install nsis -y --no-progress
+          }
+
+      # The same build.bat you run locally: bumps version.txt (CI copy only), publishes, builds the Setup.
+      - name: build.bat
+        working-directory: ${{ matrix.app }}
+        shell: cmd
+        run: call build.bat
+
+      - name: Upload installer
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: setup-${{ matrix.app }}
+          path: ${{ matrix.app }}/**/*_Setup.exe
           if-no-files-found: error
           retention-days: 14

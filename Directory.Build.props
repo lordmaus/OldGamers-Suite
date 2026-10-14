@@ -13,4 +13,27 @@
     <EnableNETAnalyzers>true</EnableNETAnalyzers>
     <AnalysisLevel>latest-minimum</AnalysisLevel>
   </PropertyGroup>
+
+  <!--
+    S-03 (2026-10-14): one version source per app = <app>\version.txt, one line "yyyy.MM.dd.NNNN".
+    Only build.bat bumps it (Tools\bump_version.cmd, local date). Every other build (IDE, CLI, CI,
+    *.Tests) just reads it, so Version / FileVersion / AssemblyVersion always match the
+    Builds\<version>\ folder and the installer (installer.nsi reads the same file).
+  -->
+  <PropertyGroup Condition="Exists('$(MSBuildProjectDirectory)\version.txt')">
+    <SuiteVersion>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\version.txt').Trim())</SuiteVersion>
+    <_SuiteVersionValid>$([System.Text.RegularExpressions.Regex]::IsMatch('$(SuiteVersion)', '^\d{4}\.\d{2}\.\d{2}\.\d{4}$'))</_SuiteVersionValid>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(_SuiteVersionValid)' == 'True'">
+    <Version>$(SuiteVersion)</Version>
+    <FileVersion>$(SuiteVersion)</FileVersion>
+    <!-- Unpadded numeric form (2026.10.14.8) for AssemblyVersion / Win32 version resource. -->
+    <AssemblyVersion>$([System.Version]::Parse('$(SuiteVersion)').ToString())</AssemblyVersion>
+  </PropertyGroup>
+
+  <Target Name="SuiteValidateVersion" BeforeTargets="PrepareForBuild"
+          Condition="'$(SuiteVersion)' != '' And '$(_SuiteVersionValid)' != 'True'">
+    <Error File="$(MSBuildProjectDirectory)\version.txt"
+           Text="version.txt must hold one line 'yyyy.MM.dd.NNNN' (found '$(SuiteVersion)'). Run build.bat or fix the file." />
+  </Target>
 </Project>

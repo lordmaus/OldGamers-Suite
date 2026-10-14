@@ -21,10 +21,7 @@
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <ApplicationManifest>app.manifest</ApplicationManifest>
 
-    <!-- Version -->
-    <Version>2026.10.13.0002</Version>
-    <FileVersion>2026.10.13.0002</FileVersion>
-    <AssemblyVersion>2026.10.13.2</AssemblyVersion>
+    <!-- Version: from version.txt via ..\Directory.Build.props (S-03); build.bat bumps it. -->
 
     <Product>NoteStation</Product>
     <Company>Matthew Pittman</Company>

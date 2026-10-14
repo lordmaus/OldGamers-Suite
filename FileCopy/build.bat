@@ -13,57 +13,11 @@ if not exist "FileCopy.csproj" (
     exit /b 1
 )
 
-:: ── Get date via PowerShell (locale-independent) ─────────────────────────────
-for /f %%D in ('powershell -NoProfile -Command "Get-Date -Format yyyy.MM.dd"') do set TODAY=%%D
-
-if "!TODAY!"=="" (
-    echo ERROR: Could not determine today's date.
-    exit /b 1
-)
-
-:: ── Read version.txt and compute next build number ───────────────────────────
-set VERSION_FILE=version.txt
-set LAST_DATE=0000.00.00
-set LAST_BUILD=0
-
-if exist "!VERSION_FILE!" (
-    set /p LAST_VER=<"!VERSION_FILE!"
-    for /f "tokens=1-4 delims=." %%a in ("!LAST_VER!") do (
-        set LAST_DATE=%%a.%%b.%%c
-        set /a LAST_BUILD=1%%d - 10000
-    )
-)
-
-if "!LAST_DATE!"=="!TODAY!" (
-    set /a BUILD_NUM=!LAST_BUILD! + 1
-) else (
-    set BUILD_NUM=1
-)
-
-set "BUILD_PAD=000!BUILD_NUM!"
-set "BUILD_PAD=!BUILD_PAD:~-4!"
-
-set NEW_VERSION=!TODAY!.!BUILD_PAD!
-
-for /f "tokens=1-3 delims=." %%a in ("!TODAY!") do (
-    set /a V_YEAR=%%a
-    set /a V_MON=1%%b - 100
-    set /a V_DAY=1%%c - 100
-)
-set ASSY_VERSION=!V_YEAR!.!V_MON!.!V_DAY!.!BUILD_NUM!
-
-echo Version : !NEW_VERSION!
-echo Assembly: !ASSY_VERSION!
-echo.
-
-echo Patching version numbers...
-powershell -NoProfile -ExecutionPolicy Bypass -File patch_version.ps1 -NewVersion "!NEW_VERSION!" -AssyVersion "!ASSY_VERSION!"
-if errorlevel 1 (
-    echo WARNING: Version patching failed.
-)
-
-echo !NEW_VERSION!> "!VERSION_FILE!"
-echo Saved !NEW_VERSION! to !VERSION_FILE!
+:: ── Version: bump version.txt (yyyy.MM.dd.NNNN, Tools\bump_version.cmd, S-03) ──────────
+:: Directory.Build.props stamps the exe from the same file; installer.nsi gets /DAPP_VERSION.
+call "%~dp0..\Tools\bump_version.cmd" "%~dp0version.txt"
+if errorlevel 1 goto :build_error
+set "NEW_VERSION=!APP_VERSION!"
 echo.
 
 echo [1/3] Restoring NuGet packages...
@@ -102,7 +56,7 @@ if exist docs\manual.pdf copy /y docs\manual.pdf dist\manual.pdf >nul
 call "%~dp0..\Tools\find_makensis.cmd"
 if errorlevel 1 goto :nsis_missing
 echo Building NSIS installer...
-"!MAKENSIS!" installer.nsi
+"!MAKENSIS!" /DAPP_VERSION=!APP_VERSION! /DAPP_VERSION_NUMERIC=!APP_VERSION_NUMERIC! installer.nsi
 if errorlevel 1 goto :nsis_failed
 echo Installer: FileCopyStudio_Setup.exe
 
