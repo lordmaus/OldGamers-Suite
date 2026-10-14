@@ -24,7 +24,7 @@
     <PublishReadyToRun>true</PublishReadyToRun>
     <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
     <NoWarn>$(NoWarn);WFO0003</NoWarn>
-    <!-- TS-09: reproducible restores Ã¢â‚¬â€ commit packages.lock.json once generated -->
+    <!-- TS-09: reproducible restores — commit packages.lock.json once generated -->
     <RestorePackagesWithLockFile>true</RestorePackagesWithLockFile>
   </PropertyGroup>
 
@@ -43,7 +43,7 @@
 
   <ItemGroup>
     <!-- MailKit: SMTP email alerts (MIT licence, no Outlook dependency) -->
-    <!-- TS-09: pinned (was 4.*). Ã¢â€°Â¥4.15.1 required for MimeKit CVE-2026-30227. -->
+    <!-- TS-09: pinned (was 4.*). ≥4.15.1 required for MimeKit CVE-2026-30227. -->
     <PackageReference Include="MailKit" Version="4.18.1" />
     <!-- MSAL: OAuth2 Modern Auth for personal Microsoft accounts (Hotmail/Outlook.com) -->
     <PackageReference Include="Microsoft.Identity.Client" Version="4.90.1" />

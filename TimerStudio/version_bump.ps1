@@ -16,7 +16,9 @@ $ErrorActionPreference = "Stop"
 $today = (Get-Date).ToString("yyyy.MM.dd")
 
 # ── Read current version from csproj ─────────────────────────────────────────
-$csproj = Get-Content $CsprojPath -Raw
+# Read as UTF-8: Windows PowerShell 5.1 Get-Content defaults to ANSI and re-encoded
+# the csproj comments on every build (mojibake, fixed 2026-10-13).
+$csproj = [System.IO.File]::ReadAllText((Resolve-Path $CsprojPath).Path, [System.Text.Encoding]::UTF8)
 $curVer = [regex]::Match($csproj, '<Version>([^<]+)</Version>').Groups[1].Value
 if (-not $curVer) { throw "Could not find <Version> in $CsprojPath" }
 
