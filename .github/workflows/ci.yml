@@ -98,18 +98,24 @@ jobs:
           dotnet test ${{ env.SOLUTION }} -c Release --no-build ${{ env.BUILD_PROPS }}
           --logger "trx;LogFilePrefix=results" --results-directory TestResults
 
-      - name: Report failed tests
-        if: failure()
+      - name: Test results summary
+        if: always()
         shell: pwsh
         run: |
           $files = Get-ChildItem TestResults -Recurse -Filter *.trx -ErrorAction SilentlyContinue
           if (-not $files) { Write-Output "::error title=Tests::No .trx produced (test run did not start)"; exit 0 }
-          $summary = @("## Failed tests", "")
+          $summary = @("## Test results", "")
           foreach ($f in $files) {
             [xml]$x = Get-Content $f.FullName -Raw
             $ns = @{ t = 'http://microsoft.com/schemas/VisualStudio/TeamTest/2010' }
             $counters = Select-Xml -Xml $x -XPath '//t:Counters' -Namespace $ns | Select-Object -First 1
-            if ($counters) { $c = $counters.Node; Write-Output "::notice title=$($f.Name)::total=$($c.total) passed=$($c.passed) failed=$($c.failed)" }
+            $unit = Select-Xml -Xml $x -XPath '//t:UnitTest' -Namespace $ns | Select-Object -First 1
+            $proj = if ($unit) { [IO.Path]::GetFileNameWithoutExtension($unit.Node.storage) } else { $f.Name }
+            if ($counters) {
+              $c = $counters.Node
+              Write-Output "::notice title=$proj::total=$($c.total) passed=$($c.passed) failed=$($c.failed)"
+              $summary += "- $($proj): $($c.passed)/$($c.total) passed"
+            }
             foreach ($r in (Select-Xml -Xml $x -XPath "//t:UnitTestResult[@outcome='Failed']" -Namespace $ns)) {
               $n = $r.Node
               $msg = ($n.Output.ErrorInfo.Message -replace '\r?\n', ' ')

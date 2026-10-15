@@ -199,7 +199,7 @@ namespace OldGamers.Wpf.Shared
         };
 
         private static string OneLine(string s) =>
-            s.IndexOfAny(new[] { '\r', '\n' }) < 0 ? s : s.Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ');
+            !s.Contains('\r') && !s.Contains('\n') ? s : s.Replace("\r\n", " ").Replace('\r', ' ').Replace('\n', ' ');
 
         private static string Indent(string s) => "    " + s.Replace("\r\n", "\n").Replace("\n", Environment.NewLine + "    ");
 
