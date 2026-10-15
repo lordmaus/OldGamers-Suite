@@ -135,7 +135,7 @@ The batch script assumes `dotnet` is on `PATH`. Outputs an unsigned installer in
 
 All user preferences live at `%APPDATA%\BadgeOverlay\settings.json`. Custom rules, badge colours, window geometry, and hotkey bindings persist across sessions. Delete the file to reset to factory defaults.
 
-Crash logs write to `%APPDATA%\BadgeOverlay\crash.log` (rolling, capped at 512 KB). A `.old` backup is kept. Crash logs are local-only — they are never transmitted.
+Errors and notices are logged to `%APPDATA%\BadgeOverlay\logs\BadgeOverlay.log` (rolling, capped at 512 KB, `.old` backup kept; profile path redacted). View it in About → View log. The log is local-only — it is never transmitted.
 
 ---
 
@@ -164,4 +164,4 @@ Issues and PRs welcome at the project repository. Please include:
 - Windows version (`winver`)
 - Badge Overlay version (visible in the About dialog)
 - A description of what you expected vs. what happened
-- If relevant, the tail of `%APPDATA%\BadgeOverlay\crash.log`
+- If relevant, the tail of `%APPDATA%\BadgeOverlay\logs\BadgeOverlay.log` (About → View log)

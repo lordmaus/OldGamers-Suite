@@ -77,7 +77,7 @@ namespace BadgeOverlay
                 string themeKey = _isHighContrast ? "HighContrast" : (_userTheme ?? "Dark");
                 App.ApplyTheme(themeKey);
             }
-            catch (Exception ex) { CrashLog.Write("ApplyThemeForCurrentState", ex); }
+            catch (Exception ex) { AppLog.Error("ApplyThemeForCurrentState", ex); }
         }
 
         public void Dispose()

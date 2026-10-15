@@ -64,7 +64,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("TimerHistory.Record", ex);
+                AppLog.Error("TimerHistory.Record", ex);
             }
         }
 
@@ -86,7 +86,7 @@ namespace TimerStudio
                     Save(new List<TimerHistoryEntry>());
                 }
             }
-            catch (Exception ex) { DiagLog.WriteException("TimerHistory.Clear", ex); }
+            catch (Exception ex) { AppLog.Error("TimerHistory.Clear", ex); }
         }
 
         // ── Private helpers ───────────────────────────────────────────────────

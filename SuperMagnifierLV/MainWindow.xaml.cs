@@ -935,7 +935,7 @@ namespace SuperMagnifier
                     if (WordTracker.TryGetWordFocus(cp.X, cp.Y, out int rx, out int ry))
                     { _wordFocusX = rx; _wordFocusY = ry; }
                 }
-                catch (System.Exception ex) { CrashLog.Write("WordTracker", ex); }
+                catch (System.Exception ex) { AppLog.Error("WordTracker", ex); }
             }
 
             // Keep lens informed of the current source rect for snapshot
@@ -2125,7 +2125,7 @@ namespace SuperMagnifier
                     System.Windows.Automation.AutomationNotificationProcessing.ImportantMostRecent,
                     message, "SuperMagnifierStatus");
             }
-            catch (Exception ex) { CrashLog.Write("AnnounceStatus", ex); }
+            catch (Exception ex) { AppLog.Error("AnnounceStatus", ex); }
         }
 
         // Hover / keyboard focus pauses the auto-dismiss timer (WCAG 2.2.1).
@@ -2594,7 +2594,7 @@ namespace SuperMagnifier
                 _settings.PerMonitorZoomMap = PerMonitorZoomMap.Serialise(_monitorZoomMap);
                 _settings.Save();
             }
-            catch (System.Exception _ex) { CrashLog.Write("TrySaveSettingsOnCrash", _ex); }
+            catch (System.Exception _ex) { AppLog.Error("TrySaveSettingsOnCrash", _ex); }
         }
 
         /// <summary>

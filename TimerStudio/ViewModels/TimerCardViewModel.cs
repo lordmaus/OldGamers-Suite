@@ -796,7 +796,7 @@ namespace TimerStudio
             {
                 double maxMs = _tickMaxTicks * 1000.0 / System.Diagnostics.Stopwatch.Frequency;
                 if (maxMs > 5.0)
-                    DiagLog.Write($"[Tick perf] '{_model.Name}' worst tick in last 1000: {maxMs:F2} ms");
+                    AppLog.Info($"[Tick perf] '{_model.Name}' worst tick in last 1000: {maxMs:F2} ms");
                 _tickCount = 0;
                 _tickMaxTicks = 0;
             }

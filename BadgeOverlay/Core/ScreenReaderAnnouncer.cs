@@ -72,7 +72,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("Announcer ctor", ex);
+                AppLog.Error("Announcer ctor", ex);
                 InitError = BuildDiagnostic(ex);
                 _synth = null;
             }
@@ -112,7 +112,7 @@ namespace BadgeOverlay
                 }
                 catch (Exception ex)
                 {
-                    CrashLog.Write("Announcer.ApplySettings", ex);
+                    AppLog.Error("Announcer.ApplySettings", ex);
                 }
             }
         }
@@ -204,7 +204,7 @@ namespace BadgeOverlay
                     _synth.SpeakAsyncCancelAll();
                     _synth.SpeakAsync(normalised);
                 }
-                catch (Exception ex) { CrashLog.Write("Announcer Speak", ex); }
+                catch (Exception ex) { AppLog.Error("Announcer Speak", ex); }
             }
         }
 

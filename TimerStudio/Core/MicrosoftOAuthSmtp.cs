@@ -109,7 +109,7 @@ namespace TimerStudio
                 // token cache for this session is unaffected; worst case the user signs
                 // in again next launch, which is strictly safer than a plaintext refresh
                 // token on disk.
-                DiagLog.WriteException("MicrosoftOAuthSmtp.AfterCacheAccess DPAPI", ex);
+                AppLog.Error("MicrosoftOAuthSmtp.AfterCacheAccess DPAPI", ex);
                 return;
             }
             AppPrefs.Instance.Save();

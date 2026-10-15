@@ -107,7 +107,7 @@ namespace TimerStudio
             using var ipcLock = AcquireIpcLock(shutdown ? ShutdownLockTimeout : SaveLockTimeout, out bool haveLock);
             if (!haveLock && !shutdown) return false;
             if (!haveLock)
-                DiagLog.Write("TimerPersistence.Save: IPC lock busy at shutdown — writing without lock");
+                AppLog.Info("TimerPersistence.Save: IPC lock busy at shutdown — writing without lock");
             try
             {
                 Directory.CreateDirectory(SaveDir);
@@ -123,7 +123,7 @@ namespace TimerStudio
                 File.Move(tmp, SaveFile, overwrite: true);
                 RecordWriteStamp();
             }
-            catch (Exception ex) { DiagLog.Write("TimerPersistence.Save failed: " + ex.GetType().Name); }
+            catch (Exception ex) { AppLog.Info("TimerPersistence.Save failed: " + ex.GetType().Name); }
             finally
             {
                 if (haveLock) ipcLock.ReleaseMutex();

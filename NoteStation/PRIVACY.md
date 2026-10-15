@@ -19,7 +19,7 @@ NoteStation is a clipboard manager, sticky-notes overlay, and task manager. It s
 - Tasks, categories, and saved views
 - Preferences, hotkeys, theme, and note PIN / master passphrase as salted PBKDF2 hashes (if set)
 - Clipboard images and screenshots: `%AppData%\NoteStation\clipimages\`
-- Error logs (`errors.log`, `crash.log`) — exception type and message only, never note, task, or clipboard content
+- Log `logs\NoteStation.log` (rotated at 512 KB to `.old`) — error type, message and full stack trace, plus short notices (e.g. a hotkey that could not be registered). Your Windows profile path is replaced by `%USERPROFILE%`; identical entries are merged and flooding is capped; never note, task, or clipboard content. Older versions wrote `errors.log`, `crash.log` and `cliptrim.log`; you can delete them.
 - Automatic backups (`.nsbak`) in the backup folder you choose
 
 These files never leave your machine.

@@ -256,7 +256,7 @@ namespace TimerStudio
         {
             if (_saveRetries >= MaxSaveRetries)
             {
-                DiagLog.Write("SaveTimers: timers.json lock still busy after retries — waiting for next autosave");
+                AppLog.Info("SaveTimers: timers.json lock still busy after retries — waiting for next autosave");
                 _saveRetries = 0;
                 return;
             }
@@ -1214,11 +1214,11 @@ namespace TimerStudio
                 var newEvents = new List<CalendarEvent>();
                 try
                 {
-                    DiagLog.Write("CalendarPoll.STA  thread started, calling ReadAllCalendarsOneShot");
+                    AppLog.Info("CalendarPoll.STA  thread started, calling ReadAllCalendarsOneShot");
                     DateTime cutoff = DateTime.Now.AddDays(lookahead);
                     var events = CalendarImporter.ReadAllCalendarsOneShot(
                         hidden, maxItems: 600, lookaheadDays: lookahead);
-                    DiagLog.Write($"CalendarPoll.STA  ReadAllCalendarsOneShot returned {events.Count} events");
+                    AppLog.Info($"CalendarPoll.STA  ReadAllCalendarsOneShot returned {events.Count} events");
 
                     foreach (var ev in events)
                     {
@@ -1260,7 +1260,7 @@ namespace TimerStudio
                 }
                 catch (Exception ex)
                 {
-                    DiagLog.WriteException("CalendarPoll.STA", ex);
+                    AppLog.Error("CalendarPoll.STA", ex);
                 }
 
                 // Return to UI thread to create cards, then shut down this STA pump

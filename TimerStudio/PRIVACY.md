@@ -16,6 +16,8 @@ The app saves your timers, stopwatches, alert settings, categories, theme, hotke
 
 These files never leave your machine except as described below for features you turn on.
 
+The app log `logs\TimerStudio.log` (rotated at 512 KB to `.old`) records errors with their stack trace and short notices. E-mail addresses are replaced by `<redacted>` and your Windows profile path by `%USERPROFILE%`. Older versions wrote `diagnostics.log`; you can delete it.
+
 ## Optional network features (user-configured)
 
 Timer Studio contacts external servers **only** when you set up one of these features. None are enabled by default beyond what you configure.

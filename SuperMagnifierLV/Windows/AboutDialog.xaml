@@ -94,16 +94,16 @@
                 AutomationProperties.Name="Copy settings file path to clipboard"
                 AutomationProperties.HelpText="Copies the path to the settings file to the clipboard"
                 Click="CopySettingsPathBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.Clipboard}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Copy path" VerticalAlignment="Center"/></StackPanel></Button>
-        <!-- SM-05: crash.log lives next to settings.json -->
+        <!-- SM-05 / S-07: logs\SuperMagnifierLV.log next to the settings file -->
         <Button
                 HorizontalAlignment="Left"
                 Style="{StaticResource FlatButton}"
                 Padding="6,3" Margin="0,4,0,0"
                 MinHeight="44"
-                ToolTip="Open the folder that contains crash.log"
-                AutomationProperties.Name="Open crash log folder"
-                AutomationProperties.HelpText="Opens File Explorer at crash.log, which records errors (no screen content)"
-                Click="OpenCrashLogBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open crash log folder" VerticalAlignment="Center"/></StackPanel></Button>
+                ToolTip="Open the folder that contains the app log"
+                AutomationProperties.Name="Open log folder"
+                AutomationProperties.HelpText="Opens File Explorer at the app log, which records errors (no screen content)"
+                Click="OpenCrashLogBtn_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open log folder" VerticalAlignment="Center"/></StackPanel></Button>
       </StackPanel>
 
       <TextBlock Grid.Row="8" Grid.Column="0" Text="Website"

@@ -285,9 +285,9 @@
                 <Button
                         Style="{StaticResource FlatButton}"
                         Padding="16,8" MinHeight="44" Margin="0,0,8,0"
-                        AutomationProperties.Name="View crash log"
+                        AutomationProperties.Name="View log"
                         AutomationProperties.HelpText="Open the diagnostic log in a viewer window"
-                        Click="BtnViewCrashLog_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.EventLog}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="View crash log" VerticalAlignment="Center"/></StackPanel></Button>
+                        Click="BtnViewCrashLog_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.EventLog}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="View log" VerticalAlignment="Center"/></StackPanel></Button>
                 <Button Content="Close" Style="{StaticResource PrimaryButton}"
                         Padding="40,8" MinHeight="44"
                         IsCancel="True" IsDefault="True"

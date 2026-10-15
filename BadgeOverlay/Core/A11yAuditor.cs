@@ -123,7 +123,7 @@ namespace BadgeOverlay
                 try { el = AutomationElement.FromHandle(root); }
                 catch (Exception ex)
                 {
-                    CrashLog.Write("A11yAuditor.FromHandle", ex);
+                    AppLog.Error("A11yAuditor.FromHandle", ex);
                 }
 
                 if (el == null)
@@ -137,7 +137,7 @@ namespace BadgeOverlay
 
                 Walk(el, result);
             }
-            catch (Exception ex) { CrashLog.Write("A11yAuditor.Audit", ex); }
+            catch (Exception ex) { AppLog.Error("A11yAuditor.Audit", ex); }
 
             return result;
         }

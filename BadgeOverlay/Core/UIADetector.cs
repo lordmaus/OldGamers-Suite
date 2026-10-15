@@ -259,10 +259,10 @@ namespace BadgeOverlay
                 catch (Exception ex)
                 {
                     // UIA can throw transiently on process exit, UAC switch,
-                    // or a broken provider. Log (deduped by CrashLog) and
-                    // continue — do not kill the worker. CrashLog.Write
+                    // or a broken provider. Log (deduped by AppLog) and
+                    // continue — do not kill the worker. AppLog.Error
                     // is self-swallowing, no outer guard needed.
-                    CrashLog.Write("UIADetector.WorkerLoop", ex);
+                    AppLog.Error("UIADetector.WorkerLoop", ex);
                 }
             }
         }

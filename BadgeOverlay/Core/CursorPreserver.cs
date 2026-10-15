@@ -42,7 +42,7 @@ namespace BadgeOverlay
                 else
                     SetClassLong32(hwnd, GCLP_HCURSOR, 0);
             }
-            catch (Exception ex) { CrashLog.Write("ClearClassCursor", ex); }
+            catch (Exception ex) { AppLog.Error("ClearClassCursor", ex); }
         }
 
         public static void Attach(Window w)

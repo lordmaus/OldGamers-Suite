@@ -16,6 +16,8 @@ The app saves your preferences (badge colors, detector rules, hotkeys, window po
 
 These files never leave your machine. You can delete them at any time to reset the app.
 
+The app log `logs\BadgeOverlay.log` (rotated at 512 KB to `.old`) records errors with their stack trace and short notices; your Windows profile path is written as `%USERPROFILE%`. Older versions wrote `crash.log`; you can delete it.
+
 ## What the app does NOT do
 
 - No data is sent to any server or third party.

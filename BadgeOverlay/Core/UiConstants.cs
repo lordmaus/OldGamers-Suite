@@ -91,14 +91,6 @@ namespace BadgeOverlay
         /// <summary>One-side duration of theme cross-fade (ms). Fade-out + swap + fade-in totals ~120 ms.</summary>
         public const int ThemeFadeMs = 60;
 
-        // ── Crash log limits ──────────────────────────────────────────────
-
-        /// <summary>Max bytes per crash.log file before rotation to .old.</summary>
-        public const long CrashLogMaxBytes = 512 * 1024;
-
-        /// <summary>Max writes per minute to crash.log to prevent runaway loops.</summary>
-        public const int CrashLogMaxWritesPerMinute = 30;
-
         // ── Tooltip ───────────────────────────────────────────────────────
 
         /// <summary>Tooltip initial show delay (ms). WCAG 1.4.13 — must be persistent and dismissable.</summary>

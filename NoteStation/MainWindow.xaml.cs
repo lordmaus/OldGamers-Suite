@@ -688,14 +688,7 @@ namespace NoteStation
                     evicted++;
                 }
                 if (evicted > 0)
-                {
-                    try
-                    {
-                        File.AppendAllText(System.IO.Path.Combine(App.AppDataDir, "cliptrim.log"),
-                            $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] rawPref={AppPrefs.Instance.ClipboardMaxHistory} flooredMax={max} before={countBefore} evicted={evicted} after={_clips.Count}\n");
-                    }
-                    catch { /* best-effort */ }
-                }
+                    AppLog.Info($"Clip trim: rawPref={AppPrefs.Instance.ClipboardMaxHistory} flooredMax={max} before={countBefore} evicted={evicted} after={_clips.Count}");
 
                 if (_clipIdx > 0) _clipIdx++;
                 UpdatePresets();

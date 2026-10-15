@@ -6,16 +6,13 @@ using System.Windows;
 namespace BadgeOverlay
 {
     /// <summary>
-    /// In-app viewer for %APPDATA%\BadgeOverlay\crash.log.
+    /// In-app viewer for the app log (%APPDATA%\BadgeOverlay\logs\BadgeOverlay.log, S-07).
     /// Read-only, monospace, with refresh/copy/clear/open-folder actions.
     /// Saves users having to navigate the file system to diagnose issues.
     /// </summary>
     public partial class CrashLogWindow : Window
     {
-        private static string LogPath =>
-            Path.Combine(
-                Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-                "BadgeOverlay", "crash.log");
+        private static string LogPath => AppLog.FilePath ?? "";
 
         public CrashLogWindow()
         {
@@ -64,7 +61,7 @@ namespace BadgeOverlay
             catch (Exception ex)
             {
                 TxtLog.Text = $"(Could not read log file.)\r\n{ex.Message}";
-                CrashLog.Write("CrashLogWindow.LoadLog", ex);
+                AppLog.Error("CrashLogWindow.LoadLog", ex);
             }
         }
 
@@ -89,7 +86,7 @@ namespace BadgeOverlay
             catch (Exception ex)
             {
                 LblStatus.Text = "Copy failed — see log.";
-                CrashLog.Write("CrashLogWindow.BtnCopy", ex);
+                AppLog.Error("CrashLogWindow.BtnCopy", ex);
             }
         }
 
@@ -111,15 +108,15 @@ namespace BadgeOverlay
             catch (Exception ex)
             {
                 LblStatus.Text = "Could not open folder — see log.";
-                CrashLog.Write("CrashLogWindow.BtnOpenFolder", ex);
+                AppLog.Error("CrashLogWindow.BtnOpenFolder", ex);
             }
         }
 
         private void BtnClear_Click(object sender, RoutedEventArgs e)
         {
             var r = AppDialog.Show(
-                "Clear all entries from the crash log?\n\n" +
-                "The log will be moved to crash.log.bak so you can still " +
+                "Clear all entries from the log?\n\n" +
+                "The log will be moved to a .bak file so you can still " +
                 "recover entries if needed. Clearing again replaces the backup.",
                 "Clear log",
                 MessageBoxButton.YesNo,
@@ -147,7 +144,7 @@ namespace BadgeOverlay
             catch (Exception ex)
             {
                 LblStatus.Text = "Clear failed — the file may be in use.";
-                CrashLog.Write("CrashLogWindow.BtnClear", ex);
+                AppLog.Error("CrashLogWindow.BtnClear", ex);
             }
         }
 

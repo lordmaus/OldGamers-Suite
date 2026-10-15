@@ -106,7 +106,7 @@ Format: `F8`, `Ctrl+F8`, `Alt+Shift+F9`, etc.
 - It is excluded from Alt+Tab and the taskbar.
 - Settings are written atomically (`.tmp` rename) — a crash never corrupts your config.
 - Export / Import profiles are available in the **About** dialog.
-- If a saved file can't be read it is kept as `*.corrupt-<date>.json` in `%AppData%\ReticleOverlay\` and you are told at startup; errors go to `crash.log` there (About → Open crash log folder).
+- If a saved file can't be read it is kept as `*.corrupt-<date>.json` in `%AppData%\ReticleOverlay\` and you are told at startup; errors go to `logs\ReticleOverlay.log` there (About → Open log folder).
 - If a hotkey is already used by a game or another app, the Hotkeys dialog says which one — pick a different key.
 
 ## FAQ — anti-cheat

@@ -6,6 +6,9 @@ namespace SuperMagnifier
 {
     public partial class App : Application
     {
+        // S-07 (2026-10-14): suite log, <data dir>\logs\SuperMagnifierLV.log. Static ctor = before anything else runs.
+        static App() => AppLog.Configure(System.IO.Path.GetDirectoryName(AppSettings.FilePath) ?? AppContext.BaseDirectory, "SuperMagnifierLV");
+
         // ── Theme state ───────────────────────────────────────────────────────
         public static string CurrentTheme { get; private set; } = "Dark";
         public static bool   IsDark       => !s_lightThemes.Contains(CurrentTheme);
@@ -207,7 +210,7 @@ namespace SuperMagnifier
             // DispatcherUnhandledException: unhandled exceptions on the UI thread
             DispatcherUnhandledException += (s, args) =>
             {
-                CrashLog.Write("DispatcherUnhandledException", args.Exception);   // SM-05: record first
+                AppLog.Error("DispatcherUnhandledException", args.Exception);   // SM-05: record first
                 TryDisposeEngineOnCrash();
                 SaveSettingsOnCrash();
                 // Do NOT mark handled — let WPF show the default crash dialog
@@ -218,14 +221,14 @@ namespace SuperMagnifier
             // (it previously threw VerifyAccess here and was swallowed, so nothing was saved).
             AppDomain.CurrentDomain.UnhandledException += (s, args) =>
             {
-                CrashLog.Write("AppDomain.UnhandledException", args.ExceptionObject as Exception);
+                AppLog.Error("AppDomain.UnhandledException", args.ExceptionObject as Exception);
                 TryDisposeEngineOnCrash();
                 SaveSettingsOnCrash();
             };
 
             System.Threading.Tasks.TaskScheduler.UnobservedTaskException += (s, args) =>
             {
-                CrashLog.Write("UnobservedTaskException", args.Exception);
+                AppLog.Error("UnobservedTaskException", args.Exception);
                 args.SetObserved();
             };
         }
@@ -278,7 +281,7 @@ namespace SuperMagnifier
                     op.Wait(TimeSpan.FromSeconds(2));   // bounded: the UI thread may itself be wedged
                 }
             }
-            catch (Exception ex) { CrashLog.Write("SaveSettingsOnCrash", ex); }
+            catch (Exception ex) { AppLog.Error("SaveSettingsOnCrash", ex); }
         }
 
         private static void TryDisposeEngineOnCrash()

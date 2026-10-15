@@ -3,6 +3,13 @@
 All notable changes to Badge Overlay are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows `YYYY.MM.DD.BUILD`.
 
+## [Unreleased] – 2026-10-14 · One log, shared helpers (S-05 / S-07)
+
+### Changed
+- **One log file: `%APPDATA%\BadgeOverlay\logs\BadgeOverlay.log`** (rotated at 512 KB to `.old`; About → View log). Replaces crash.log. Errors now include the full stack trace; your Windows profile path is written as `%USERPROFILE%`; repeated identical entries are merged and a log flood is capped. Old log files are left in place and can be deleted.
+- `window-sizes.json` writes are atomic (shared `WindowSizeStore`).
+- Log viewer: "View crash log" → "View log".
+
 ## [Unreleased] – 2026-10-14 · One version mechanism (S-03)
 
 ### Changed

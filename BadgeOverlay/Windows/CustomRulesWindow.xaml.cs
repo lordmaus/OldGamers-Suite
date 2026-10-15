@@ -152,7 +152,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("BtnExport_Click", ex);
+                AppLog.Error("BtnExport_Click", ex);
                 AppDialog.Show(this, "Export failed — see crash log.",
                     "Export rules", MessageBoxButton.OK, MessageBoxImage.Warning);
             }
@@ -214,7 +214,7 @@ namespace BadgeOverlay
                             System.IO.File.WriteAllText(bak, bakJson);
                         }
                     }
-                    catch (Exception bex) { CrashLog.Write("BtnImport_Click backup", bex); }
+                    catch (Exception bex) { AppLog.Error("BtnImport_Click backup", bex); }
                     _s.CustomRules.Clear();
                 }
                 _s.CustomRules.AddRange(imported);
@@ -225,7 +225,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("BtnImport_Click", ex);
+                AppLog.Error("BtnImport_Click", ex);
                 AppDialog.Show(this, "Import failed — file may not be a valid rules export.",
                     "Import rules", MessageBoxButton.OK, MessageBoxImage.Warning);
             }

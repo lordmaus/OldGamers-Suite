@@ -8,6 +8,10 @@ namespace TimerStudio
 {
     public partial class App : Application
     {
+        // S-07 (2026-10-14): suite log, <data dir>\logs\TimerStudio.log. Static ctor = before anything else runs.
+        static App() => AppLog.Configure(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "TimerStudio"), "TimerStudio",
+            new AppLogOptions { RedactEmails = true });   // SMTP / Graph errors carry recipient addresses
+
         private static bool  _isDark = true;
         public  static bool  IsDark  => _isDark;
 
@@ -31,7 +35,7 @@ namespace TimerStudio
             if (Current.MainWindow is TimerStudio.MainWindow mw)
             {
                 try { mw.PrepareForRestart(); }
-                catch (Exception ex) { DiagLog.WriteException("App.Restart save", ex); }
+                catch (Exception ex) { AppLog.Error("App.Restart save", ex); }
             }
             string exePath = Environment.ProcessPath
                 ?? System.Diagnostics.Process.GetCurrentProcess().MainModule?.FileName;
@@ -158,12 +162,12 @@ namespace TimerStudio
             AppDomain.CurrentDomain.UnhandledException += (s, args) =>
             {
                 if (args.ExceptionObject is Exception ex)
-                    DiagLog.WriteException("AppDomain.UnhandledException (terminating=" + args.IsTerminating + ")",
-                        ex, redactEmails: true);
+                    AppLog.Error("AppDomain.UnhandledException (terminating=" + args.IsTerminating + ")",
+                        ex);
             };
             System.Threading.Tasks.TaskScheduler.UnobservedTaskException += (s, args) =>
             {
-                DiagLog.WriteException("TaskScheduler.UnobservedTaskException", args.Exception, redactEmails: true);
+                AppLog.Error("TaskScheduler.UnobservedTaskException", args.Exception);
                 args.SetObserved();
             };
 
@@ -253,7 +257,7 @@ namespace TimerStudio
             // ── Save timers on unhandled crash ────────────────────────────────
             DispatcherUnhandledException += (s, args) =>
             {
-                DiagLog.WriteException("DispatcherUnhandledException", args.Exception, redactEmails: true);
+                AppLog.Error("DispatcherUnhandledException", args.Exception);
                 try
                 {
                     if (MainWindow is MainWindow mw)

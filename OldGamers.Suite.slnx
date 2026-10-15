@@ -11,6 +11,7 @@
     <Project Path="TimerStudio/TimerStudio.csproj" />
   </Folder>
   <Folder Name="/Tests/">
+    <Project Path="Shared/OldGamers.Wpf.Shared.Tests/OldGamers.Wpf.Shared.Tests.csproj" />
     <Project Path="BadgeOverlay.Tests/BadgeOverlay.Tests.csproj" />
     <Project Path="FileCopy.Tests/FileCopy.Tests.csproj" />
     <Project Path="NoteStation.Tests/NoteStation.Tests.csproj" />

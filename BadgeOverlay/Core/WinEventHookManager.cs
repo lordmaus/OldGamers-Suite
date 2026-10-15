@@ -114,7 +114,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("WinEventHookManager.Subscribe", ex);
+                AppLog.Error("WinEventHookManager.Subscribe", ex);
                 sub.KeepAlive = null;
                 return sub;   // Disposed=false but Handle=Zero; Dispose is a safe no-op
             }
@@ -127,7 +127,7 @@ namespace BadgeOverlay
                 // Return the subscription anyway so callers can dispose
                 // uniformly without null-checking.
                 sub.KeepAlive = null;
-                CrashLog.Write("WinEventHookManager.Subscribe",
+                AppLog.Error("WinEventHookManager.Subscribe",
                     new InvalidOperationException(
                         $"SetWinEventHook returned 0 for range " +
                         $"0x{eventMin:X4}..0x{eventMax:X4}"));

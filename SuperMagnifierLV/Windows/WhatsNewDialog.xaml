@@ -34,7 +34,7 @@
                      FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Status messages: choose 5 s, 10 s or until dismissed in Settings; they pause while hovered, Esc dismisses, and the tray menu has Recent messages."
                      FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
-          <TextBlock Text="• Crash log: About → Open crash log folder."
+          <TextBlock Text="• Log: About → Open log folder."
                      FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>
           <TextBlock Text="• Larger text throughout (minimum 12 px) and 44 px controls; theme colours meet 7:1 contrast."
                      FontFamily="{DynamicResource AppFontFamily}" FontSize="{DynamicResource FontSizeCaption}" Foreground="{DynamicResource BrushText}" TextWrapping="Wrap" Margin="0,2"/>

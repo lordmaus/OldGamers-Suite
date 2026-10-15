@@ -74,7 +74,7 @@ namespace BadgeOverlay
                             if (!string.IsNullOrEmpty(label))
                                 System.Windows.Clipboard.SetText(label);
                         }
-                        catch (Exception ex) { CrashLog.Write("CopyLabelHotkey", ex); }
+                        catch (Exception ex) { AppLog.Error("CopyLabelHotkey", ex); }
                     });
 
                 // Toggle speech on / off — runtime mute switch over
@@ -86,7 +86,7 @@ namespace BadgeOverlay
                     () =>
                     {
                         try { _overlay?.ToggleSpeechMuted(); }
-                        catch (Exception ex) { CrashLog.Write("ToggleSpeechHotkey", ex); }
+                        catch (Exception ex) { AppLog.Error("ToggleSpeechHotkey", ex); }
                     });
 
                 // Load Preset 1-5 — recall saved settings from a slot.
@@ -117,7 +117,7 @@ namespace BadgeOverlay
                         () => SavePreset(slot));
                 }
             }
-            catch (Exception ex) { CrashLog.Write("RegisterHotkeys", ex); }
+            catch (Exception ex) { AppLog.Error("RegisterHotkeys", ex); }
         }
 
         /// <summary>
@@ -136,7 +136,7 @@ namespace BadgeOverlay
             if (!hk.IsRegistered)
             {
                 hk.Dispose();
-                CrashLog.Write(
+                AppLog.Warn(
                     $"Hotkey '{name}' failed to register " +
                     $"(mods={mods:X} vk={vk:X}). " +
                     "Another app is probably using the same shortcut.");

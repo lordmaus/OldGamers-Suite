@@ -215,7 +215,7 @@ namespace SuperMagnifier
                     SnapBtn.Foreground = BrushInactive; };
                 t.Start();
             }
-            catch (System.Exception _ex) { CrashLog.Write("SaveSnapshot", _ex); }
+            catch (System.Exception _ex) { AppLog.Error("SaveSnapshot", _ex); }
         }
 
         // ── Colour picker ─────────────────────────────────────────────────────

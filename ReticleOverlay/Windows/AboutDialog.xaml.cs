@@ -137,7 +137,7 @@ namespace ReticleOverlay
                 }
                 ProfileStore.Save(existing);
                 if (sanitized > 0)
-                    CrashLog.Info($"Import: cleared {sanitized} unsafe (non-local) CustomImagePath value(s).");
+                    AppLog.Info($"Import: cleared {sanitized} unsafe (non-local) CustomImagePath value(s).");
 
                 ProfilesImported?.Invoke(this, EventArgs.Empty);
                 AppDialog.Show(
@@ -193,19 +193,19 @@ namespace ReticleOverlay
         private static void OpenUrl(string url)
         {
             try { Process.Start(new ProcessStartInfo(url) { UseShellExecute = true }); }
-            catch (Exception ex) { CrashLog.Write("OpenUrl", ex); }
+            catch (Exception ex) { AppLog.Error("OpenUrl", ex); }
         }
 
         private void BtnCrashLog_Click(object sender, RoutedEventArgs e)
         {
             try
             {
-                Directory.CreateDirectory(CrashLog.Dir);
+                Directory.CreateDirectory(AppLog.LogDirectory);
                 var psi = new ProcessStartInfo("explorer.exe") { UseShellExecute = false };
-                psi.ArgumentList.Add(CrashLog.Dir);
+                psi.ArgumentList.Add(AppLog.LogDirectory);
                 Process.Start(psi);
             }
-            catch (Exception ex) { CrashLog.Write("Open crash log folder", ex); }
+            catch (Exception ex) { AppLog.Error("Open log folder", ex); }
         }
 
         // ── Window size persistence ───────────────────────────────────────────

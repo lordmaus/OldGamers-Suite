@@ -60,9 +60,9 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("BtnResetAll_Click", ex);
+                AppLog.Error("BtnResetAll_Click", ex);
                 AppDialog.Show(
-                    "Reset failed. See crash.log for details.",
+                    "Reset failed. See About → View log for details.",
                     "Reset all settings",
                     MessageBoxButton.OK, MessageBoxImage.Error);
             }
@@ -95,7 +95,7 @@ namespace BadgeOverlay
             {
                 if (Owner is MainWindow mw) mw.ExportSettingsPublic();
             }
-            catch (Exception ex) { CrashLog.Write("BtnExportSettings_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnExportSettings_Click", ex); }
         }
 
         private void BtnImportSettings_Click(object sender, RoutedEventArgs e)
@@ -104,7 +104,7 @@ namespace BadgeOverlay
             {
                 if (Owner is MainWindow mw) mw.ImportSettingsPublic();
             }
-            catch (Exception ex) { CrashLog.Write("BtnImportSettings_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnImportSettings_Click", ex); }
         }
 
         private void BtnCheckUpdates_Click(object sender, RoutedEventArgs e)
@@ -172,7 +172,7 @@ namespace BadgeOverlay
                     catch { /* swallow: no browser */ }
                 }
             }
-            catch (Exception ex) { CrashLog.Write("BtnOpenReadme_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnOpenReadme_Click", ex); }
         }
 
         /// <summary>
@@ -191,7 +191,7 @@ namespace BadgeOverlay
                 var win = new CheatSheetWindow(s) { Owner = this };
                 win.ShowDialog();
             }
-            catch (Exception ex) { CrashLog.Write("BtnCheatSheet_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnCheatSheet_Click", ex); }
         }
 
         /// <summary>
@@ -209,7 +209,7 @@ namespace BadgeOverlay
                 var welcome = new WelcomeWindow { Owner = this };
                 welcome.ShowDialog();
             }
-            catch (Exception ex) { CrashLog.Write("BtnReplayWelcome_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnReplayWelcome_Click", ex); }
         }
 
         /// <summary>
@@ -359,10 +359,10 @@ namespace BadgeOverlay
                     }
                     catch (Exception ex2)
                     {
-                        CrashLog.Write("BtnAudit_Click run", ex2);
+                        AppLog.Error("BtnAudit_Click run", ex2);
                         WindowState = prevState;
                         AppDialog.Show(
-                            "The audit failed. Details have been written to the crash log.",
+                            "The audit failed. Details have been written to the log.",
                             "Audit failed", MessageBoxButton.OK, MessageBoxImage.Warning);
                         return;
                     }
@@ -382,7 +382,7 @@ namespace BadgeOverlay
                     }
                     catch (Exception ex3)
                     {
-                        CrashLog.Write("BtnAudit_Click open", ex3);
+                        AppLog.Error("BtnAudit_Click open", ex3);
                         AppDialog.Show(
                             $"Audit saved to:\n{outPath}\n\n" +
                             "Couldn't open it automatically — open it manually in your browser.",
@@ -391,7 +391,7 @@ namespace BadgeOverlay
                 };
                 timer.Start();
             }
-            catch (Exception ex) { CrashLog.Write("BtnAudit_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnAudit_Click", ex); }
         }
 
         private void BtnVenmo_Click(object sender, RoutedEventArgs e)
@@ -411,7 +411,7 @@ namespace BadgeOverlay
                 FileName        = "https://oldgamerssoftware.com/",
                 UseShellExecute = true
             }); }
-            catch (Exception ex) { CrashLog.Write("BtnWebsite_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnWebsite_Click", ex); }
         }
 
         private void BtnGitHub_Click(object sender, RoutedEventArgs e)
@@ -421,7 +421,7 @@ namespace BadgeOverlay
                 FileName        = "https://github.com/lordmaus/Badge-Overlay",
                 UseShellExecute = true
             }); }
-            catch (Exception ex) { CrashLog.Write("BtnGitHub_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnGitHub_Click", ex); }
         }
 
         private void BtnThirdPartyNotices_Click(object sender, RoutedEventArgs e)
@@ -452,7 +452,7 @@ namespace BadgeOverlay
                         System.Windows.MessageBoxImage.Information);
                 }
             }
-            catch (Exception ex) { CrashLog.Write("BtnThirdPartyNotices_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnThirdPartyNotices_Click", ex); }
         }
 
         private void BtnCashApp_Click(object sender, RoutedEventArgs e)
@@ -481,7 +481,7 @@ namespace BadgeOverlay
                     "**What happened?**\n\n\n" +
                     "**What did you expect to happen?**\n\n\n" +
                     "**Steps to reproduce**\n1. \n2. \n3. \n\n" +
-                    "**Crash log tail** (optional — from About → View crash log)\n```\n\n```\n");
+                    "**Log tail** (optional — from About → View log)\n```\n\n```\n");
                 string url = $"https://github.com/lordmaus/Badge-Overlay/issues/new?title=&body={body}";
                 System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
                 {
@@ -489,7 +489,7 @@ namespace BadgeOverlay
                     UseShellExecute = true
                 });
             }
-            catch (Exception ex) { CrashLog.Write("BtnReportProblem_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnReportProblem_Click", ex); }
         }
 
         private void BtnViewCrashLog_Click(object sender, RoutedEventArgs e)
@@ -499,7 +499,7 @@ namespace BadgeOverlay
                 var w = new CrashLogWindow { Owner = this };
                 w.ShowDialog();
             }
-            catch (Exception ex) { CrashLog.Write("BtnViewCrashLog_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnViewCrashLog_Click", ex); }
         }
 
         private void BtnClose_Click(object sender, RoutedEventArgs e) => Close();

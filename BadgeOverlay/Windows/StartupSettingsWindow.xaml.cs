@@ -125,15 +125,15 @@ namespace BadgeOverlay
                 if (!string.Equals(stored, current, System.StringComparison.OrdinalIgnoreCase))
                 {
                     key.SetValue(StartupRegName, current);
-                    // CrashLog.Write() now redacts %USERPROFILE% centrally,
+                    // AppLog.Warn() now redacts %USERPROFILE% centrally,
                     // but redact here too — the message text becomes the
                     // "context" argument, which is safe either way.
-                    CrashLog.Write(
+                    AppLog.Warn(
                         "StartupRegKey: path updated after app move. " +
-                        $"was='{CrashLog.Redact(stored)}' now='{CrashLog.Redact(current)}'");
+                        $"was='{AppLog.Redact(stored)}' now='{AppLog.Redact(current)}'");
                 }
             }
-            catch (System.Exception ex) { CrashLog.Write("RefreshStartupPathIfStale", ex); }
+            catch (System.Exception ex) { AppLog.Error("RefreshStartupPathIfStale", ex); }
         }
 
         private static string BuildStartupValue()

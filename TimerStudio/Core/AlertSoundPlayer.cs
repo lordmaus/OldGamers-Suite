@@ -19,7 +19,7 @@ namespace TimerStudio
         {
             if (sound == AlertSound.Silent) return;
             Task.Run(() => PlaySync(sound))
-                .ContinueWith(t => DiagLog.WriteException("AlertSoundPlayer.Play", t.Exception!.GetBaseException()),
+                .ContinueWith(t => AppLog.Error("AlertSoundPlayer.Play", t.Exception!.GetBaseException()),
                     TaskContinuationOptions.OnlyOnFaulted);
         }
 

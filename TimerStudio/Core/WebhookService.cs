@@ -47,7 +47,7 @@ namespace TimerStudio
         {
             if (string.IsNullOrWhiteSpace(webhookUrl)) return false;
             if (ValidateUrl(webhookUrl) is null) return true;
-            DiagLog.Write($"[WebhookService] skipped — URL not allowed: {TruncateUrl(webhookUrl)}");
+            AppLog.Info($"[WebhookService] skipped — URL not allowed: {TruncateUrl(webhookUrl)}");
             return false;
         }
 
@@ -135,7 +135,7 @@ namespace TimerStudio
                     if (response.IsSuccessStatusCode) return;
 
                     int code = (int)response.StatusCode;
-                    DiagLog.Write($"[WebhookService] HTTP {code} from {TruncateUrl(url)} (attempt {attempt})");
+                    AppLog.Info($"[WebhookService] HTTP {code} from {TruncateUrl(url)} (attempt {attempt})");
 
                     // Retry only on 5xx; 4xx are client errors — retrying won't help
                     if (code < 500 || attempt == maxAttempts) return;
@@ -143,7 +143,7 @@ namespace TimerStudio
                 }
                 catch (Exception ex)
                 {
-                    DiagLog.WriteException($"WebhookService.PostAsync {TruncateUrl(url)} attempt {attempt}", ex);
+                    AppLog.Error($"WebhookService.PostAsync {TruncateUrl(url)} attempt {attempt}", ex);
                     if (attempt == maxAttempts) return;
                     await System.Threading.Tasks.Task.Delay(2000).ConfigureAwait(false);
                 }

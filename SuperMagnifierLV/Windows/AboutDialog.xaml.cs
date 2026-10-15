@@ -26,7 +26,7 @@ namespace SuperMagnifier
         {
             try
             {
-                string log = CrashLog.LogPath;
+                string log = AppLog.FilePath;
                 string dir = System.IO.Path.GetDirectoryName(log);
                 if (string.IsNullOrEmpty(dir)) return;
                 System.IO.Directory.CreateDirectory(dir);
@@ -35,7 +35,7 @@ namespace SuperMagnifier
                 else                            psi.ArgumentList.Add(dir);
                 Process.Start(psi);
             }
-            catch (Exception ex) { CrashLog.Write("OpenCrashLogBtn", ex); }
+            catch (Exception ex) { AppLog.Error("Open log folder", ex); }
         }
 
         private void CopySettingsPathBtn_Click(object sender, RoutedEventArgs e)

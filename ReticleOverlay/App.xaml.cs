@@ -9,6 +9,9 @@ namespace ReticleOverlay
 {
     public partial class App : Application
     {
+        // S-07 (2026-10-14): suite log, <data dir>\logs\ReticleOverlay.log. Static ctor = before anything else runs.
+        static App() => AppLog.Configure(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "ReticleOverlay"), "ReticleOverlay");
+
         // ── Theme registry ────────────────────────────────────────────────────
                 public static readonly string[] ThemeNames =
         {
@@ -175,7 +178,7 @@ namespace ReticleOverlay
         {
             try
             {
-                CrashLog.Write("Unhandled (" + source + ")", ex);   // RO-03: Release builds now keep a trace
+                AppLog.Error("Unhandled (" + source + ")", ex);   // RO-03: Release builds now keep a trace
                 // Prefs are UI-owned — save on the UI thread (2 s cap when called from a worker).
                 var d = Current?.Dispatcher;
                 if (d == null || d.CheckAccess()) AppPrefs.Instance.Save();

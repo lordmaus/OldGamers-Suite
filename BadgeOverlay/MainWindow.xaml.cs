@@ -169,7 +169,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("MainWindow.OnLoaded", ex);
+                AppLog.Error("MainWindow.OnLoaded", ex);
             }
             finally
             {
@@ -195,7 +195,7 @@ namespace BadgeOverlay
                         _s.Save();
                     }
                 }
-                catch (Exception ex) { CrashLog.Write("WelcomeWindow", ex); }
+                catch (Exception ex) { AppLog.Error("WelcomeWindow", ex); }
             }
 
             UpdateStatusBar();   // initial paint
@@ -239,7 +239,7 @@ namespace BadgeOverlay
                     System.Windows.Automation.AutomationProperties.SetName(
                         FooterLandmark, "Footer");
             }
-            catch (Exception ex) { CrashLog.Write("InitLandmarks", ex); }
+            catch (Exception ex) { AppLog.Error("InitLandmarks", ex); }
         }
 
         // ── Controls ← Settings ───────────────────────────────────────────────
@@ -1002,7 +1002,7 @@ namespace BadgeOverlay
                 _s.Save();
                 RegisterHotkeys();
             }
-            catch (Exception ex) { CrashLog.Write("BtnConfigureSpeakHotkey_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnConfigureSpeakHotkey_Click", ex); }
         }
 
         private void RbGranularity_Checked(object sender, RoutedEventArgs e)
@@ -1075,7 +1075,7 @@ namespace BadgeOverlay
                 _cheatSheet.Closed += (s2, e2) => _cheatSheet = null;
                 _cheatSheet.ShowDialog();
             }
-            catch (Exception ex) { CrashLog.Write("OpenCheatSheet_Executed", ex); }
+            catch (Exception ex) { AppLog.Error("OpenCheatSheet_Executed", ex); }
         }
 
         // ── UI scale cycle ────────────────────────────────────────────────────
@@ -1115,7 +1115,7 @@ namespace BadgeOverlay
                 _cheatSheet.Closed += (s2, e2) => _cheatSheet = null;
                 _cheatSheet.ShowDialog();
             }
-            catch (Exception ex) { CrashLog.Write("BtnSectionHelp_Click", ex); }
+            catch (Exception ex) { AppLog.Error("BtnSectionHelp_Click", ex); }
         }
 
         // ── Status bar ────────────────────────────────────────────────────────
@@ -1274,7 +1274,7 @@ namespace BadgeOverlay
                     _s.Save();  // always write — covers both pending edits and window geometry
                 }
             }
-            catch (Exception ex) { CrashLog.Write("TrySaveSettings", ex); }
+            catch (Exception ex) { AppLog.Error("TrySaveSettings", ex); }
         }
 
         /// <summary>

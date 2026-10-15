@@ -4,6 +4,13 @@ All notable changes to Reticle Overlay are documented here.
 Format follows [Keep a Changelog](https://keepachangelog.com/en/1.0.0/).
 Versions follow `yyyy.mm.dd.xxxx` (date + 4-digit daily build counter; 3-digit before 2026-10-13).
 
+## [Unreleased] – 2026-10-14 · One log, shared helpers (S-05 / S-07)
+
+### Changed
+- **One log file: `%APPDATA%\ReticleOverlay\logs\ReticleOverlay.log`** (rotated at 512 KB to `.old`; About → Open log folder). Replaces crash.log. Errors now include the full stack trace; your Windows profile path is written as `%USERPROFILE%`; repeated identical entries are merged and a log flood is capped. Old log files are left in place and can be deleted.
+- `window-sizes.json` writes are atomic (shared `WindowSizeStore`).
+- Corrupt-file keep (`*.corrupt-<date>.json`) moved to the shared library, same behaviour.
+
 ## [Unreleased] – 2026-10-14 · One version mechanism (S-03)
 
 ### Changed

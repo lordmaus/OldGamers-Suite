@@ -10,6 +10,9 @@ namespace BadgeOverlay
 {
     public partial class App : Application
     {
+        // S-07 (2026-10-14): suite log, <data dir>\logs\BadgeOverlay.log. Static ctor = before anything else runs.
+        static App() => AppLog.Configure(System.IO.Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "BadgeOverlay"), "BadgeOverlay");
+
         // C# 14: private-setter auto-property eliminates the _isDark backing field.
         // The field keyword is unnecessary here — no custom getter/setter logic —
         // so the idiomatic form is a plain auto-property with private set.
@@ -80,7 +83,7 @@ namespace BadgeOverlay
         public static void ApplyOverlayPalette()
         {
             try { OverlayPalette.Apply(CurrentBadgeStyle, _themeKey, SystemParameters.HighContrast); }
-            catch (Exception ex) { CrashLog.Write("ApplyOverlayPalette", ex); }
+            catch (Exception ex) { AppLog.Error("ApplyOverlayPalette", ex); }
         }
 
         public static void ApplyTheme(string key)
@@ -184,14 +187,14 @@ namespace BadgeOverlay
             };
             fadeOut.Completed += (s, e) =>
             {
-                try { DoSwap(); } catch (Exception ex) { CrashLog.Write("ApplyTheme.Swap", ex); }
+                try { DoSwap(); } catch (Exception ex) { AppLog.Error("ApplyTheme.Swap", ex); }
                 try { win.BeginAnimation(UIElement.OpacityProperty, fadeIn); }
-                catch (Exception ex) { CrashLog.Write("ApplyTheme.FadeIn", ex); }
+                catch (Exception ex) { AppLog.Error("ApplyTheme.FadeIn", ex); }
             };
             try { win.BeginAnimation(UIElement.OpacityProperty, fadeOut); }
             catch (Exception ex)
             {
-                CrashLog.Write("ApplyTheme.FadeOut", ex);
+                AppLog.Error("ApplyTheme.FadeOut", ex);
                 DoSwap();   // animation failed — still swap so theme actually changes
             }
         }
@@ -260,7 +263,7 @@ namespace BadgeOverlay
                 System.Runtime.GCSettings.LatencyMode =
                     System.Runtime.GCLatencyMode.SustainedLowLatency;
             }
-            catch (Exception ex) { CrashLog.Write("GC LatencyMode", ex); }
+            catch (Exception ex) { AppLog.Error("GC LatencyMode", ex); }
 
             // Restarted by App.Restart(): wait for the old process to finish exiting
             // (it may still be saving / tearing down hooks) before the duplicate check.
@@ -308,7 +311,7 @@ namespace BadgeOverlay
             // Heal a stale Run-key path if the user moved / reinstalled the
             // app. No-op when Start-with-Windows isn't enabled.
             try { StartupSettingsWindow.RefreshStartupPathIfStale(); }
-            catch (Exception ex) { CrashLog.Write("RefreshStartupPathIfStale (OnStartup)", ex); }
+            catch (Exception ex) { AppLog.Error("RefreshStartupPathIfStale (OnStartup)", ex); }
         }
 
         private static void OnSessionSwitch(object sender,
@@ -347,7 +350,7 @@ namespace BadgeOverlay
                         break;
                 }
             }
-            catch (Exception ex) { CrashLog.Write("OnSessionSwitch", ex); }
+            catch (Exception ex) { AppLog.Error("OnSessionSwitch", ex); }
         }
 
         private void OnUnhandledException(
@@ -419,7 +422,7 @@ namespace BadgeOverlay
                 }
             }
             catch (ArgumentException) { return; }          // already gone
-            catch (Exception ex) { CrashLog.Write("WaitForRestartedParent", ex); }
+            catch (Exception ex) { AppLog.Error("WaitForRestartedParent", ex); }
 
             // No pid: poll until the old instance's mutex disappears (≤ 5 s).
             var until = DateTime.UtcNow.AddSeconds(5);
@@ -440,7 +443,7 @@ namespace BadgeOverlay
                 w.WriteLine("activate");
                 return true;
             }
-            catch (Exception ex) { CrashLog.Write("SignalExistingInstance", ex); return false; }
+            catch (Exception ex) { AppLog.Error("SignalExistingInstance", ex); return false; }
         }
 
         private void StartActivationListener()
@@ -464,7 +467,7 @@ namespace BadgeOverlay
                     catch (OperationCanceledException) { return; }
                     catch (Exception ex)
                     {
-                        CrashLog.Write("Activation listener", ex);
+                        AppLog.Error("Activation listener", ex);
                         try { await Task.Delay(1000, token).ConfigureAwait(false); } catch (OperationCanceledException) { return; }
                     }
                 }
@@ -473,14 +476,14 @@ namespace BadgeOverlay
 
         /// <summary>
         /// Single funnel for the three top-level exception sinks
-        /// (Dispatcher, AppDomain, TaskScheduler). CrashLog.Write already
+        /// (Dispatcher, AppDomain, TaskScheduler). AppLog.Error already
         /// swallows its own failures internally, so no outer try/catch is
         /// needed here — the previous defensive wrapping was dead defence.
         /// </summary>
         private static void LogUnhandled(string source, Exception ex)
         {
             if (ex == null) return;
-            CrashLog.Write(source, ex);
+            AppLog.Error(source, ex);
         }
 
         protected override void OnSessionEnding(SessionEndingCancelEventArgs e)
@@ -491,7 +494,7 @@ namespace BadgeOverlay
                 MainWindow mw = MainWindow as MainWindow;
                 if (mw != null) mw.TrySaveSettings();
             }
-            catch (Exception ex) { CrashLog.Write("OnSessionEnding", ex); }
+            catch (Exception ex) { AppLog.Error("OnSessionEnding", ex); }
         }
 
         protected override void OnExit(ExitEventArgs e)
@@ -512,7 +515,7 @@ namespace BadgeOverlay
             // the windows that depend on them; this is the last line
             // of defence.
             try { WinEventHookManager.DisposeAll(); }
-            catch (Exception ex) { CrashLog.Write("WinEventHookManager.DisposeAll", ex); }
+            catch (Exception ex) { AppLog.Error("WinEventHookManager.DisposeAll", ex); }
 
             try { _pipeCts?.Cancel(); } catch { }
             try

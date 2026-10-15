@@ -60,7 +60,7 @@ namespace SuperMagnifier
                     }
                 }
             }
-            catch (Exception ex) { CrashLog.Write("LensPreset.LoadAll", ex); }
+            catch (Exception ex) { AppLog.Error("LensPreset.LoadAll", ex); }
             for (int i = 0; i < list.Count; i++) list[i] ??= new LensPreset();
             while (list.Count < 5) list.Add(new LensPreset());
             if (list.Count > 5) list.RemoveRange(5, list.Count - 5);
@@ -111,7 +111,7 @@ namespace SuperMagnifier
             }
             catch (Exception ex)
             {
-                CrashLog.Write("LensPreset.SaveAll", ex);
+                AppLog.Error("LensPreset.SaveAll", ex);
                 return false;
             }
         }

@@ -2,7 +2,8 @@
 
   <!-- Suite shared library (2026-10-13, S-05). Referenced by all six apps.
        Holds code that was copied between apps: accessible resize grip, keyboard window mover,
-       type ramp, version display, themed dialog, second-launch activation.
+       type ramp, version display, themed dialog, second-launch activation,
+       app log (S-07), atomic writes / corrupt-file keep, window-size store (2026-10-14).
        Themes are not compiled here: Shared\Themes\*.xaml are linked into each app so the
        existing relative "Themes/X.xaml" URIs keep working. -->
   <PropertyGroup>

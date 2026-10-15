@@ -16,7 +16,7 @@ The app saves your preferences (crosshair styles, per-game profiles, global hotk
 
 These files never leave your machine.
 
-- `crash.log` (rotated at 512 KB to `crash.log.old`) — written only when something goes wrong: error type, message and stack trace. No screen content, window titles or file contents.
+- `logs\ReticleOverlay.log` (rotated at 512 KB to `.old`) — error type, message and full stack trace, plus short notices (e.g. a hotkey that could not be registered). Your Windows profile path is replaced by `%USERPROFILE%`; identical entries are merged and flooding is capped. No screen content, window titles or file contents. Older versions wrote `crash.log`; you can delete it.
 - `profiles.corrupt-<date>.json` / `prefs.corrupt-<date>.json` — kept only if a saved file could not be read, so you can recover it; delete them any time.
 
 ## Process detection

@@ -264,7 +264,7 @@ namespace ReticleOverlay
                 // cannot leave prefs.json partially written.
                 System.IO.File.Move(tmp, File, overwrite: true);
             }
-            catch (Exception ex) { CrashLog.Write("Prefs.Save", ex); }
+            catch (Exception ex) { AppLog.Error("Prefs.Save", ex); }
         }
 
         public void Load()
@@ -277,7 +277,7 @@ namespace ReticleOverlay
                 if (d != null) FromData(d);
             }
             catch (JsonException ex) { CorruptFile.SetAside(File, ex); }   // RO-05
-            catch (Exception ex) { CrashLog.Write("Prefs.Load", ex); }
+            catch (Exception ex) { AppLog.Error("Prefs.Load", ex); }
         }
 
         public void ApplyTo(Window w)

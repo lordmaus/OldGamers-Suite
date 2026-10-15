@@ -38,7 +38,7 @@ namespace ReticleOverlay
             bool ok = NativeMethods.RegisterHotKey(_source.Handle, id, mods | NativeMethods.MOD_NOREPEAT, vk);
             if (!ok)
             {
-                CrashLog.Info($"Hotkey '{hotkeyString}' could not be registered (in use by another app?)");
+                AppLog.Info($"Hotkey '{hotkeyString}' could not be registered (in use by another app?)");
                 return -1;
             }
             _actions[id] = callback;

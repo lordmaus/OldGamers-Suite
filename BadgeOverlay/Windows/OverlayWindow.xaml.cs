@@ -145,7 +145,7 @@ namespace BadgeOverlay
                     // rather than the ctor defaults.
                     if (_s != null) _announcer.ApplySettings(_s);
                 }
-                catch (Exception ex) { CrashLog.Write("EnsureAnnouncer", ex); }
+                catch (Exception ex) { AppLog.Error("EnsureAnnouncer", ex); }
             }
         }
 
@@ -233,7 +233,7 @@ namespace BadgeOverlay
         {
             if ((DateTime.UtcNow - _lastDetectFailLog).TotalMinutes < 10) return;
             _lastDetectFailLog = DateTime.UtcNow;
-            CrashLog.Write("MSAA query failed (logged at most every 10 min)", ex);
+            AppLog.Error("MSAA query failed (logged at most every 10 min)", ex);
         }
 
         public const string DetectionDegradedText =
@@ -247,7 +247,7 @@ namespace BadgeOverlay
                 if (degraded) _announcer?.Announce(DetectionDegradedText, force: true);
                 DetectionHealthChanged?.Invoke(degraded);
             }
-            catch (Exception ex) { CrashLog.Write("OnDetectionHealthChanged", ex); }
+            catch (Exception ex) { AppLog.Error("OnDetectionHealthChanged", ex); }
         }
 
         // ── Constructor ───────────────────────────────────────────────────────
@@ -403,7 +403,7 @@ namespace BadgeOverlay
                     NativeMethods.EVENT_SYSTEM_MINIMIZEEND,
                     _winEventDelegate);
             }
-            catch (Exception ex) { CrashLog.Write("RegisterWinEventHooks", ex); }
+            catch (Exception ex) { AppLog.Error("RegisterWinEventHooks", ex); }
         }
 
         private void OnWinEvent(IntPtr hHook, uint eventType, IntPtr hwnd,

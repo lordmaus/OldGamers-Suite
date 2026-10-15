@@ -208,24 +208,6 @@ namespace SuperMagnifier
 
         public static string FilePath => SettingsPath;
 
-        // ── Diagnostic log rotation ────────────────────────────────────────
-        // magnifier_error.log was appended to on every Load()/Save() call with no
-        // size cap, growing unbounded over months of daily use. Cap it at 1 MB and
-        // truncate (drop) rather than grow past that on each append.
-        private const long MaxDiagnosticLogBytes = 1 * 1024 * 1024;
-
-        private static void AppendDiagnosticLog(string path, string text)
-        {
-            try
-            {
-                var fi = new FileInfo(path);
-                if (fi.Exists && fi.Length > MaxDiagnosticLogBytes)
-                    File.Delete(path);
-            }
-            catch { /* best-effort rotation — fall through to append */ }
-            File.AppendAllText(path, text);
-        }
-
         /// <summary>Returns a deep clone of this settings object.</summary>
         public AppSettings Clone()
         {
@@ -243,18 +225,7 @@ namespace SuperMagnifier
             var s = new AppSettings();
             try
             {
-                // Diagnostic log
-                try
-                {
-                    string logDir  = Path.GetDirectoryName(SettingsPath) ?? "";
-                    if (!string.IsNullOrEmpty(logDir)) Directory.CreateDirectory(logDir);
-                    string logPath = Path.Combine(logDir, "magnifier_error.log");
-                    AppendDiagnosticLog(logPath,
-                        $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] Load\n"
-                        + $"  Path: {SettingsPath}\n"
-                        + $"  Exists: {File.Exists(SettingsPath)}\n\n");
-                }
-                catch { }
+                AppLog.Info($"Settings load: {SettingsPath} (exists={File.Exists(SettingsPath)})");
 
                 if (!File.Exists(SettingsPath)) return s;
 
@@ -407,12 +378,7 @@ namespace SuperMagnifier
             }
             catch (Exception ex)
             {
-                try
-                {
-                    string lp = Path.Combine(Path.GetDirectoryName(SettingsPath) ?? "", "magnifier_error.log");
-                    AppendDiagnosticLog(lp, $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] LOAD EXCEPTION: {ex.GetType().Name}: {ex.Message}\n  {ex.StackTrace?.Split('\n')[0]}\n\n");
-                }
-                catch { }
+                AppLog.Error("Settings load", ex);
             }
             return s;
         }
@@ -535,14 +501,7 @@ namespace SuperMagnifier
             }
             catch (Exception ex)
             {
-                try
-                {
-                    string sd = Path.GetDirectoryName(SettingsPath) ?? Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                    if (!Directory.Exists(sd)) sd = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
-                    AppendDiagnosticLog(Path.Combine(sd, "magnifier_error.log"),
-                        $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] SAVE EXCEPTION: {ex.GetType().Name}: {ex.Message}\n  {ex.StackTrace?.Split('\n')[0]}\n\n");
-                }
-                catch { }
+                AppLog.Error("Settings save", ex);
             }
         }
     }

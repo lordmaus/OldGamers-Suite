@@ -3,6 +3,13 @@
 All notable changes to File Copy Studio are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows `yyyy.MM.dd.NNNN`.
 
+## [Unreleased] – 2026-10-14 · One log, shared helpers (S-05 / S-07)
+
+### Changed
+- **Log goes through the suite logger** (`OldGamers.Wpf.Shared` `AppLog`): same daily files `logs\filecopy-studio-<date>.log`, 30 days kept, viewer unchanged. Your Windows profile path is now written as `%USERPROFILE%`; repeated identical entries are merged and a log flood is capped.
+- `window-sizes.json` writes are atomic (shared `WindowSizeStore`).
+- Removed the unused `Microsoft.Extensions.Logging.Debug` package.
+
 ## [Unreleased] – 2026-10-14 · One version mechanism (S-03)
 
 ### Changed

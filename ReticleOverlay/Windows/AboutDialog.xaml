@@ -147,9 +147,9 @@
               HorizontalAlignment="Left"
               Style="{StaticResource FlatButton}"
               FontSize="12" Padding="8,0" MinHeight="44"
-              ToolTip="Opens the folder that holds crash.log (errors only — no screen content)"
-              AutomationProperties.Name="Open crash log folder"
-              Click="BtnCrashLog_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open crash log folder" VerticalAlignment="Center"/></StackPanel></Button>
+              ToolTip="Opens the folder that holds the app log (errors and notices — no screen content)"
+              AutomationProperties.Name="Open log folder"
+              Click="BtnCrashLog_Click"><StackPanel Orientation="Horizontal"><Image Source="{StaticResource JtIcon.File}" Style="{StaticResource JtBtnIcon}"/><TextBlock Text="Open log folder" VerticalAlignment="Center"/></StackPanel></Button>
     </Grid>
 
     <Separator Margin="0,14,0,14"/>

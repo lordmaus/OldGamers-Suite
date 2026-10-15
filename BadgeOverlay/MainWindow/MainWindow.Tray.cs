@@ -38,7 +38,7 @@ namespace BadgeOverlay
                 if (!string.IsNullOrEmpty(exePath) && System.IO.File.Exists(exePath))
                 {
                     try { icon = System.Drawing.Icon.ExtractAssociatedIcon(exePath); }
-                    catch (Exception ex) { CrashLog.Write("Tray icon ExtractAssociatedIcon", ex); }
+                    catch (Exception ex) { AppLog.Error("Tray icon ExtractAssociatedIcon", ex); }
                 }
 
                 // Fallback: loose app.ico beside the EXE. Covers XCOPY
@@ -51,11 +51,11 @@ namespace BadgeOverlay
                     if (System.IO.File.Exists(ico))
                     {
                         try { icon = new System.Drawing.Icon(ico, 16, 16); }
-                        catch (Exception ex) { CrashLog.Write("Tray icon file load", ex); }
+                        catch (Exception ex) { AppLog.Error("Tray icon file load", ex); }
                     }
                     else
                     {
-                        CrashLog.Write($"Tray icon: app.ico missing at {ico}");
+                        AppLog.Warn($"Tray icon: app.ico missing at {ico}");
                     }
                 }
 
@@ -63,7 +63,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("SetupTray", ex);
+                AppLog.Error("SetupTray", ex);
                 _tray.Icon = System.Drawing.SystemIcons.Application;
             }
 

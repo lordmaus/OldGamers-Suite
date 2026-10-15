@@ -32,7 +32,6 @@
   <ItemGroup>
     <PackageReference Include="System.IO.Hashing"                      Version="10.0.0" />
     <PackageReference Include="Microsoft.Extensions.Logging"           Version="10.0.0" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Debug"     Version="10.0.0" />
   </ItemGroup>
 
   <!-- App.xaml is in src/ — WPF SDK only auto-detects ApplicationDefinition at root -->

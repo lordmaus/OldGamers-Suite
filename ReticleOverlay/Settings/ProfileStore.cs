@@ -70,7 +70,7 @@ namespace ReticleOverlay
                 CorruptFile.SetAside(file, ex);
                 return new List<ReticleProfile>();
             }
-            catch (Exception ex) { CrashLog.Write("ProfileStore.Load", ex); return new List<ReticleProfile>(); }
+            catch (Exception ex) { AppLog.Error("ProfileStore.Load", ex); return new List<ReticleProfile>(); }
         }
 
         public static void Save(List<ReticleProfile> profiles) => Save(profiles, File);
@@ -85,7 +85,7 @@ namespace ReticleOverlay
                 System.IO.File.WriteAllText(tmp, json, System.Text.Encoding.UTF8);
                 System.IO.File.Move(tmp, file, overwrite: true);
             }
-            catch (Exception ex) { CrashLog.Write("ProfileStore.Save", ex); }
+            catch (Exception ex) { AppLog.Error("ProfileStore.Save", ex); }
         }
     }
 }

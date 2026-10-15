@@ -20,7 +20,7 @@ These files never leave your machine.
 
 Activity logs are written to `%AppData%\File Copy Studio\logs\` (portable mode: `Data\logs\` beside the exe):
 
-- `filecopy-studio-<date>.log` — one file per day; scans, copies, skipped folders, errors and crash details. Entries include **full source and destination paths**, which can contain your Windows user name and folder names.
+- `filecopy-studio-<date>.log` — one file per day; scans, copies, skipped folders, errors and crash details. Entries include **full source and destination paths** (folder names); the part of a path inside your Windows profile is written as `%USERPROFILE%` so your user name is not recorded.
 - `scheduler-job-<id>.log` — per scheduled job run history.
 - Daily logs older than 30 days are deleted automatically on startup. Release builds log at Information level and above.
 

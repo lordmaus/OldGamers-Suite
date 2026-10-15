@@ -1,5 +1,4 @@
 using System;
-using System.IO;
 using Microsoft.Extensions.Logging;
 
 #nullable enable
@@ -8,20 +7,20 @@ using Microsoft.Extensions.Logging;
 namespace FileCopy
 {
     /// <summary>
-    /// Central logging setup. Writes structured log entries to:
-    ///   - Debug output (VS Output window / DebugView)
-    ///   - %APPDATA%\FileCopy\logs\filecopy-{date}.log (plain text, rolling by day)
+    /// Central logging setup. FileCopy code logs through <see cref="ILogger"/>; every entry goes to the
+    /// suite <see cref="AppLog"/> (S-07, 2026-10-14): one file per day,
+    /// <c>logs\filecopy-studio-yyyy-MM-dd.log</c> (portable: <c>Data\logs\</c>), 30 days kept,
+    /// profile path redacted, Information and above (Debug output window gets everything).
     /// </summary>
     public static class AppLogger
     {
-        private static ILoggerFactory _factory;
+        public const string FilePrefix = "filecopy-studio";
+        private static ILoggerFactory? _factory;
 
         public static void Initialize()
         {
             PortableMode.EnsureDataDir();
-            string logsDir = PortableMode.LogsDir;
-
-            PruneOldLogs(logsDir, maxAgeDays: 30);
+            AppLog.ConfigureDaily(PortableMode.LogsDir, FilePrefix, new AppLogOptions { MaxAgeDays = 30 });
 
             _factory = LoggerFactory.Create(builder =>
             {
@@ -31,23 +30,8 @@ namespace FileCopy
 #else
                     .SetMinimumLevel(LogLevel.Information)   // FC-11
 #endif
-                    .AddDebug()
-                    .AddProvider(new RollingFileLoggerProvider(logsDir));
+                    .AddProvider(new AppLogProvider());
             });
-        }
-
-        private static void PruneOldLogs(string dir, int maxAgeDays)
-        {
-            try
-            {
-                var cutoff = DateTime.Now.AddDays(-maxAgeDays);
-                foreach (var file in Directory.GetFiles(dir, "filecopy-studio-*.log"))
-                {
-                    if (File.GetLastWriteTime(file) < cutoff)
-                        File.Delete(file);
-                }
-            }
-            catch { /* best-effort; never block startup */ }
         }
 
         public static ILogger<T> ForContext<T>() =>
@@ -61,47 +45,32 @@ namespace FileCopy
         public static void Shutdown() => _factory?.Dispose();
     }
 
-    /// <summary>
-    /// Minimal rolling-file log provider — one file per calendar day.
-    /// Line format: {timestamp} [{level}] [{category}] {message}
-    /// </summary>
-    internal sealed class RollingFileLoggerProvider : ILoggerProvider
+    /// <summary>ILogger → suite <see cref="AppLog"/> bridge. Category shown as its last segment.</summary>
+    internal sealed class AppLogProvider : ILoggerProvider
     {
-        private readonly string _dir;
-        public RollingFileLoggerProvider(string dir) { _dir = dir; }
-        public ILogger CreateLogger(string categoryName) => new RollingFileLogger(_dir, categoryName);
+        public ILogger CreateLogger(string categoryName) => new AppLogBridge(categoryName);
         public void Dispose() { }
     }
 
-    internal sealed class RollingFileLogger : ILogger
+    internal sealed class AppLogBridge : ILogger
     {
-        private readonly string _dir;
         private readonly string _cat;
+        public AppLogBridge(string cat) { _cat = cat.Split('.')[^1]; }
 
-        // Per-file locks: concurrent categories writing to the same daily file
-        // share that file's lock, not a single global one.
-        private static readonly System.Collections.Concurrent.ConcurrentDictionary<string, object>
-            _fileLocks = new System.Collections.Concurrent.ConcurrentDictionary<string, object>();
-
-        public RollingFileLogger(string dir, string cat) { _dir = dir; _cat = cat; }
-
-        public IDisposable? BeginScope<TState>(TState state) => null;
-        public bool IsEnabled(LogLevel level) => level >= LogLevel.Information;
+        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
+        public bool IsEnabled(LogLevel level) => level != LogLevel.None;
 
         public void Log<TState>(LogLevel level, EventId eventId, TState state, Exception? ex,
             Func<TState, Exception?, string> formatter)
         {
             if (!IsEnabled(level)) return;
-            string msg  = formatter(state, ex);
-            // Strip embedded newlines to prevent log-line injection via crafted file paths
-            msg = msg.Replace('\r', ' ').Replace('\n', ' ');
-            string line = $"{DateTime.Now:yyyy-MM-dd HH:mm:ss.fff} [{level,-11}] [{_cat.Split('.')[^1]}] {msg}";
-            if (ex != null) line += Environment.NewLine + ex.ToString();
-
-            string path = Path.Combine(_dir, $"filecopy-studio-{DateTime.Now:yyyy-MM-dd}.log");
-            object fileLock = _fileLocks.GetOrAdd(path, _ => new object());
-            try { lock (fileLock) { File.AppendAllText(path, line + Environment.NewLine); } }
-            catch { /* never throw from logger */ }
+            AppLog.Write(level switch
+            {
+                LogLevel.Trace or LogLevel.Debug => AppLogLevel.Debug,
+                LogLevel.Information             => AppLogLevel.Info,
+                LogLevel.Warning                 => AppLogLevel.Warn,
+                _                                => AppLogLevel.Error,
+            }, _cat, formatter(state, ex), ex);
         }
     }
 }

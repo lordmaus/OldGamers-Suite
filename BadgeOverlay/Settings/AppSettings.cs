@@ -198,7 +198,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("SetPortableMode", ex);
+                AppLog.Error("SetPortableMode", ex);
                 return false;
             }
         }
@@ -286,14 +286,14 @@ namespace BadgeOverlay
                     // sees the current schema even if the user exits before any
                     // change triggers a normal save.
                     try { s.Save(); }
-                    catch (Exception ex) { CrashLog.Write("Migration save failed", ex); }
+                    catch (Exception ex) { AppLog.Error("Migration save failed", ex); }
                     // Log every migration encounter — gives visibility into how
                     // many users still load v1 / v2 / etc files. Once the log
                     // shows zero hits for a given <from> for a couple of
                     // releases, the corresponding case in Migrate() can be
                     // retired (delete the case + this log slows again as the
                     // path simply isn't reached).
-                    CrashLog.Write($"Settings migrated v{from} → v{CurrentSchemaVersion}");
+                    AppLog.Warn($"Settings migrated v{from} → v{CurrentSchemaVersion}");
                 }
                 // Future-version settings (newer app wrote this file, older app is reading it):
                 // accept — unknown fields are ignored, and we don't overwrite the stored version.
@@ -316,7 +316,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("AppSettings.Load failed", ex);
+                AppLog.Error("AppSettings.Load failed", ex);
                 // Quarantine the corrupt file so the next Save() doesn't
                 // silently overwrite it. Renaming preserves whatever the
                 // user had configured — they can attempt manual recovery
@@ -330,10 +330,10 @@ namespace BadgeOverlay
                     {
                         string q = p + ".corrupt-" + DateTime.Now.ToString("yyyyMMdd-HHmmss");
                         File.Move(p, q);
-                        CrashLog.Write($"AppSettings: corrupt file moved to {Path.GetFileName(q)} (recovery via About → Import)");
+                        AppLog.Warn($"AppSettings: corrupt file moved to {Path.GetFileName(q)} (recovery via About → Import)");
                     }
                 }
-                catch (Exception qex) { CrashLog.Write("AppSettings quarantine failed", qex); }
+                catch (Exception qex) { AppLog.Error("AppSettings quarantine failed", qex); }
                 return new AppSettings { LoadedFromDefaults = true, LastLoadError = ex.Message };
             }
         }
@@ -470,7 +470,7 @@ namespace BadgeOverlay
                     try { File.Delete(tmp); }
                     catch (Exception cleanupEx)
                     {
-                        CrashLog.Write("AppSettings.Save orphan .tmp cleanup failed", cleanupEx);
+                        AppLog.Error("AppSettings.Save orphan .tmp cleanup failed", cleanupEx);
                     }
                 }
 
@@ -495,7 +495,7 @@ namespace BadgeOverlay
             }
             catch (Exception ex)
             {
-                CrashLog.Write("AppSettings.Save failed", ex);
+                AppLog.Error("AppSettings.Save failed", ex);
                 // Best-effort cleanup of the .tmp we created — without this,
                 // a save failure leaves an orphan that the next Save would
                 // delete (still safe), but cleaning up now keeps the user's

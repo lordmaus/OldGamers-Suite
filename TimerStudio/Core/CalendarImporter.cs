@@ -104,15 +104,15 @@ namespace TimerStudio
                 int clsidHr = CLSIDFromProgID("Outlook.Application", out Guid clsid);
                 if (clsidHr != 0)
                 {
-                    DiagLog.Write($"CalendarImporter.TryGetRunningOutlook  CLSIDFromProgID hr=0x{clsidHr:X8} — ProgID not in registry.");
+                    AppLog.Info($"CalendarImporter.TryGetRunningOutlook  CLSIDFromProgID hr=0x{clsidHr:X8} — ProgID not in registry.");
                     return null;
                 }
                 int hr = GetActiveObject(ref clsid, IntPtr.Zero, out object punk);
-                DiagLog.Write($"CalendarImporter.TryGetRunningOutlook  CLSID={clsid}  GetActiveObject hr=0x{hr:X8}" +
+                AppLog.Info($"CalendarImporter.TryGetRunningOutlook  CLSID={clsid}  GetActiveObject hr=0x{hr:X8}" +
                               (hr == 0 ? " → attached via ROT." : " → not in ROT."));
                 return hr == 0 ? punk : null;
             }
-            catch (Exception ex) { DiagLog.WriteException("CalendarImporter.TryGetRunningOutlook", ex); return null; }
+            catch (Exception ex) { AppLog.Error("CalendarImporter.TryGetRunningOutlook", ex); return null; }
         }
 
         // user32: get window title text.
@@ -210,7 +210,7 @@ namespace TimerStudio
 
                 var g  = iidDispatch;
                 int hr = AccessibleObjectFromWindow(hwnd, OBJID_NATIVEOM, ref g, out object obj);
-                DiagLog.Write($"CalendarImporter.TryGetOutlookViaHwnd  rctrl_renwnd32 found, OBJID_NATIVEOM hr=0x{hr:X8}");
+                AppLog.Info($"CalendarImporter.TryGetOutlookViaHwnd  rctrl_renwnd32 found, OBJID_NATIVEOM hr=0x{hr:X8}");
 
                 if (hr == 0 && obj != null)
                 {
@@ -227,10 +227,10 @@ namespace TimerStudio
             }, IntPtr.Zero);
 
             if (candidates.Count > 0)
-                DiagLog.Write("CalendarImporter.TryGetOutlookViaHwnd  Outlook-related windows: " +
+                AppLog.Info("CalendarImporter.TryGetOutlookViaHwnd  Outlook-related windows: " +
                     string.Join(" | ", candidates));
             else
-                DiagLog.Write("CalendarImporter.TryGetOutlookViaHwnd  No Outlook-related windows found in EnumWindows.");
+                AppLog.Info("CalendarImporter.TryGetOutlookViaHwnd  No Outlook-related windows found in EnumWindows.");
 
             return found;
         }
@@ -258,21 +258,21 @@ namespace TimerStudio
             LastAcquireHint = null; // clear from previous attempt
 
             bool elevated = IsCurrentProcessElevated();
-            DiagLog.Write($"CalendarImporter.AcquireOutlook  TimerStudio elevated={elevated}");
+            AppLog.Info($"CalendarImporter.AcquireOutlook  TimerStudio elevated={elevated}");
 
             // S1: ROT
             object existing = TryGetRunningOutlook();
             if (existing != null) return (existing, false);
 
             // S2: HWND / OBJID_NATIVEOM
-            DiagLog.Write("CalendarImporter.AcquireOutlook  S1 failed. Trying HWND/OBJID_NATIVEOM...");
+            AppLog.Info("CalendarImporter.AcquireOutlook  S1 failed. Trying HWND/OBJID_NATIVEOM...");
             object hwndApp = TryGetOutlookViaHwnd();
             if (hwndApp != null)
             {
-                DiagLog.Write("CalendarImporter.AcquireOutlook  HWND approach succeeded.");
+                AppLog.Info("CalendarImporter.AcquireOutlook  HWND approach succeeded.");
                 return (hwndApp, false);
             }
-            DiagLog.Write("CalendarImporter.AcquireOutlook  HWND approach returned null.");
+            AppLog.Info("CalendarImporter.AcquireOutlook  HWND approach returned null.");
 
             bool outlookRunning = Process.GetProcessesByName("OUTLOOK").Length > 0;
             if (outlookRunning)
@@ -300,13 +300,13 @@ namespace TimerStudio
                         "If you use classic Outlook, try restarting Outlook, then click Refresh.";
                 }
                 LastAcquireHint = diagnosis;
-                DiagLog.Write("CalendarImporter.AcquireOutlook  " + diagnosis.Replace("\n", " "));
+                AppLog.Info("CalendarImporter.AcquireOutlook  " + diagnosis.Replace("\n", " "));
 
                 // S3-fallback: even with Outlook running, CreateInstance often routes to
                 // the existing process (COM singleton behaviour). Try it before giving up.
                 // COM objects are properly released after each call so no "only one version"
                 // errors from leaked RCW handles.
-                DiagLog.Write("CalendarImporter.AcquireOutlook  S3-fallback: trying CreateInstance while Outlook already running...");
+                AppLog.Info("CalendarImporter.AcquireOutlook  S3-fallback: trying CreateInstance while Outlook already running...");
                 try
                 {
                     var type2 = Type.GetTypeFromProgID("Outlook.Application", throwOnError: false);
@@ -315,7 +315,7 @@ namespace TimerStudio
                         var app2 = Activator.CreateInstance(type2);
                         if (app2 != null)
                         {
-                            DiagLog.Write("CalendarImporter.AcquireOutlook  S3-fallback succeeded.");
+                            AppLog.Info("CalendarImporter.AcquireOutlook  S3-fallback succeeded.");
                             LastAcquireHint = null;
                             return (app2, false); // don't Quit() — we didn't start it
                         }
@@ -323,7 +323,7 @@ namespace TimerStudio
                 }
                 catch (Exception ex2)
                 {
-                    DiagLog.WriteException("CalendarImporter.AcquireOutlook  S3-fallback failed", ex2);
+                    AppLog.Error("CalendarImporter.AcquireOutlook  S3-fallback failed", ex2);
                 }
                 return (null, false);
             }
@@ -334,21 +334,21 @@ namespace TimerStudio
                 var type = Type.GetTypeFromProgID("Outlook.Application", throwOnError: false);
                 if (type == null)
                 {
-                    DiagLog.Write("CalendarImporter.AcquireOutlook  Outlook not installed (ProgID absent).");
+                    AppLog.Info("CalendarImporter.AcquireOutlook  Outlook not installed (ProgID absent).");
                     return (null, false);
                 }
-                DiagLog.Write("CalendarImporter.AcquireOutlook  S3: Outlook not running. Calling CreateInstance...");
+                AppLog.Info("CalendarImporter.AcquireOutlook  S3: Outlook not running. Calling CreateInstance...");
                 var app = Activator.CreateInstance(type);
                 if (app != null)
                 {
-                    DiagLog.Write("CalendarImporter.AcquireOutlook  CreateInstance succeeded (new Outlook process).");
+                    AppLog.Info("CalendarImporter.AcquireOutlook  CreateInstance succeeded (new Outlook process).");
                     return (app, true); // weStarted=true → Quit() on exit
                 }
-                DiagLog.Write("CalendarImporter.AcquireOutlook  CreateInstance returned null.");
+                AppLog.Info("CalendarImporter.AcquireOutlook  CreateInstance returned null.");
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("CalendarImporter.AcquireOutlook  CreateInstance failed", ex);
+                AppLog.Error("CalendarImporter.AcquireOutlook  CreateInstance failed", ex);
             }
             return (null, false);
         }
@@ -434,12 +434,12 @@ namespace TimerStudio
                     else
                         key.SetValue(exePath, newVal);
 
-                    DiagLog.Write($"CalendarImporter.ClearRunAsAdminFlag  Cleared from {root.Name}: old='{val}' new='{newVal}'");
+                    AppLog.Info($"CalendarImporter.ClearRunAsAdminFlag  Cleared from {root.Name}: old='{val}' new='{newVal}'");
                     cleared = true;
                 }
                 catch (Exception ex)
                 {
-                    DiagLog.WriteException("CalendarImporter.ClearRunAsAdminFlag", ex);
+                    AppLog.Error("CalendarImporter.ClearRunAsAdminFlag", ex);
                 }
             }
             return cleared;
@@ -470,7 +470,7 @@ namespace TimerStudio
         {
             var result = new List<OutlookCalendarFolder>();
             var (app, weStarted) = AcquireOutlook();
-            if (app == null) { DiagLog.Write("CalendarImporter.GetOutlookCalendarFolders  AcquireOutlook returned null — cannot enumerate folders."); return result; }
+            if (app == null) { AppLog.Info("CalendarImporter.GetOutlookCalendarFolders  AcquireOutlook returned null — cannot enumerate folders."); return result; }
 
             object ns = null;
             try
@@ -480,7 +480,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("CalendarImporter.GetOutlookCalendarFolders", ex);
+                AppLog.Error("CalendarImporter.GetOutlookCalendarFolders", ex);
             }
             finally
             {
@@ -646,7 +646,7 @@ namespace TimerStudio
         {
             var events = new List<CalendarEvent>();
             var (app, weStarted) = AcquireOutlook();
-            if (app == null) { DiagLog.Write("CalendarImporter.ReadByPath  AcquireOutlook returned null — cannot read events from: " + folderPath); return events; }
+            if (app == null) { AppLog.Info("CalendarImporter.ReadByPath  AcquireOutlook returned null — cannot read events from: " + folderPath); return events; }
 
             object ns     = null;
             object folder = null;
@@ -659,7 +659,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("CalendarImporter.ReadByPath path=" + folderPath, ex);
+                AppLog.Error("CalendarImporter.ReadByPath path=" + folderPath, ex);
             }
             finally
             {
@@ -686,7 +686,7 @@ namespace TimerStudio
         {
             var all        = new List<CalendarEvent>();
             var (app, weStarted) = AcquireOutlook();
-            if (app == null) { DiagLog.Write("CalendarImporter.ReadAllCalendarsOneShot  AcquireOutlook returned null — cannot read any calendars."); return all; }
+            if (app == null) { AppLog.Info("CalendarImporter.ReadAllCalendarsOneShot  AcquireOutlook returned null — cannot read any calendars."); return all; }
 
             object ns = null;
             try
@@ -729,7 +729,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("CalendarImporter.ReadAllCalendarsOneShot", ex);
+                AppLog.Error("CalendarImporter.ReadAllCalendarsOneShot", ex);
             }
             finally
             {
@@ -890,7 +890,7 @@ namespace TimerStudio
                     }
                     catch (Exception ex)
                     {
-                        DiagLog.WriteException("CalendarImporter.ReadEventsFromFolder item", ex);
+                        AppLog.Error("CalendarImporter.ReadEventsFromFolder item", ex);
                     }
                     finally { SafeRelease(itemObj); }
                 }
@@ -906,7 +906,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("CalendarImporter.ReadEventsFromFolder calendar=" + calName, ex);
+                AppLog.Error("CalendarImporter.ReadEventsFromFolder calendar=" + calName, ex);
             }
             finally
             {
@@ -979,7 +979,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("CalendarImporter.ParseIcs path=" + filePath, ex);
+                AppLog.Error("CalendarImporter.ParseIcs path=" + filePath, ex);
             }
             return events;
         }

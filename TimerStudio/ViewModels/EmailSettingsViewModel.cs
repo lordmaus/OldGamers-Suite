@@ -294,7 +294,7 @@ namespace TimerStudio
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("EmailSettingsViewModel.RefreshOAuthAsync", ex, redactEmails: true);
+                AppLog.Error("EmailSettingsViewModel.RefreshOAuthAsync", ex);
             }
         }
 

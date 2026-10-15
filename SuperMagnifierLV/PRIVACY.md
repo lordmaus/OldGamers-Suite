@@ -17,8 +17,7 @@ The app saves your preferences (zoom level, lens size and position, color filter
 Also in that folder:
 
 - `lens_presets.json` — your five lens presets
-- `crash.log` (and `crash.log.old`) — error type, message and code location when something goes wrong; never screen content, window titles or text under the lens
-- `magnifier_error.log` — settings load/save diagnostics
+- `logs\SuperMagnifierLV.log` (rotated at 512 KB to `.old`) — error type, message and full stack trace, plus short notices (e.g. a hotkey that could not be registered). Your Windows profile path is replaced by `%USERPROFILE%`; identical entries are merged and flooding is capped, and settings load/save notices; never screen content, window titles or text under the lens. Older versions wrote `crash.log` and `magnifier_error.log`; you can delete them.
 
 These files never leave your machine.
 

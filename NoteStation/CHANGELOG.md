@@ -3,6 +3,11 @@
 All notable changes to NoteStation are documented here.
 Format based on [Keep a Changelog](https://keepachangelog.com/); versioning follows `yyyy.MM.dd.NNNN`.
 
+## [Unreleased] – 2026-10-14 · One log, shared helpers (S-05 / S-07)
+
+### Changed
+- **One log file: `%APPDATA%\NoteStation\logs\NoteStation.log`** (rotated at 512 KB to `.old`; the fatal-error dialog shows the path). Replaces errors.log, crash.log, cliptrim.log. Errors now include the full stack trace; your Windows profile path is written as `%USERPROFILE%`; repeated identical entries are merged and a log flood is capped. Old log files are left in place and can be deleted.
+
 ## [Unreleased] – 2026-10-14 · One version mechanism (S-03)
 
 ### Changed

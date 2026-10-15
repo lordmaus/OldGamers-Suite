@@ -72,7 +72,7 @@ namespace SuperMagnifier
                 _hotkeyResizeLeft  = Make(32, "ResizeLeft",  () => ResizeLens(-20, 0));
                 _hotkeyResizeRight = Make(33, "ResizeRight", () => ResizeLens(+20, 0));
             }
-            catch (System.Exception _ex) { CrashLog.Write("RegisterHotkeys", _ex); }
+            catch (System.Exception _ex) { AppLog.Error("RegisterHotkeys", _ex); }
 
             UpdateHotkeyHints();
 
@@ -107,7 +107,7 @@ namespace SuperMagnifier
                 PresetHelpText.Text    = $"Click=load  ·  Then click Save to overwrite  ·  {Chord("Preset1Load")}…  /  {Chord("Preset1Save")}…";
                 _lens?.SetHotkeyHints(freeze, zin, zout);
             }
-            catch (System.Exception ex) { CrashLog.Write("UpdateHotkeyHints", ex); }
+            catch (System.Exception ex) { AppLog.Error("UpdateHotkeyHints", ex); }
         }
 
         private void DisposeHotkeys()

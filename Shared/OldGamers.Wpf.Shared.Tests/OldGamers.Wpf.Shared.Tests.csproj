@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <!-- 2026-10-14 (S-05 / S-07): tests for the suite shared library (AppLog, AtomicFile, CorruptFile, WindowSizeStore).
+       Run:  dotnet test Shared\OldGamers.Wpf.Shared.Tests\OldGamers.Wpf.Shared.Tests.csproj -->
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>disable</Nullable>
+    <ImplicitUsings>disable</ImplicitUsings>
+    <IsPackable>false</IsPackable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.14.1" />
+    <PackageReference Include="xunit.v3" Version="2.0.3" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\OldGamers.Wpf.Shared\OldGamers.Wpf.Shared.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -57,7 +57,7 @@ namespace TimerStudio
             }
             catch (Exception ex) when (ex is CryptographicException or FormatException)
             {
-                DiagLog.Write("EmailAlertService.DecryptPassword failed: " + ex.GetType().Name);
+                AppLog.Info("EmailAlertService.DecryptPassword failed: " + ex.GetType().Name);
                 throw new CryptographicException(PasswordUnreadableMessage, ex);
             }
         }
@@ -102,7 +102,7 @@ namespace TimerStudio
                 else skipped++;
             }
             if (skipped > 0)
-                DiagLog.Write($"EmailAlertService: skipped {skipped} invalid recipient(s)");
+                AppLog.Info($"EmailAlertService: skipped {skipped} invalid recipient(s)");
             if (message.To.Count == 0)
                 throw new InvalidOperationException("No valid recipient address. Check \"Send to\" in Settings → Email.");
         }
@@ -142,8 +142,8 @@ namespace TimerStudio
                 EmailMode.MicrosoftOAuth => Task.Run(() => SendViaMicrosoftOAuthAsync(subject, body, p, to)),
                 _                  => null,
             };
-            send?.ContinueWith(t => DiagLog.WriteException("EmailAlertService." + context,
-                    t.Exception!.GetBaseException(), redactEmails: true),
+            send?.ContinueWith(t => AppLog.Error("EmailAlertService." + context,
+                    t.Exception!.GetBaseException()),
                 TaskContinuationOptions.OnlyOnFaulted);
         }
 
@@ -265,11 +265,11 @@ namespace TimerStudio
 
                 client.Send(message);
                 client.Disconnect(true);
-                DiagLog.Write("EmailAlertService.MailKit  send OK  to=<redacted>");
+                AppLog.Info("EmailAlertService.MailKit  send OK  to=<redacted>");
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("EmailAlertService.MailKit  to=<redacted>", ex, redactEmails: true);
+                AppLog.Error("EmailAlertService.MailKit  to=<redacted>", ex);
                 string msg = ex.Message ?? "";
 
                 // Microsoft basic-auth block — distinguish business vs personal account
@@ -408,11 +408,11 @@ namespace TimerStudio
                 if (!string.IsNullOrEmpty(to))
                     dynMail.To = to;
                 dynMail.Send();
-                DiagLog.Write("EmailAlertService.Outlook  send OK  to=<redacted>");
+                AppLog.Info("EmailAlertService.Outlook  send OK  to=<redacted>");
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("EmailAlertService.Outlook  to=<redacted>", ex, redactEmails: true);
+                AppLog.Error("EmailAlertService.Outlook  to=<redacted>", ex);
                 throw;
             }
             finally
@@ -458,11 +458,11 @@ namespace TimerStudio
 
                 await client.SendAsync(message);
                 await client.DisconnectAsync(true);
-                DiagLog.Write("EmailAlertService.OAuth2  send OK  to=<redacted>");
+                AppLog.Info("EmailAlertService.OAuth2  send OK  to=<redacted>");
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("EmailAlertService.OAuth2  to=<redacted>", ex, redactEmails: true);
+                AppLog.Error("EmailAlertService.OAuth2  to=<redacted>", ex);
                 throw;
             }
         }

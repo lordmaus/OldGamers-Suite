@@ -66,10 +66,8 @@ namespace NoteStation
         public static readonly string AppDataDir =
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "NoteStation");
 
-        // ── Crash log path ────────────────────────────────────────────────────
-        private static readonly string _crashLog = Path.Combine(
-            Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData),
-            "NoteStation", "crash.log");
+        // ── Log (S-07): %AppData%\NoteStation\logs\NoteStation.log ──────────────────
+        static App() => AppLog.Configure(AppDataDir, "NoteStation");
 
         // Guard against nested error dialogs cascading into a stack overflow.
         private bool _showingErrorDialog;
@@ -123,7 +121,7 @@ namespace NoteStation
                     MessageBox.Show(
                         $"An unexpected error occurred:\n\n" +
                         $"{root.GetType().Name}: {root.Message}\n\n" +
-                        $"At: {where}\n\nDetails have been written to crash.log.",
+                        $"At: {where}\n\nDetails have been written to the log file.",
                         "NoteStation — Unexpected Error",
                         MessageBoxButton.OK, MessageBoxImage.Error);
                 }
@@ -190,7 +188,7 @@ namespace NoteStation
             if (!_showingErrorDialog)   // another error box already up → skip the dialog, still close
             {
                 _showingErrorDialog = true;
-                try { new FatalErrorDialog(ex, _crashLog).ShowDialog(); }
+                try { new FatalErrorDialog(ex, AppLog.FilePath).ShowDialog(); }
                 catch (Exception dlgEx) { LogCrash("Fatal dialog", dlgEx); }
             }
             Shutdown(1);
@@ -269,16 +267,7 @@ namespace NoteStation
             }, token);
         }
 
-        private static void LogCrash(string source, Exception ex)
-        {
-            try
-            {
-                Directory.CreateDirectory(Path.GetDirectoryName(_crashLog)!);
-                File.AppendAllText(_crashLog,
-                    $"[{DateTime.Now:yyyy-MM-dd HH:mm:ss}] [{source}] {ex.GetType().Name}: {ex.Message}\n{ex.StackTrace}\n\n");
-            }
-            catch { /* best-effort */ }
-        }
+        private static void LogCrash(string source, Exception ex) => AppLog.Error("Crash: " + source, ex);
 
         // ── Theme switching ───────────────────────────────────────────────────
         public static void SetTheme(string name)

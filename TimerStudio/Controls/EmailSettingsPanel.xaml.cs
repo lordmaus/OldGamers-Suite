@@ -62,20 +62,20 @@ namespace TimerStudio.Controls
             }
             catch (Exception ex)
             {
-                DiagLog.WriteException("EmailSettingsPanel.SendTest", ex, redactEmails: true);
+                AppLog.Error("EmailSettingsPanel.SendTest", ex);
             }
         }
 
         private async void BtnMsSignIn_Click(object sender, RoutedEventArgs e)
         {
             try { await _vm.SignInAsync(); }
-            catch (Exception ex) { DiagLog.WriteException("EmailSettingsPanel.SignIn", ex, redactEmails: true); }
+            catch (Exception ex) { AppLog.Error("EmailSettingsPanel.SignIn", ex); }
         }
 
         private async void BtnMsSignOut_Click(object sender, RoutedEventArgs e)
         {
             try { await _vm.SignOutAsync(); }
-            catch (Exception ex) { DiagLog.WriteException("EmailSettingsPanel.SignOut", ex, redactEmails: true); }
+            catch (Exception ex) { AppLog.Error("EmailSettingsPanel.SignOut", ex); }
         }
     }
 }

@@ -186,11 +186,11 @@ namespace BadgeOverlay
             // we want a checkpoint right after applying — both for
             // safety and so PushToDetector below sees fresh values.
             try { _s.Save(); }
-            catch (Exception ex) { CrashLog.Write("Palette preset Save", ex); }
+            catch (Exception ex) { AppLog.Error("Palette preset Save", ex); }
 
             BuildRows();   // refresh swatches + contrast readouts
             try { _s.PushToDetector(); }
-            catch (Exception ex) { CrashLog.Write("Palette preset Push", ex); }
+            catch (Exception ex) { AppLog.Error("Palette preset Push", ex); }
         }
 
         // ── Reference surfaces for contrast checks ────────────────────────────
